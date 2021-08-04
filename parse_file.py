@@ -15,7 +15,7 @@ class Post:
         self.verified = verified
 
 # expand this with other demonstrators
-valid = set(["chris.mcdonlad@uwa.edu.au"])
+valid = set(["chris.mcdonald@uwa.edu.au"])
 
 def parse_post(post_str): 
     message = email.message_from_string(post_str)
