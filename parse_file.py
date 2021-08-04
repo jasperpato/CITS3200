@@ -23,7 +23,7 @@ def parse_post(post_str):
 
     date = datetime.datetime.strptime(header["Date"], "%a %b %d %H:%M:%S %Y")
     subject = header["Subject"]
-    payload = message.get_payload()
+    payload = message.get_payload().strip()
     verified = header["From"] in valid
 
     return Post(date,subject,payload,verified)
@@ -40,3 +40,22 @@ def parse_file(filename):
         posts = [parse_post(s) for s in post_strings]
         
     return group(posts)
+
+def print_threads(threads):
+    num = 0
+    for t in threads:
+        title = " Thread " + str(num) + ' '
+        spaces = '-' * ((60 - len(title)) // 2)
+        print("\n\n" + spaces + title + spaces + '\n')
+        for p in t.posts:
+            print("Date: " + str(p.date))
+            print("Subject: " + p.subject)
+            print("Verified: " + str(p.verified) + '\n')
+            print(p.payload  + '\n')
+            if p is not t.posts[-1]:
+                print()
+        print('-' * 60 + '\n')
+        num += 1
+            
+threads = parse_file("help2002-2017.txt")
+print_threads(threads)
