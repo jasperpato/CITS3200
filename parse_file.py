@@ -1,5 +1,6 @@
 import email
 import datetime
+from itertools import groupby
 
 class Thread:
     def __init__(self):
@@ -21,11 +22,10 @@ def parse_file(filename):
         
         s = file.read()
             
-        posts = ["Date: " + x for x in s.split("\nDate: ")][1:]
+        posts_strings = ["Date: " + x for x in s.split("\nDate: ")][1:]
+        posts = []
         
-        thread = Thread()
-        
-        for p in posts:
+        for p in posts_strings:
             post = Post()
             
             message = email.message_from_string(p)
@@ -38,18 +38,22 @@ def parse_file(filename):
             
             post.verified = header["From"] == "chris.mcdonald@uwa.edu.au" # + demonstrators
             
-            if thread.subject == "" or post.subject == thread.subject:
-                thread.subject = post.subject
-                thread.posts.append(post)
+            posts.append(post)
             
-            else:
-                threads.append(thread)
-                thread = Thread()
-                thread.subject = post.subject
-                thread.posts.append(post)
-                
-    return threads # list of Thread objects
+    threads = []
+    
+    for _, post in groupby(sorted(posts, key = lambda x: x.subject), key = lambda x: x.subject):
+        threads.append(list(post))
+    
+    
+    for t in threads:
+        for p in t:
+            print(p.date)
+            print(p.subject)
+    
+    return threads
+        
 
-#parse_file("~/desktop/computing/help2002/help2002-2017.txt")
-            
+threads = parse_file("help2002/help2002-2017.txt")
+
     
