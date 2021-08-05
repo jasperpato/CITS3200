@@ -14,6 +14,9 @@ class Post:
         self.payload = payload
         self.verified = verified
 
+    def __str__(self):
+        return f'Date: {self.date}\nSubject: {self.subject}\nVerified: {self.verified}\n\n{self.payload}\n\n'
+
 # expand this with other demonstrators
 valid = set(["chris.mcdonald@uwa.edu.au"])
 
@@ -42,20 +45,15 @@ def parse_file(filename):
     return group(posts)
 
 def print_threads(threads):
-    num = 0
-    for t in threads:
+    for num,t in enumerate(threads):
         title = " Thread " + str(num) + ' '
         spaces = '-' * ((60 - len(title)) // 2)
         print("\n\n" + spaces + title + spaces + '\n')
         for p in t.posts:
-            print("Date: " + str(p.date))
-            print("Subject: " + p.subject)
-            print("Verified: " + str(p.verified) + '\n')
-            print(p.payload  + '\n')
+            print(str(p))
             if p is not t.posts[-1]:
                 print()
         print('-' * 60 + '\n')
-        num += 1
             
 threads = parse_file("help2002-2017.txt")
 print_threads(threads)
