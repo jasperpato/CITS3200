@@ -7,6 +7,14 @@ class Thread:
         self.subject = subject
         self.posts = posts
         
+    def __str__(self):
+        thread_str = ""
+        for p in self.posts:
+            thread_str += str(p)
+            if p is not self.posts[-1]:
+                thread_str += '\n'
+        return thread_str
+        
 class Post:
     def __init__(self, date, subject, payload, verified):
         self.date = date    # datetime.datetime object
@@ -45,14 +53,11 @@ def parse_file(filename):
     return group(posts)
 
 def print_threads(threads):
-    for num,t in enumerate(threads):
+    for num, t in enumerate(threads):
         title = " Thread " + str(num) + ' '
         spaces = '-' * ((60 - len(title)) // 2)
         print("\n\n" + spaces + title + spaces + '\n')
-        for p in t.posts:
-            print(str(p))
-            if p is not t.posts[-1]:
-                print()
+        print(str(t))
         print('-' * 60 + '\n')
             
 threads = parse_file("help2002-2017.txt")
