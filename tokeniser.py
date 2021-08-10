@@ -5,12 +5,12 @@ from sys import argv
 nltk.download('punkt')
 nltk.download('stopwords')
 
-def clean(txt):
+def clean(txt : str) -> str:
     txt = sub('[^a-zA-Z]', ' ', txt)
     txt = sub(r'\s+', ' ', txt)
     return txt
 
-def preprocess(txt):
+def preprocess(txt : str) -> List[str]:
     # clean, tokenise, filter stopwords
     stopwords = nltk.corpus.stopwords.words('english')
     return list(filter(lambda w: w not in stopwords, nltk.word_tokenize(clean(txt).lower())))
