@@ -38,6 +38,4 @@ def print_threads(threads):
         print("\n\n" + spaces + title + spaces + '\n')
         print(str(t))
         print('-' * 60 + '\n')
-            
-threads = parse_file("help2002-2017.txt")
-print_threads(threads)
+
