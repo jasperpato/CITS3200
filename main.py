@@ -10,7 +10,7 @@ if __name__=="__main__":
     print("Enter a new post and view the most similar existing posts.")
     new_post.subject = input("Subject: ")
     new_post.payload = input("Question body: ")
-    for p in find_similar_posts(new_post):
+    for p in find_similar_posts(new_post, threads):
         print(p)
     
 
