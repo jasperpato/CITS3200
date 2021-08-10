@@ -1,6 +1,7 @@
 from re import sub
 import nltk
 from sys import argv
+from typing import List
 
 nltk.download('punkt')
 nltk.download('stopwords')

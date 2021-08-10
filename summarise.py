@@ -16,6 +16,8 @@ def word_vector(toks : Tokens, words : Set[str]) -> Vector:
     return list(merge({w : 0 for w in words}, Counter(toks)).values())
 
 def cosine_similarity(A : Tokens, B : Tokens) -> float:
+    if(len(A) == 0 or len(B) == 0):
+        return 0.0
     all_words = set(A) | set(B)
     A_vec = word_vector(A, all_words)
     B_vec = word_vector(B, all_words)
