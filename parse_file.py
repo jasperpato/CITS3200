@@ -1,29 +1,8 @@
 import email
 import datetime
 from itertools import groupby
-
-class Thread:
-    def __init__(self, subject, posts):
-        self.subject = subject
-        self.posts = posts
-        
-    def __str__(self):
-        thread_str = ""
-        for p in self.posts:
-            thread_str += str(p)
-            if p is not self.posts[-1]:
-                thread_str += '\n'
-        return thread_str
-        
-class Post:
-    def __init__(self, date, subject, payload, verified):
-        self.date = date    # datetime.datetime object
-        self.subject = subject
-        self.payload = payload
-        self.verified = verified
-
-    def __str__(self):
-        return f'Date: {self.date}\nSubject: {self.subject}\nVerified: {self.verified}\n\n{self.payload}\n\n'
+from post import Post
+from thread import Thread
 
 # expand this with other demonstrators
 valid = set(["chris.mcdonald@uwa.edu.au"])
