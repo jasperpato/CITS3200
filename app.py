@@ -41,5 +41,6 @@ def main():
         return form
     else:
         post = Post(None, request.form['subject'], request.form['payload'], None)
-        return form + "<ul>" + "".join(["<li>"+str(p).replace('\n', '<br>')+"</li>"
+        posts =  "<ul>" + "".join(["<li>"+str(p).replace('\n', '<br>')+"</li>"
                     for p in find_similar_posts(post, threads[int(request.form['year'])], int(request.form['nposts']), False)]) + "</ul>"
+        return form + "<h2>Subject: </h2><h3>{0}</h3><br><h2>Payload: </h2><h3>{1}</h3><br>".format(request.form['subject'], request.form['payload']) + posts
