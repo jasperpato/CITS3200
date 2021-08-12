@@ -13,14 +13,14 @@ threads = parse_file('help2002-2017.txt')
 def main():
     form =  """
             <h1>Enter a new post</h1>
-            <form method="post" action="/">
+            <form method="post" action="/" id="new_post">
                 <label for="subject">Subject</label>
                 <br>
                 <input type=text name=subject>
                 <br>
                 <label for="payload">Payload</label>
                 <br>
-                <input type=text name=payload>
+                <textarea name="payload" form="new_post" rows=5 cols=50></textarea>
                 <br>
                 <label for="nposts">Number of posts</label>
                 <br>
