@@ -1,4 +1,4 @@
-from types import List
+from typing import List
 from post import Post
 from itertools import chain
 
