@@ -1,6 +1,8 @@
 from typing import List
 from post import Post
 from itertools import chain
+from collections import Counter
+from tokeniser import preprocess
 
 class Thread:
     def __init__(self, subject : str, posts : List[Post]):
@@ -14,6 +16,9 @@ class Thread:
             if p is not self.posts[-1]:
                 thread_str += '\n'
         return thread_str
+
+    def word_count(self) -> Counter:
+        return Counter(*[preprocess(p.payload) for p in self.posts])
 
 def all_posts(threads : List[Thread]) -> List[Post]:
     return list(chain(*[t.posts for t in threads]))
