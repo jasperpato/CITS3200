@@ -1,0 +1,16 @@
+{
+    "testcases":[{
+        "post_1":{
+            "body":"Date: Wed Oct  2 11:03:56 2019 To: help2002@csse.uwa.edu.au Received: from 1.159.161.109 Subject: uint_32t and size_t From: poster048@student.uwa.edu.au X-smilie: none X-img: none hi all, Does anyone know what the the uint_32t and size_t constants are supposed to be? Fraser",
+            "category":"size_t"
+        },
+        "post_2":{
+            "body":"Date: Wed Oct  2 11:06:22 2019 To: help2002@csse.uwa.edu.au Received: from 10.21.255.140 Subject: uint_32t and size_t From: chris.mcdonald@uwa.edu.au X-smilie: none X-img: none Previously, <poster048@student.uwa.edu.au> wrote: > Does anyone know what the the uint_32t and size_t constants are supposed to be? They are not constants, but datatypes. Search for them on the project question sheet. ",
+            "category":"size_t"
+        },
+        "post_3":{
+            "Subject":"",
+            "body":""
+        }
+    }]
+}

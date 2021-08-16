@@ -1,0 +1,16 @@
+{
+    "testcases":[{
+        "test_case_1":{
+            "Subject":"question on size_t",
+            "body":"Hi chris, in lectre 5 the strcat() function contins size_t datatype. Does it need to be pre defined or simply integer values?"
+        },
+        "test_case_2":{
+            "Subject":"about sifs_mkvolume.c",
+            "body":"Hi Chris, Sorry if its a dumb question to ask. But I couldn't figure out how the sifs_mkvolume.c has never used any function from the mkvolume.c in the library and still be able to create a new volume. It does check the integrity of the input parameters however that seems to have nothing to do with creating a new volume."
+        },
+        "test_case_3":{
+            "Subject":"",
+            "body":""
+        }
+    }]
+}
