@@ -1,5 +1,4 @@
 from collections import Counter
-from tokeniser import preprocess
 
 class Post:
     def __init__(self, date, subject, payload, verified):
@@ -10,6 +9,3 @@ class Post:
 
     def __str__(self):
         return f'Date: {self.date}\nSubject: {self.subject}\nVerified: {self.verified}\n\n{self.payload}\n\n'
-
-    def word_count(self) -> Counter:
-        return Counter(preprocess(self.payload))
