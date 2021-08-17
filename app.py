@@ -34,6 +34,7 @@ stem = stemmer.stem
 
 #################### Weights #######################################
 
+# weight by y on post x
 verified = lambda y: lambda x: y if x.verified else 1.0
 
 ########################
