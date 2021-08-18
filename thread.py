@@ -17,4 +17,16 @@ class Thread:
         return thread_str
 
 def all_posts(threads : List[Thread]) -> List[Post]:
+    """
+    Returns all of the posts in a list of threads
+    """
     return list(chain(*[t.posts for t in threads]))
+
+# debug
+def print_threads(threads : List[Thread]) -> None:
+    for num, t in enumerate(threads):
+        title = " Thread " + str(num) + ' '
+        spaces = '-' * ((60 - len(title)) // 2)
+        print("\n\n" + spaces + title + spaces + '\n')
+        print(str(t))
+        print('-' * 60 + '\n')
