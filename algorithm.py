@@ -15,7 +15,7 @@ from project_types import Tokens
 def process_post(       p : Post,
                         cleaners : Tuple[Callable[[str], str]],
                         filters : Tuple[Callable[[str], bool]],
-                        substitutes : Tuple[Callable[[str], str]]) -> Tokens:
+                        substitutes : Tuple[Callable[[str], str]]) -> List[Tokens]:
         """
         Returns a list of tokens.
 
