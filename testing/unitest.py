@@ -4,6 +4,7 @@ import unittest
 import datetime
 import parse_file
 import tokeniser
+import algorithm
 from post import Post
 
 class testConfig():
@@ -33,8 +34,7 @@ class FileParseCase(unittest.TestCase):
     def test_parse_file(self):
         threads = parse_file.parse_file('help2002-2019.txt')
         for thread in threads:
-            posts = thread.posts
-            self.assertEqual([True for x in posts], [p.subject == posts[0].subject for p in posts])
+            self.assertTrue(all(post.subject == thread.posts[0].subject for post in thread.posts))
         posts = [manual_post_parse(post) for post in self.post_strings]
         test_subject_set = set([post.subject for post in posts])
         tbt_subject_set = set([thread.subject for thread in threads])
@@ -63,6 +63,22 @@ class TokeniserCase(unittest.TestCase):
         test_tokens = ['greeting', 'traveller', 'save', 'dog', 'stuck', 'well']
         tbt_tokens = tokeniser.preprocess(text)
         self.assertEqual(test_tokens, tbt_tokens)
+
+
+class AlgorithmTestCase(unittest.TestCase):
+    def setUp(self):
+        return super().setUp()
+
+    def tearDown(self):
+        return super().tearDown()
+
+    def test_find_similar_posts(self):
+        threads = parse_file.parse_file('help2002-2019.txt')
+        input = threads[0].posts[0]
+        num_posts = 10
+        similar_posts = algorithm.find_similar_posts(input, threads, num_posts, True)
+        self.assertEqual(num_posts, len(similar_posts))
+        self.assertTrue(all(type(x) is Post for x in similar_posts))
 
 
 def manual_post_parse(post):
