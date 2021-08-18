@@ -27,6 +27,17 @@ class FileParseCase(unittest.TestCase):
             self.assertEqual(test_post.subject, tbt_post.subject)
             self.assertEqual(test_post.payload, tbt_post.payload)
             self.assertEqual(test_post.verified, tbt_post.verified)
+    
+    def test_parse_file(self):
+        threads = parse_file.parse_file('help2002-2019.txt')
+        for thread in threads:
+            posts = thread.posts
+            self.assertEqual([True for x in posts], [p.subject == posts[0].subject for p in posts])
+        posts = [manual_post_parse(post) for post in self.post_strings]
+        test_subject_set = set([post.subject for post in posts])
+        tbt_subject_set = set([thread.subject for thread in threads])
+        self.assertEqual(test_subject_set, tbt_subject_set)
+            
 
 
 def manual_post_parse(post):
