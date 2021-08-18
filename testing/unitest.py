@@ -1,7 +1,9 @@
+from itertools import chain
 import json 
 import unittest
 import datetime
 import parse_file
+import tokeniser
 from post import Post
 
 class testConfig():
@@ -37,7 +39,30 @@ class FileParseCase(unittest.TestCase):
         test_subject_set = set([post.subject for post in posts])
         tbt_subject_set = set([thread.subject for thread in threads])
         self.assertEqual(test_subject_set, tbt_subject_set)
-            
+
+
+class TokeniserCase(unittest.TestCase):
+    def setUp(self):
+        return super().setUp()
+
+    def tearDown(self):
+        return super().tearDown()
+
+    def test_clean(self):
+        text1 = 'JDJ2$x@esL'
+        test_str = 'JDJ x esL'
+        tbt_str = tokeniser.clean(text1)
+        self.assertEqual(test_str, tbt_str)
+        text2 = ''.join([str(i) for i in range(0, 255)])
+        test_str = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz '
+        tbt_str = tokeniser.clean(text2)
+        self.assertTrue(test_str, tbt_str)
+
+    def test_preprocess(self):
+        text = 'Greeting, traveller. Will you save the dog stuck in the well?'
+        test_tokens = ['greeting', 'traveller', 'save', 'dog', 'stuck', 'well']
+        tbt_tokens = tokeniser.preprocess(text)
+        self.assertEqual(test_tokens, tbt_tokens)
 
 
 def manual_post_parse(post):
