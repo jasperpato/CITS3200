@@ -27,9 +27,9 @@ def jaccard(A : Tokens, B : Tokens) -> float:
     union = len(A)
     intersection = 0
     for s in B:
-        if s not in A:
-            union += 1
-        else:
+        if s in A:
             intersection += 1
+        else:
+            union += 1
     return intersection / union
     
