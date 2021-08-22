@@ -8,7 +8,7 @@ from typing import List, Callable, Tuple
 from heapq import nlargest
 from nltk import word_tokenize
 from utils import pipe, cached
-from summarise import cosine_similarity
+from algorithms import cosine_similarity
 from itertools import product
 from project_types import Tokens
 
@@ -36,7 +36,7 @@ def process_post(       p : Post,
 #process_cached is simply the process_post function, but with memoisation
 process_cached = cached(process_post)
 
-def pipe_line(  post : Post,
+def pipeline(   post : Post,
                 threads : List[Thread],
                 cleaners : Tuple[Callable[[str], str]],
                 filters : Tuple[Callable[[str], bool]],      # functions that check if a string should be filtered out
@@ -56,8 +56,8 @@ def pipe_line(  post : Post,
                 - cosine similarity takes the post's tokens and the threads' posts' tokens and computes similarity
                 - weight functions are then applied
         """
-    post_toks = process_post(post,cleaners,filters,substitutes)
+        post_toks = process_post(post,cleaners,filters,substitutes)
 
-    # check similarity between given post and all other posts, and then scale with weights
-    post_scores = {p:(pipe(*weights)(p))*(cosine_similarity(post_toks, process_cached(p,cleaners,filters,substitutes))) for p in all_posts(threads)}
-    return nlargest(n, post_scores, key=post_scores.get)
+        # check similarity between given post and all other posts, and then scale with weights
+        post_scores = {p:(pipe(*weights)(p))*(cosine_similarity(post_toks, process_cached(p,cleaners,filters,substitutes))) for p in all_posts(threads)}
+        return nlargest(n, post_scores, key=post_scores.get)

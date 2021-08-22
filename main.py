@@ -2,7 +2,7 @@ import sys
 from parse_file import parse_file
 from thread import Thread
 from post import Post
-from algorithm import pipe_line
+from pipeline import pipeline
 import nltk
 from re import sub
 from string import ascii_letters
@@ -27,7 +27,7 @@ if __name__=="__main__":
 
     weights = [ lambda x: 1.5 if x.verified else 1.0]   # give a bit more priority to Chris' posts
 
-    for p in pipe_line(new_post, threads, substitutes, filters, weights, N):
+    for p in pipeline(new_post, threads, substitutes, filters, weights, N):
         print(p)
 
         
