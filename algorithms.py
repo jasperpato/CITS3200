@@ -22,6 +22,7 @@ def cosine_similarity(A : Tokens, B : Tokens) -> float:
     return dot_product(A_vec, B_vec) / (norm(A_vec) * norm(B_vec))
 
 # calculates (intersection / union) of two sets of tokens
+# probably too slow
 def jaccard(A : Tokens, B : Tokens) -> float:
     # remove duplicates (doesn't weight on frequency)
     A = list(dict.fromkeys(A))
