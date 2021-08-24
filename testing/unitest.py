@@ -80,6 +80,18 @@ class AlgorithmTestCase(unittest.TestCase):
         self.assertEqual(num_posts, len(similar_posts))
         self.assertTrue(all(type(x) is Post for x in similar_posts))
 
+class SpellcheckTestCase(unittest.TestCase):
+    def setUp(self):
+        return super().setUp()
+    
+    def tearDown(self):
+        return super().tearDown()
+    
+    def test_spell_check(self):
+        correct_txt=["segmentation", "directory", "clarified", "consistent"]
+        corrupted_txt_one_error=["segmentetion", "dicectory", "clarefied", "consistent"]
+        check = lambda x: x
+        self.assertTrue(all(check(a) == b for a in correct_txt for b in corrupted_txt_one_error))
 
 def manual_post_parse(post):
     post_lines = post.split('\n')
