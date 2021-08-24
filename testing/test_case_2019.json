@@ -1,29 +1,29 @@
 {
-    "testcases":[{
-        "test_case_1":{
+    "testcases":[
+        {
             "Subject":"question on size_t",
-            "body":"Hi chris, in lectre 5 the strcat() function contins size_t datatype. Does it need to be pre defined or simply integer values?",
+            "Body":"Hi chris, in lectre 5 the strcat() function contins size_t datatype. Does it need to be pre defined or simply integer values?",
             "Category":"size_t"
         },
-        "test_case_2":{
+        {
             "Subject":"about sifs_mkvolume.c",
-            "body":"Hi Chris, Sorry if its a dumb question to ask. But I couldn't figure out how the sifs_mkvolume.c has never used any function from the mkvolume.c in the library and still be able to create a new volume. It does check the integrity of the input parameters however that seems to have nothing to do with creating a new volume.",
+            "Body":"Hi Chris, Sorry if its a dumb question to ask. But I couldn't figure out how the sifs_mkvolume.c has never used any function from the mkvolume.c in the library and still be able to create a new volume. It does check the integrity of the input parameters however that seems to have nothing to do with creating a new volume.",
             "Category":"mkvolume block mkdir"
         },
-        "test_case_3":{
+        {
             "Subject":"which mode to set file",
-            "body":"If we wanted to change contents of the file with i.e. mkdir, would fopen() need to have mode r+ or w+ or something else?",
+            "Body":"If we wanted to change contents of the file with i.e. mkdir, would fopen() need to have mode r+ or w+ or something else?",
             "Category":"mode mkdir io"
         },
-        "test_case_4":{
+        {
             "Subject":"segmentation fault",
-            "body":" In dirinfo, we tried to define *entrynames = entries (which is array of entry names). But when we try to print elements of entryname out, it gives the segmentation error. Anyone know why this happens?",
+            "Body":" In dirinfo, we tried to define *entrynames = entries (which is array of entry names). But when we try to print elements of entryname out, it gives the segmentation error. Anyone know why this happens?",
             "Category":"segmentation"
         },
-        "test_case_5":{
+        {
             "Subject":"data block",
-            "body":" i saw in one of the posts that volume is a file but not a text file so for example in every method along with the path of file or directory we are given with the path of volume so is it a directory? ",
+            "Body":" i saw in one of the posts that volume is a file but not a text file so for example in every method along with the path of file or directory we are given with the path of volume so is it a directory? ",
             "Category":"block path"
         }
-    }]
+    ]
 }
