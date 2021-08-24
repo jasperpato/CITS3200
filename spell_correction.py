@@ -23,29 +23,26 @@ def spell_correction(thread):
 
     for thread_word in thread_list:
 
-        #print(thread_word)
-
         best_similarity = 0
         best_match = ""
 
-        start = time.time()
+
+        #this runs essentially instantly
         if thread_word in word_dict.keys():
 
-            #print("in dict")
             best_similarity = 1
             best_match = thread_word
 
             corrected_list.append(best_match)
 
-            end = time.time()
-            print("dict search time: ", end-start)
-
             continue
-        start = time.time()
+
+        #this is where time problems are
+        #SequenceMatcher takes almost no time to run but running it 60,000 times adds up
+        #this makes it take sometimes >1sec for a single misspelt word
         for word in word_dict:
-            startse = time.time()
+            
             curr_similarity = difflib.SequenceMatcher(None, thread_word, word).ratio()
-            endse = time.time()
 
             if curr_similarity > best_similarity:
 
@@ -53,9 +50,6 @@ def spell_correction(thread):
                 best_match = word
 
         corrected_list.append(best_match)
-        end = time.time()
-        print("sequence funtion time: ", endse-startse)
-        print("sequence time: ", end-start)
 
     return " ".join(corrected_list)
 
