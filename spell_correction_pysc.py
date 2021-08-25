@@ -10,7 +10,8 @@ def spell_correction(thread):
 
     for i in range(0, len(thread_list)):
 
-        #removes punctuation
+        #removes punctuation for spell correction
+        #if punctuation needs to be removed for output then do this before return
         thread_list[i] = thread_list[i].strip("""!@#$%^&*()_+-={}[]|\~`:;"'<,>.?/""")
 
         #marks words with numbers in them for removal
