@@ -3,18 +3,44 @@
 from flask import Flask, request
 from post import Post
 from parse_file import parse_file
-from algorithm import find_similar_posts
+from algorithms import jaccard, cosine_similarity
+from pipeline import pipeline
+from re import sub
+from string import ascii_letters
+import nltk
+import time
 
 app = Flask("Evaluator")
 
-threads = []
-for path in ['help2002-2017.txt', 'help2002-2018.txt', 'help2002-2019.txt']:
-    threads.append(parse_file(path))
+files = ['help2002-2017.txt', 'help2002-2018.txt', 'help2002-2019.txt']
+all_threads = [parse_file(f) for f in files]
 
-@app.route("/", methods=["GET", "POST"])
-def main():
+nltk.download('punkt')
+nltk.download('stopwords')
+stopwords = nltk.corpus.stopwords.words('english')
 
-    css = """
+##################### cleaners ######################################
+
+lower = lambda x: x.lower()
+space = lambda x: sub(r'\s+', ' ', x)
+
+##################### Filters ######################################
+
+not_ascii = lambda x: x not in ascii_letters
+stopword = lambda x: x in stopwords
+
+##################### substitutes ######################################
+stemmer = nltk.stem.snowball.SnowballStemmer("english")
+stem = stemmer.stem
+
+#################### Weights #######################################
+
+# weight by y on post x
+verified = lambda y: lambda x: y if x.verified else 1.0
+
+########################
+
+page = """
             <style>
                 aside{
                     float: left;
@@ -33,11 +59,9 @@ def main():
                 }
 
             </style>
-        """
-
-    form =  """
-                <aside>
-                <form method="post" action="/" id="new_post">
+        
+            <aside>
+                <form method="GET" action="/search" id="new_post">
                     <label for="subject">Subject</label>
                     <br>
                     <input type=text name=subject>
@@ -48,22 +72,65 @@ def main():
                     <br>
                     <label for="nposts">Number of posts</label>
                     <br>
-                    <input type=number name=nposts>
+                    <input type=number name=nposts min="1" value="5" max="10">
                     <br>
-                    <input type="radio" id="2017" name="year" value="0">
+                    <input type="radio" id="2017" name="year" value="0" checked>
                     <label for="2017">help2002-2017.txt</label><br> 
                     <input type="radio" id="2018" name="year" value="1">
                     <label for="2018">help2002-2018.txt</label><br> 
                     <input type="radio" id="2019" name="year" value="2">
-                    <label for="2019">help2002-2019.txt</label><br> 
+                    <label for="2019">help2002-2019.txt</label><br>
+
+                    <input type="checkbox" id="lower" name="lower" checked>
+                    <label for="lower">search with lowercase</label><br> 
+
+                    <input type="checkbox" id="space" name="space" checked>
+                    <label for="space">remove extraneous spaces</label><br> 
+
+                    <input type="checkbox" id="ascii" name="ascii" checked>
+                    <label for="ascii">limit search to non-ascii</label><br>
+
+                    <input type="checkbox" id="stopwords" name="stopwords" checked>
+                    <label for="stopwords">filter out stopwords</label><br>
+
+                    <input type="checkbox" id="stem" name="stem" checked>
+                    <label for="stem">Apply stemming</label><br>
+
+                    <input type=number name="weight" min="1" value="1">
+                    <label for="weight">scaling applied to Chris' posts</label><br>
                     <input type=submit value=Yall>
                 </form>
                 </aside>
-        """
-    if(request.method == "GET"):
-        return css + form
-    else:
-        post = Post(None, request.form['subject'], request.form['payload'], None)
-        posts =  "<ul>" + "".join(["<li>"+str(p).replace('\n', '<br>')+"</li>"
-                    for p in find_similar_posts(post, threads[int(request.form['year'])], int(request.form['nposts']), False)]) + "</ul>"
-        return css + form + "<article>" + posts + "</article>" +  "<aside><h2>Subject: </h2><h3>{0}</h3><br><h2>Payload: </h2><h3>{1}</h3><br></aside>".format(request.form['subject'], request.form['payload'])
+                """
+
+@app.route("/search")
+def search():
+    time_start = time.time()
+    post = Post(None, request.args['subject'], request.args['payload'], None)
+    threads = all_threads[int(request.args['year'])]
+    
+    nposts = int(request.args['nposts'])
+    cleaners = []
+    if('lower' in request.args): cleaners.append(lower)
+    if('space' in request.args): cleaners.append(space)
+    
+    filters = []
+    if('ascii' in request.args): filters.append(not_ascii)
+    if('stopwords' in request.args): filters.append(stopword)
+
+    substitutes = []
+    if('stem' in request.args): substitutes.append(stem)
+
+    weights = []
+    weights.append(verified(float(request.args['weight'])))
+    
+    algos = (jaccard, cosine_similarity)
+
+    posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, algos, nposts)
+
+    time_taken = time.time() - time_start
+    return page + f"<article><h3>{time_taken} seconds</h3><br><h2>Subject: {request.args['subject']}<br>Payload: {request.args['payload']}</h2><ul>" + "".join(["<li>{0}</li><br>".format(str(p).replace('\n', '<br>')) for p in posts])+ "</ul>"
+
+@app.route("/")
+def main():
+    return page 
