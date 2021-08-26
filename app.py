@@ -3,7 +3,8 @@
 from flask import Flask, request
 from post import Post
 from parse_file import parse_file
-from algorithm import pipe_line, process_post
+from algorithms import jaccard, cosine_similarity
+from pipeline import pipeline
 from re import sub
 from string import ascii_letters
 import nltk
@@ -123,7 +124,9 @@ def search():
     weights = []
     weights.append(verified(float(request.args['weight'])))
     
-    posts = pipe_line(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, nposts)
+    algos = (jaccard, cosine_similarity)
+
+    posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, algos, nposts)
 
     ########## DEBUG
     print(process_post(post, cleaners, filters, substitutes))
