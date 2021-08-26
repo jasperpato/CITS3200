@@ -42,6 +42,7 @@ def pipeline(   post : Post,
                 filters : Tuple[Callable[[str], bool]],      # functions that check if a string should be filtered out
                 substitutes : Tuple[Callable[[str], str]],   # functions that apply textual substitution
                 weights : List[Callable[[Post], float]],    # functions that return a scalar value that scales a post up/down
+                algorithms : Tuple[Callable[[Tokens, Tokens], float]],
                 n : int) -> List[Post]:
         """
         Returns a list of posts (of length n) that are similar, in descending order of similarity, to the given post.
@@ -57,6 +58,9 @@ def pipeline(   post : Post,
                 - weight functions are then applied
         """
         post_toks = process_post(post,cleaners,filters,substitutes)
+        similarity = 0
+        for(a in algorithms):
+                
 
         # check similarity between given post and all other posts, and then scale with weights
         post_scores = {p:(pipe(*weights)(p))*(cosine_similarity(post_toks, process_cached(p,cleaners,filters,substitutes))) for p in all_posts(threads)}
