@@ -128,12 +128,6 @@ def search():
 
     posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, algos, nposts)
 
-    ########## DEBUG
-    print(process_post(post, cleaners, filters, substitutes))
-    for p in posts:
-        print(process_post(p, cleaners, filters, substitutes))
-    ############
-
     time_taken = time.time() - time_start
     return page + f"<article><h3>{time_taken} seconds</h3><br><h2>Subject: {request.args['subject']}<br>Payload: {request.args['payload']}</h2><ul>" + "".join(["<li>{0}</li><br>".format(str(p).replace('\n', '<br>')) for p in posts])+ "</ul>"
 
