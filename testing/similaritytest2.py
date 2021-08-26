@@ -27,13 +27,16 @@ def pipeline_test():
         print(f"Subject: {test_case['Subject']}\n")
         top_posts = pipeline(parse_test_case(test_case), parse_test_space(test_space_posts), cleaner, substitutes, filters, weights, 3)
         target_categories = set(test_case['Category'].split(' '))
+        sum = 0
         for post, j in enumerate(top_posts):
             test_space_post = [tp for tp in test_space_posts if tp['Body'] == post.payload][0]
             post_categories = set(test_space_post['Category'].split(' '))
             score = len(target_categories.intersection(post_categories)) / len(target_categories)
+            sum += score
             print(f"\t{j + 1}'th Post:") 
             print("Evaluation score: {score}")
-            print(f"{post}\n")
+            print(f"{post}")
+        print(f'Average Score: {sum / len(top_posts)}\n')
 
 def parse_test_case(post):
     return Post(None, post['Subject'], post['Body'], False)
