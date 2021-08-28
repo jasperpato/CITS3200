@@ -36,7 +36,7 @@ def pipeline_test():
             sum += score
             print(f"\t{j + 1}'th Post:") 
             print(f"Evaluation score: {score}")
-            #print(f"{post}")
+            print(f"{post}")
         print(f'Average Score: {sum / len(top_posts)}\n')
 
 def parse_test_case(post):
