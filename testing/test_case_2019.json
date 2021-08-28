@@ -2,12 +2,12 @@
     "testcases":[
         {
             "Subject":"question on size_t",
-            "Body":"Hi chris, in lectre 5 the strcat() function contins size_t datatype. Does it need to be pre defined or simply integer values?",
+            "Body":"Hi chris, what are the uint_32t and size_t constants? Are these constants predefined in the system?",
             "Category":"size_t"
         },
         {
             "Subject":"about sifs_mkvolume.c",
-            "Body":"Hi Chris, Sorry if its a dumb question to ask. But I couldn't figure out how the sifs_mkvolume.c has never used any function from the mkvolume.c in the library and still be able to create a new volume. It does check the integrity of the input parameters however that seems to have nothing to do with creating a new volume.",
+            "Body":"Hi Chris, Sorry if its a dumb question to ask. But I couldn't figure out how the sifs_mkvolume.c has never used any function from the mkvolume.c in the library and still be able to create a new volume. It does check the integrity of the input parameters however it seems to have nothing to do with creating a new volume.",
             "Category":"mkvolume block mkdir"
         },
         {
