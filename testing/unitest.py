@@ -1,11 +1,13 @@
 from itertools import chain
-import json 
+import json
+from os import remove 
 import unittest
 import datetime
-import parse_file
-import tokeniser
-import algorithm
-from post import Post
+# import parse_file
+from parse_spell_test import remove_one_letter
+#import tokeniser
+#import algorithm
+#from post import Post
 
 class testConfig():
     pass
@@ -82,6 +84,10 @@ class AlgorithmTestCase(unittest.TestCase):
 
 class SpellcheckTestCase(unittest.TestCase):
     def setUp(self):
+        with open("commonWords.txt") as f:
+            read_data = f.read().split("\n")
+            self.one_letter_diff,self.one_letter_orig = remove_one_letter(read_data)
+            f.close
         return super().setUp()
     
     def tearDown(self):
@@ -94,10 +100,9 @@ class SpellcheckTestCase(unittest.TestCase):
         self.assertTrue(all(check(a) == b for a in correct_txt for b in corrupted_txt_one_error))
     
     def test_letter_missing(self):
-        correct_txt=["segmentation", "directory", "clarified", "consistent"]
-        corrupted_txt_one_error=["segmentetion", "dicectory", "clarefied", "consistent"]
+        print(self.one_letter_diff, self.one_letter_orig)
         check = lambda x: x
-        self.assertTrue(all(check(a) == b for a in correct_txt for b in corrupted_txt_one_error))
+        self.assertTrue(all(check(a) == b for a in self.one_letter_orig for b in self.one_letter_diff))
     
     def test_letter_replaced(self):
         correct_txt=["segmentation", "directory", "clarified", "consistent"]
