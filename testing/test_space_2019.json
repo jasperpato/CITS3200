@@ -1,0 +1,130 @@
+{
+    "testcases":[
+        {
+            "Date":"Wed Oct  2 11:03:56 2019",
+            "Subject":"uint_32t and size_t",
+            "From": "poster048@student.uwa.edu.au",
+            "Body":"hi all, Does anyone know what the the uint_32t and size_t constants are supposed to be? Fraser",
+            "Category":"size_t"
+        },
+        {
+            "Date": "Wed Oct  2 11:06:22 2019",
+            "Subject": "uint_32t and size_t",
+            "From": "chris.mcdonald@uwa.edu.au",
+            "Body": "Previously, <poster048@student.uwa.edu.au> wrote: > Does anyone know what the the uint_32t and size_t constants are supposed to be? They are not constants, but datatypes. Search for them on the project question sheet. ",
+            "Category":"size_t"
+        },
+        {
+            "Date": "Wed Oct  2 11:07:11 2019",
+            "Subject": "uint_32t and size_t",
+            "From": "poster048@student.uwa.edu.au",
+            "Body":" all good, I understand now - they are simply the blocksize and num of blocks (as is said right there in the code). I suppose this gives occasion to a further query; from where are we to get these values, do we specify them or are they pre-defined? Fraser",
+            "Category":"size_t"
+        },
+        {
+            "Date": "Tue Aug 27 23:05:30 2019",
+            "Subject": "possible error in slide & couple questions",
+            "From": "poster123@student.uwa.edu.au",
+            "Body":" Hi Chris, On lecture7's slide, the strlen() was labeled as int type. I tried to print a value from the function with placeholder %i but failed. However, in C library, the strlen() function seems to have a size_t type. I don't know if I called the function incorrectly or it was a typo on the slide. And the questions(or confirmation): 1. Is it true that 0,r,n do not count for the length of an array but each occupies storage of 1 byte? 2. Is it true that the read() function returns the storage(in byte) of the file it reads? 3. Is it true that we can define an array as large as we want, and if we don't fill it up with enough value, the rest of the space will be filled up with a bunch of 0s? (I tried to print the unassigned spaces out but only get 0s.) Thank you for your time. ",
+            "Category":"size_t io"
+        },
+        {
+            "Date":"Wed Oct  2 18:07:01 2019",
+            "Subject":"about sifs_mkvolume.c",
+            "From": "poster076@student.uwa.edu.au",
+            "Body":"SIFS_mkvolume() is the function from the library that does the volume creation It is a function in mkvolume.c, in fact, it is the only one",
+            "Category":"mkvolume"
+        },
+        {
+            "Date":"Tue Oct  8 04:36:34 2019",
+            "Subject":"Creating Test Files",
+            "From": "chris.mcdonald@uwa.edu.au",
+            "Body":"ANONYMOUS wrote: > Hi, > > I'm creating my mkdir.c file and have no idea how to create either another file to > test it or used hte provided files outside of the library folder provided. Can anyone > please provide some assistance around how to do this and for future files too. The simple way to test your new functions in your library is to have a small test program that simply calls a library function. Look at the provided sifs_mkvolume.c program. After checking its command-line options,  it simply calls the library function SIFS_mkvolume() and checks the return result. The 'process' of writing a test function for your SIFS_mkdir() function is almost identical (below). Using an existing, even a downloaded sample volume, run this program, upload the modified volume to the viewer,  and see if it looks like you'd expect. {{{ #include <stdio.h> #include <stdlib.h> #include 'sifs.h' //  Written by Chris.McDonald@uwa.edu.au, September 2019 //  REPORT HOW THIS PROGRAM SHOULD BE INVOKED void usage(char *progname) { fprintf(stderr, 'Usage: %s volumename pathname\n', progname); fprintf(stderr, 'or     %s pathname\n', progname); exit(EXIT_FAILURE); } int main(int argcount, char *argvalue[]) { char        *volumename;        // filename storing the SIFS volume char        *pathname;          // pathname *inside* the volume //  ATTEMPT TO OBTAIN THE volumename FROM AN ENVIRONMENT VARIABLE if(argcount == 2) { volumename      = getenv('SIFS_VOLUME'); if(volumename == NULL) { usage(argvalue[0]); } pathname        = argvalue[1]; } //  ... OR FROM A COMMAND-LINE PARAMETER else if(argcount == 3) { volumename      = argvalue[1]; pathname        = argvalue[2]; } else { usage(argvalue[0]); exit(EXIT_FAILURE); } //  ATTEMPT TO CREATE THE NEW DIRECTORY if(SIFS_mkdir(volumename, pathname) != 0) { SIFS_perror(argvalue[0]); exit(EXIT_FAILURE); } return EXIT_SUCCESS; } }}} ",
+            "Category":"mkvolume mkdir test"
+        },
+        {
+            "Date":"Thu Oct 10 16:56:59 2019",
+            "Subject":"appending to volume",
+            "From": "chris.mcdonald@uwa.edu.au",
+            "Body":"ANONYMOUS wrote: > When I have made the new directory and changed the bitmap, it all works but when I go > to look at the volume again its appending the new bitmap to the old one instead of > updating. Any reason why? > > I have frwite() the oneblock and fwrite() the bitmap. Has this caused it. Every volume has one header, one bitmap, and then N equal-sized blocks. If you need to update the bitmap you first need to fseek to the physical location of the bitmap to then overwrite it.",
+            "Category":"io block"
+        },
+        {
+            "Date":"Sat Oct 12 05:06:25 2019",
+            "Subject":"appending blocks into the volume",
+            "From": "chris.mcdonald@uwa.edu.au",
+            "Body":"ANONYMOUS wrote: > HI > just need to be clarified that is adding any kinds of block not beginning from the > last unused block, but from the first unused blocks following with enough contiguous > blocks?(such as may need more than 1 data blocks to hold the data) Yes. (but get the word 'append' out of your head - it'll have you imagining things that our project/volume does not support). ",
+            "Category":"block"
+        },
+        {
+            "Date":"Wed Sep 11 14:11:34 2019",
+            "Subject":"Segmentation Error 11",
+            "From": "chris.mcdonald@uwa.edu.au",
+            "Body":"ANONYMOUS wrote: > The seg error was of course due to illegal indexing of an array, but this occurred further > down in my code, past the print line that never happened. Not sure why it never printed, > but when I added a \n character at the end of that line it did print, and showed that the > error was occurring further down. I don't quite understand why that made a difference. The lack of (the delay of) output via printf() is because the output, to the screen, is line-buffered. Its output is only forced/flushed to the screen when it encounters a newline character, or if its buffer fills up. If you need to print stuff without a newline, you can force it to be flushed with: printf('look, no newline');  fflush(stdout); or you could add  setbuf(stdout, NULL);  in your main() function to disable all line-buffering.",
+            "Category":"segmentation"
+        },
+        {
+            "Date":"Tue Sep 10 20:51:41 2019",
+            "Subject":"Segmentation Error 11",
+            "From": "poster142@student.uwa.edu.au",
+            "Body":" Hi, I was bus error man but have now evolved. Sorry to keep turning here but I am at a standstill again. I have a debugging print line at the very end of the parse trace file function and a print line directly after the main function calls it. My first line is printed but then followed by segmentation error: 11, and not the following line. Do you know how this can be?",
+            "Category":"segmentation"
+        },
+        {
+            "Date":"Sun Oct  6 12:30:45 2019",
+            "Subject":"fread()",
+            "From": "poster137@student.uwa.edu.au",
+            "Body":" I've read the manual. We have fopen to mode r+, but now I'm starting to feel that w+ is the one that we need to put in (but when I change it to w+, our function would only give a segmentation error after reading the file's contents). I'm worried we may have used fopen wrong. Is it w+? ",
+            "Category":"segmentation mode"
+        },
+        {
+            "Date":"Sun Oct  6 13:04:06 2019",
+            "Subject":"what mode to open volume in?",
+            "From": "poster048@student.uwa.edu.au",
+            "Body":"Hello all, Just wondering... what mode in which to open our volume would be best? I have attempted to open in both 'r+' and 'w'. 'w' gives me a segmentation fault at the cmd line, while r+ does not appear to 'actually' write anything to the volume. thanks Fraser",
+            "Category":"segmentation mode"
+        },
+        {
+            "Date":"Wed Oct  9 17:02:25 2019",
+            "Subject":"mkdir checking path validity",
+            "From": "chris.mcdonald@uwa.edu.au",
+            "Body":"ANONYMOUS wrote: > If we were given a directory name like /dir1/dir2/dir3, do we have to traverse > through the pathname starting from root, checking if its valid? e.g. is there an > entry for dir2 in dir1 and so on. Or is the supplied path assumed to be valid, and > therefore we can just directly add dir3 to dir2 without checking its parent > directories. You'll need to check a pathname's validity. ",
+            "Category":"path"
+        },
+        {
+            "Date":"Thu Oct 10 07:23:36 2019",
+            "Subject":"fread() with variables",
+            "From": "poster119@student.uwa.edu.au",
+            "Body":" Hi, I am trying to pass the bitmap to mkdir but I am not sure how to do it. I've been stumped on this for the past day or so. Does the mkvolume need modifying or is it complete already? Any guidance would be appreciated. Thanks ",
+            "Category":"mkvolume variable_passing"
+        },
+        {
+            "Date":"Wed Oct  9 17:05:19 2019",
+            "Subject":"accessing variables from other files",
+            "From": "chris.mcdonald@uwa.edu.au",
+            "Body":" ANONYMOUS wrote: > Basically when the volume is created the bitmap has a root directory created and > stored in position 0. When a make directory is requested in the mkdir.c file, how can > I access the up to date bitmap? I know that the sifs-internal.h has the declared > bitmap but I need the up to date one if possible. Terminology: sifs-internal.h defines the datatype of each element of any (future) bitmap. It doesn't even mention 'bitmap' at all, let alone declare or define one.",
+            "Category":"bitmap variable_passing block"
+        },
+        {
+            "Date":"Wed Oct  9 19:35:38 2019",
+            "Subject":"help on processing pathname input",
+            "From": "poster140@student.uwa.edu.au",
+            "Body":"hey chris i'm really struggling on how to process the pathname input in mkdir. ///dir1/dir2/dir3 /dir1///dir2//dir3/// dir1/dir2/dir3/// there can be many variations and i'm trying to write an appropriate loop to process them. right now I've gotten something like if(*pathname == '/') { while(*pathname == '/') { pathname++; i++; } } what i'm trying to do with the above code is that whenever a '/' is read it will keep going until '/' is not being read. But other than that i'm rather lost. Any hints or tips?",
+            "Category":"path"
+        },
+        {
+            "Date":"Wed Oct  9 17:02:25 2019",
+            "Subject":"mkdir checking path validity",
+            "From": "chris.mcdonald@uwa.edu.au",
+            "Body":"ANONYMOUS wrote: > If we were given a directory name like /dir1/dir2/dir3, do we have to traverse > through the pathname starting from root, checking if its valid? e.g. is there an > entry for dir2 in dir1 and so on. Or is the supplied path assumed to be valid, and > therefore we can just directly add dir3 to dir2 without checking its parent > directories. You'll need to check a pathname's validity.",
+            "Category":"path"
+        },
+        {
+            "Date":"Mon Aug 26 20:04:40 2019",
+            "Subject":"Compiling jawbreaker.c",
+            "From": "chris.mcdonald@uwa.edu.au",
+            "Body":"ANONYMOUS wrote: > [package] but I still keep getting the error message - fatal error: tcl.h: No such > file or directory. You need to find out where the package manager has installed the header files, and then inform the compiler where to find them. I'm out of practice, but I think you can find the include files with: apt-file search '*/tcl.h' and then can compile jawbreaker with: mycc -I/the/path/just/found -o jawbreaker jawbreaker.c -ltcl -ltk ",
+            "Category":"path"
+        }
+    ]
+}
