@@ -4,7 +4,7 @@ from post import Post
 #This function identifies whether the post is made by a verified person and increases its score
 def verified_weight(p: Post):
     if p.verified is True:
-        return 1.5 #If it is a verified person, the score will increase by 0.5
+        return 1.35 #If it is a verified person, the score will increase by 0.35
     else:
         return 1.0
 
