@@ -5,6 +5,7 @@ import tensorflow_hub as hub
 import numpy as np
 import pandas as pd
 from heapq import nlargest
+import json
 
 from post import Post
 from thread import Thread, all_posts
@@ -18,6 +19,9 @@ def load_USE_encoder(module):
         embeddings = embed(sentences)
         session = tf_v1.train.MonitoredSession()
     return lambda x: session.run(embeddings, {sentences: x})
+
+
+encoder = load_USE_encoder('../USE')
 
 
 def cosine_similarity(vec1, vec2):
@@ -49,17 +53,26 @@ def get_similarity_dataframe(posts, encoder):
 
 
 # Identical in use-case to the function defined in algorithm.py
-def find_similar_posts(post, n, encoded_posts, encoder):
+def similarity_function_USE(post, encoded_posts, posts, n, encoder):
     k = lambda x: x.subject if x.subject else lambda x: x.payload
     in_vec = encoder([k(post)])[0]
-    post_scores = {p: cosine_similarity(in_vec, p) for p in encoded_posts}
-    return tuple(nlargest(n, post_scores, key=post_scores.get))
+    scores = [cosine_similarity(in_vec, p) for p in encoded_posts]
+    post_dict = {posts[i]:scores[i] for i in range(len(posts))}
+    return tuple(nlargest(n, post_dict, key=post_dict.get))
 
 
 def encode_posts(posts, save_name):
-    encoder = load_USE_encoder('USE')
     k = lambda x: x.subject if x.subject else lambda x: x.payload
     encoded_posts = encoder([k(post) for post in posts])
-    np.save(f'./encodings/{save_name}')
+    np.save(f'../encodings/{save_name}', encoded_posts)
     return encoded_posts
+
+
+if __name__== '__main__':
+    #test_space_posts = json.load(open("testing/test_space_2019.json"))["testcases"]
+    #posts = [parse_post(p) for p in test_space_posts]
+    #encode_posts(posts, 'test_space.npy')
+    pass
+
+
     
