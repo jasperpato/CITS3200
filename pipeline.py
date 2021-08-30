@@ -7,7 +7,7 @@ from thread import Thread, all_posts
 from typing import List, Callable, Tuple
 from heapq import nlargest
 from nltk import word_tokenize
-from utils import pipe, cached
+from utils import pipe, cached, pipe_weight
 from itertools import product
 from project_types import Tokens
 
@@ -59,5 +59,5 @@ def pipeline(   post : Post,
         post_toks = process_post(post,cleaners,filters,substitutes)
 
         # check similarity between given post and all other posts, and then scale with weights
-        post_scores = {p:(pipe(*weights)(p))*sum([alg(post_toks, process_cached(p, cleaners, filters, substitutes)) for alg in algorithms]) for p in all_posts(threads)}
+        post_scores = {p:(pipe_weight(p,*weights))*sum([alg(post_toks, process_cached(p, cleaners, filters, substitutes)) for alg in algorithms]) for p in all_posts(threads)}
         return nlargest(n, post_scores, key=post_scores.get)
