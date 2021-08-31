@@ -3,11 +3,10 @@ import json
 from os import remove 
 import unittest
 import datetime
-# import parse_file
-from parse_spell_test import remove_one_letter
-#import tokeniser
-#import algorithm
-#from post import Post
+import parse_file
+from testing.parse_spell_test import remove_one_letter
+import algorithms
+from post import Post
 
 class testConfig():
     pass
