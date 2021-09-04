@@ -21,12 +21,12 @@ def spell_correction(thread):
 
     #removes words with numbers in them
     for i in numeric:
-
         thread_list.pop(i)
     
     #takes ~0.09s for this line to run, should initialize it once instead of for every thread
     spell = SpellChecker()
 
+    #Library seems to already ignore capitialisation
     misspelled = spell.unknown(thread_list)
 
     for word in misspelled:
@@ -38,8 +38,8 @@ def spell_correction(thread):
 def main():
 
     #this sample run in ~0.18s
-    input_text = """Just wondeering hwo we 5are expected to report termination of backgound processes? Currently I have a simpel implementation printnig to stderr "process blah has terminated" buut noticed bash initially gives a processs number and prints it and the pid, eg:"""
-
+    input_text = """Juust wondeering hwo we 5are expEcted to repOrt termination oF backGROUND CASR casr processes? Currently I have a simpel implementation printnig to stderr "process blah has terminated" buut noticed bash initially gives a processs number and prints it and the pid, eg:"""
+    print(input_text)
     start = time.time()
 
     output_text = spell_correction(input_text)
