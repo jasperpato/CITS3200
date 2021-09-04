@@ -5,6 +5,7 @@ import unittest
 import datetime
 import parse_file
 from testing.parse_spell_test import remove_one_letter
+from SpellCorrectionTestMethods.SpellCorrection_difflibMethod_Good import spellCheck
 import algorithms
 from post import Post
 
@@ -83,9 +84,9 @@ class AlgorithmTestCase(unittest.TestCase):
 
 class SpellcheckTestCase(unittest.TestCase):
     def setUp(self):
-        with open("commonWords.txt") as f:
+        with open("./testing/commonWords.txt") as f:
             read_data = f.read().split("\n")
-            self.one_letter_diff,self.one_letter_orig = remove_one_letter(read_data)
+            self.one_letter_removed,self.one_letter_orig = remove_one_letter(read_data)
             f.close
         return super().setUp()
     
@@ -95,13 +96,28 @@ class SpellcheckTestCase(unittest.TestCase):
     def test_letter_replaced(self):
         correct_txt=["segmentation", "directory", "clarified", "consistent"]
         corrupted_txt_one_error=["segmentetion", "dicectory", "clarefied", "consistent"]
+        
         check = lambda x: x
         self.assertTrue(all(check(a) == b for a in correct_txt for b in corrupted_txt_one_error))
     
     def test_letter_missing(self):
-        print(self.one_letter_diff, self.one_letter_orig)
-        check = lambda x: x
-        self.assertTrue(all(check(a) == b for a in self.one_letter_orig for b in self.one_letter_diff))
+        
+        result = spellCheck(self.one_letter_removed)
+        result2 = spellCheck(self.one_letter_orig)
+        
+        print(f"one letter removed :         {self.one_letter_removed}")
+        print(f"orig :                       {self.one_letter_orig}")
+        print("one letter diff spellcheck length:", len(result), "origional spellcheck length: ", len(result2))
+        print("one letter diff spellcheck: ", result)
+        print("orig spellcheck:            ", result2)
+        self.assertTrue(len(result) == len(result2))
+        diff = 0
+        for item in result:
+            if item not in result2:
+                diff +=1 
+        score = 1-(diff / len(result))
+        print("score: ",score)
+        self.assertTrue(score >= 0.8)
     
     def test_letter_replaced(self):
         correct_txt=["segmentation", "directory", "clarified", "consistent"]
