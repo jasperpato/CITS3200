@@ -2,7 +2,6 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from heapq import nlargest
-import json
 
 
 def tfidf_similarity(post, posts, n):
