@@ -60,6 +60,7 @@ def pipeline_test():
 
 
 def encoder_test():
+    print('\n\n')
     test_space_posts = json.load(open("testing/test_space_2019.json"))["testcases"]
     test_case_posts = json.load(open("testing/test_case_2019.json"))["testcases"]  
     encoded_posts = np.load(join(dirname(__file__), '../../encodings/test_space.npy'))
