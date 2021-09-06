@@ -52,7 +52,7 @@ def similarity_function_USE(post, encoded_posts, posts, n, encoder):
 def encode_posts(posts, save_name):
     k = lambda post: post.subject if len(post.subject.split(' ')) >= 10 else post.payload
     encoded_posts = encoder([k(post) for post in posts])
-    np.save(f'../encodings/{save_name}', encoded_posts)
+    np.save(f'../encodings/use/{save_name}', encoded_posts)
     return encoded_posts
 
 
