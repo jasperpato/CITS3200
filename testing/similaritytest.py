@@ -15,6 +15,7 @@ from algorithms import cosine_similarity, jaccard
 from tfidf import tfidf_similarity
 stopwords = nltk.corpus.stopwords.words('english')
 
+
 def pipeline_test():
     test_space_posts = json.load(open("testing/test_space_2019.json"))["testcases"]
     test_case_posts = json.load(open("testing/test_case_2019.json"))["testcases"]
@@ -58,7 +59,6 @@ def pipeline_test():
 def tfidf_test():
     test_space_posts = json.load(open("testing/test_space_2019.json"))["testcases"]
     test_case_posts = json.load(open("testing/test_case_2019.json"))["testcases"]
-    embeddings = np.load('../../encodings/tfidf/test_space.npy')
     posts = [parse_post(p) for p in test_space_posts]
     for i, test_case in enumerate(test_case_posts):
         print(f"{i + 1}'th Test Case")
@@ -66,7 +66,7 @@ def tfidf_test():
         print(f"body: {test_case['Body']}\n")
         print("________________________")
         ###
-        top_posts = tfidf_similarity(parse_test_case(test_case), embeddings, posts, test_case['target_count'])
+        top_posts = tfidf_similarity(parse_test_case(test_case), posts, test_case['target_count'])
         ###
         target_categories = set(test_case['Category'].split(' '))
         sum = 0
