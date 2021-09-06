@@ -63,7 +63,8 @@ def encoder_test():
     print('\n\n')
     test_space_posts = json.load(open("testing/test_space_2019.json"))["testcases"]
     test_case_posts = json.load(open("testing/test_case_2019.json"))["testcases"]  
-    encoded_posts = np.load(join(dirname(__file__), '../../encodings/test_space.npy'))
+    encoded_posts = np.load(join(dirname(__file__), '../../encodings/use/test_space.npy'))
+    posts = [parse_post(post) for post in test_space_posts]
     total_sum = 0
     for i, test_case in enumerate(test_case_posts):
         print(f"{i + 1}'th Test Case")
@@ -71,7 +72,7 @@ def encoder_test():
         print(f"body: {test_case['Body']}\n")
         print("________________________")
         ###
-        top_posts = similarity_function_USE(parse_test_case(test_case), encoded_posts, [parse_post(post) for post in test_space_posts], 4, encoder)
+        top_posts = similarity_function_USE(parse_test_case(test_case), encoded_posts, posts, test_case['target_count'], encoder)
         ###
         target_categories = set(test_case['Category'].split(' '))
         sum = 0
