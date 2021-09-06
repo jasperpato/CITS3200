@@ -60,6 +60,7 @@ def tfidf_test():
     test_space_posts = json.load(open("testing/test_space_2019.json"))["testcases"]
     test_case_posts = json.load(open("testing/test_case_2019.json"))["testcases"]
     posts = [parse_post(p) for p in test_space_posts]
+    total_sum = 0
     for i, test_case in enumerate(test_case_posts):
         print(f"{i + 1}'th Test Case")
         print(f"Subject: {test_case['Subject']}\n")
@@ -85,6 +86,9 @@ def tfidf_test():
         print(f'Target existing:{test_case["target_count"]}\n')
         print(f'Recall: {sum / test_case["target_count"]}\n')
         print("<<=====================================>>")
+        total_sum += sum / test_case["target_count"]
+    print('FINAL SCORE:', total_sum / len(test_case_posts))
+    print("<<=====================================>>\n")
 
 
 def parse_test_case(post):
