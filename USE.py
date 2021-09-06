@@ -1,27 +1,18 @@
-import tensorflow.compat.v1 as tf_v1
-tf_v1.disable_v2_behavior()
 import tensorflow_hub as hub
 
 import numpy as np
 import pandas as pd
 from heapq import nlargest
 import json
+import nltk
 
 from post import Post
 from thread import Thread, all_posts
 
 
 # load universal sentence encoder module
-def load_USE_encoder(module):
-    with tf_v1.Graph().as_default():
-        sentences = tf_v1.placeholder(tf_v1.string)
-        embed = hub.Module(module)
-        embeddings = embed(sentences)
-        session = tf_v1.train.MonitoredSession()
-    return lambda x: session.run(embeddings, {sentences: x})
 
-
-encoder = load_USE_encoder('../USE')
+encoder = hub.load('../pretrained_models/universal-sentence-encoder_4')
 
 
 def cosine_similarity(vec1, vec2):
@@ -59,14 +50,14 @@ def similarity_function_USE(post, encoded_posts, posts, n, encoder):
 
 
 def encode_posts(posts, save_name):
-    k = lambda x: x.subject if x.subject else lambda x: x.payload
+    k = lambda post: post.subject if len(post.subject.split(' ')) >= 10 else post.payload
     encoded_posts = encoder([k(post) for post in posts])
     np.save(f'../encodings/{save_name}', encoded_posts)
     return encoded_posts
 
 
 if __name__== '__main__':
-    from testing.similaritytest2 import parse_post
+    from testing.similaritytest import parse_post
 
     test_space_posts = json.load(open("testing/test_space_2019.json"))["testcases"]
     posts = [parse_post(p) for p in test_space_posts]
