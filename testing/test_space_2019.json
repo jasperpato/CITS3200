@@ -85,13 +85,6 @@
             "Category":"segmentation mode"
         },
         {
-            "Date":"Wed Oct  9 17:02:25 2019",
-            "Subject":"mkdir checking path validity",
-            "From": "chris.mcdonald@uwa.edu.au",
-            "Body":"ANONYMOUS wrote: > If we were given a directory name like /dir1/dir2/dir3, do we have to traverse > through the pathname starting from root, checking if its valid? e.g. is there an > entry for dir2 in dir1 and so on. Or is the supplied path assumed to be valid, and > therefore we can just directly add dir3 to dir2 without checking its parent > directories. You'll need to check a pathname's validity. ",
-            "Category":"path"
-        },
-        {
             "Date":"Thu Oct 10 07:23:36 2019",
             "Subject":"fread() with variables",
             "From": "poster119@student.uwa.edu.au",
