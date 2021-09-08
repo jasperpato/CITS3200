@@ -8,10 +8,11 @@ from string import ascii_letters
 from weights import date_weight, verified_weight
 import nltk
 from re import sub
-from pipeline import pipeline
+from pipeline import process_post, pipeline
 from parse_file import valid, group_into_threads
 from algorithms import cosine_similarity, jaccard
-from USE import encoder, similarity_function_USE
+from tfidf import tfidf_similarity
+from USE import similarity_function_USE
 stopwords = nltk.corpus.stopwords.words('english')
 
 
