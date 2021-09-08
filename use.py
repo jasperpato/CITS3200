@@ -3,23 +3,22 @@ import tensorflow_hub as hub
 import numpy as np
 import pandas as pd
 from heapq import nlargest
+from sklearn.metrics.pairwise import cosine_similarity
 import json
 import nltk
 
 from post import Post
-from thread import Thread, all_posts
+from thread_obj import Thread, all_posts
 
 
 # load universal sentence encoder module
+encoder  = None
+post_text = lambda post: post.subject if len(post.subject.split(' ')) >= 10 else post.payload
 
-encoder = hub.load('../pretrained_models/universal-sentence-encoder_4')
 
-
-def cosine_similarity(vec1, vec2):
-    dot_product = np.dot(vec1, vec2)
-    mag_1 = np.sqrt(np.dot(vec1, vec2))
-    mag_2 = np.sqrt(np.dot(vec2, vec2))
-    return dot_product / (mag_1 * mag_2)
+def load_use_model():
+    global encoder
+    encoder = hub.load('../pretrained_models/universal-sentence-encoder_4')
 
 
 # return a pandas dataframe that includes the similarity between every post. 
@@ -42,16 +41,15 @@ def get_similarity_dataframe(posts, encoded_posts, encoder):
 
 
 # Identical in use-case to the function defined in algorithm.py
-def similarity_function_USE(post, encoded_posts, posts, n, encoder):
-    in_vec = encoder([post.payload])[0]
-    scores = [cosine_similarity(in_vec, p) for p in encoded_posts]
-    post_dict = {posts[i]:scores[i] for i in range(len(posts))}
-    return tuple(nlargest(n, post_dict, key=post_dict.get))
+def use_similarity(post, encoded_posts, posts, n):
+    in_vec = encoder([post_text(post)])
+    scores = cosine_similarity(in_vec, encoded_posts)
+    post_score_map = {posts[i]:scores[i] for i in range(len(posts))}
+    return tuple(nlargest(n, post_score_map, key=post_score_map.get))
 
 
 def encode_posts(posts, save_name):
-    k = lambda post: post.subject if len(post.subject.split(' ')) >= 10 else post.payload
-    encoded_posts = encoder([k(post) for post in posts])
+    encoded_posts = encoder([post_text(post) for post in posts])
     np.save(f'../encodings/use/{save_name}', encoded_posts)
     return encoded_posts
 
