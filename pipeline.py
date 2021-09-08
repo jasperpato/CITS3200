@@ -3,7 +3,7 @@ This is the 'heart' of the program.
 Developers need to understand how the pipe_line function works, as this is the main interface that they must use.
 """
 from post import Post
-from thread import Thread, all_posts
+from thread_obj import Thread, all_posts
 from typing import List, Callable, Tuple
 from heapq import nlargest
 from nltk import word_tokenize
