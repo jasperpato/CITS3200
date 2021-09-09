@@ -59,6 +59,7 @@ if __name__== '__main__':
 
     test_space_posts = json.load(open("testing/test_space_2019.json"))["testcases"]
     posts = [parse_post(p) for p in test_space_posts]
+    load_use_model()
     encode_posts(posts, 'test_space.npy')
 
 
