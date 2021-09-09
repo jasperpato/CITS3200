@@ -14,6 +14,7 @@ from algorithms import cosine_similarity, jaccard
 from tfidf import tfidf_similarity
 from use import use_similarity, load_use_model
 from bert import bert_similarity, load_bert_model
+
 stopwords = nltk.corpus.stopwords.words('english')
 
 cleaner =  (lambda x: x.lower(),                # lowercase all text
@@ -91,5 +92,4 @@ def parse_test_space(test_space_posts):
 
 
 if __name__ == '__main__':   
-    #pipeline_test()
     pipeline_test('bert')

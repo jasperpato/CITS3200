@@ -19,12 +19,19 @@ def load_bert_model():
 
 
 def encode_posts(posts, save_name):
+    load_bert_model()
     encoded_posts = [0] * len(posts)
     for i in range(len(posts)):
         sentences = sent_tokenize(post_text(posts[i]))
         encoded_posts[i] = np.mean(model.encode(sentences), axis=0)
     np.save(f'../encodings/bert/{save_name}', encoded_posts)
     return encoded_posts
+
+
+def gen_sentence_weights(num_weights, initial):
+    weights = [initial / i for i in range(1, num_weights)]
+    weights.insert(0, initial / 2)
+    return weights
 
 
 def bert_similarity(post, encoded_posts, posts, n):
