@@ -1,3 +1,4 @@
+import tensorflow as tf
 import tensorflow_hub as hub
 
 import numpy as np
@@ -16,9 +17,11 @@ encoder  = None
 post_text = lambda post: post.subject if len(post.subject.split(' ')) >= 10 else post.payload
 
 
-def load_use_model():
+def load_use_model(use_cpu=False):
     global encoder
-    encoder = hub.load('../pretrained_models/universal-sentence-encoder_4')
+    if use_cpu:
+        tf.config.set_visible_devices([], 'GPU')
+    encoder = hub.load('../pretrained_models/use/universal-sentence-encoder_4')
 
 
 # return a pandas dataframe that includes the similarity between every post. 
@@ -43,7 +46,7 @@ def get_similarity_dataframe(posts, encoded_posts, encoder):
 # Identical in use-case to the function defined in algorithm.py
 def use_similarity(post, encoded_posts, posts, n):
     in_vec = encoder([post_text(post)])
-    scores = cosine_similarity(in_vec, encoded_posts)
+    scores = cosine_similarity(in_vec, encoded_posts).flatten()
     post_score_map = {posts[i]:scores[i] for i in range(len(posts))}
     return tuple(nlargest(n, post_score_map, key=post_score_map.get))
 

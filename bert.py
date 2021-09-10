@@ -13,9 +13,11 @@ model = None
 post_text = lambda post: post.subject if len(post.subject.split(' ')) >= 10 else post.payload
 
 
-def load_bert_model():
+def load_bert_model(use_cpu=False):
     global model 
     model = SentenceTransformer('bert-base-nli-mean-tokens')
+    if use_cpu:
+        model = model.cpu()
 
 
 def encode_posts(posts, save_name):
