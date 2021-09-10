@@ -1,42 +1,93 @@
 from summarise import cosine_similarity
+from thread import Thread, all_posts
+from tokeniser import preprocess
+from typing import List
+
+from parse_file import parse_post, group
 
 #takes in threads in whatever form they're in (need to find out what that is exactly)
 #creates a dictionary containing a list of each thread closest to the key thread
-def clustering(threads):
+def clustering(threads : List[Thread], subject : bool):
+
+    k = (lambda x: x.subject) if subject else (lambda x: x.payload)
 
     closest_vector = {}
-    
-    for thread in threads:
 
-        for other_thread in threads:
+    i = 0
+    
+    for post in all_posts(threads):
+
+        print("post: ", i)
+        i = i + 1
+
+        for other_post in all_posts(threads):
 
             #doesn't find how close the thread is to itself
-            if thread == other_thread:
+            if post == other_post:
                 continue
 
             #finds the cosine similarity for each pair of threads
-            cosine_sim = cosine_similarity(thread, other_thread)
+            cosine_sim = cosine_similarity(preprocess(k(post)), preprocess(k(other_post)))
 
             #sets current closest thread dependending on the cosine similarity
-            if thread in closest_vector:
+            if post in closest_vector:
 
-                if cosine_sim < closest_vector[thread][1]:
+                if cosine_sim < closest_vector[post][1]:
 
-                    closest_vector[thread] = (other_thread, cosine_sim)
+                    closest_vector[post] = (other_post, cosine_sim)
 
             else:
                 
-                closest_vector[thread] = (other_thread, cosine_sim)
+                closest_vector[post] = (other_post, cosine_sim)
 
     clusters = {}
     
-    for thread in threads:
+    for post in all_posts(threads):
 
-        clusters[thread] = []
+        clusters[post] = []
 
     #structures the results into a dictionary with the thread as the key and a list of closest threads as the value
-    for thread in closest_vector:
+    for post in closest_vector:
 
-        clusters[closest_vector[thread][0]].append(thread)
+        clusters[closest_vector[post][0]].append(post)
 
     return clusters
+
+#needed to 'borrow' because importing gave encoding issue
+def parse_file(filename):
+    with open(filename, 'r', encoding="utf8") as file:
+        s = file.read()
+        post_strings = ["Date: " + x for x in s.split("Date: ")][1:]
+        posts = [parse_post(s) for s in post_strings]
+        
+    return group(posts)
+
+def main():
+
+    threads = parse_file("help2002-2019.txt")
+
+    clusters = clustering(threads, False)
+
+    frequent = 0
+    frequent_key = ""
+
+    for key in clusters:
+
+        if len(clusters[key]) > frequent:
+            frequent = len(clusters[key])
+            frequent_key = key
+
+    print(key.payload)
+
+    print()
+    print("-----------------------------------------------------------")
+    print()
+
+    for post in clusters[key]:
+
+        print(post.payload)
+        print("----------------")
+
+    keys = list(clusters.keys())
+
+    print(keys[0].payload)
