@@ -4,20 +4,27 @@ import numpy as np
 import time
 import nltk
 import os
+import sys
 from re import sub
 from os.path import dirname, join
+from string import ascii_letters
+
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
 
 from post import Post
 from thread_obj import all_posts
-from string import ascii_letters
 from weights import date_weight, verified_weight
 from pipeline import process_post, pipeline
 from parse_file import valid, group_into_threads
 from algorithms import cosine_similarity, jaccard
 from tfidf import tfidf_similarity
 from use import use_similarity, load_use_model
-from bert import bert_similarity, load_bert_model
+#from bert import bert_similarity, load_bert_model
 
+
+nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
 
 cleaner =  (lambda x: x.lower(),                # lowercase all text
@@ -74,7 +81,8 @@ def evaluate_algo(algo, test_case, test_space_posts, n):
     if algo == 'use':
         load_use_model(use_cpu=True)
     elif algo == 'bert':
-        load_bert_model(use_cpu=True)
+        #load_bert_model(use_cpu=True)
+        pass
 
     start_time = time.process_time()
     posts = [parse_post(p) for p in test_space_posts]
@@ -88,8 +96,9 @@ def evaluate_algo(algo, test_case, test_space_posts, n):
         encoded_posts = np.load(join(dirname(__file__), '../../encodings/use/test_space.npy'))
         top_posts = use_similarity(post, encoded_posts, posts, n)
     elif algo == 'bert':
-        encoded_posts = np.load(join(dirname(__file__), '../../encodings/bert/test_space.npy'))
-        top_posts = bert_similarity(post, encoded_posts, posts, n)
+        #encoded_posts = np.load(join(dirname(__file__), '../../encodings/bert/test_space.npy'))
+        #top_posts = bert_similarity(post, encoded_posts, posts, n)
+        pass
     return {'top_posts': top_posts, 'time': time.process_time() - start_time}
 
 
@@ -109,4 +118,4 @@ def parse_test_space(test_space_posts):
 
 
 if __name__ == '__main__':   
-    pipeline_test('use')
+    pipeline_test('tfidf')
