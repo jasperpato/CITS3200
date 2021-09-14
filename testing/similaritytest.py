@@ -77,18 +77,18 @@ def pipeline_test(algo):
 
 
 def tag_intersection_test(algo, n):
-    overall_test_space = json.load(open("testing/test_space_2019.json"))["test_space"]
+    overall_test_space = json.load(open("testing/test_space_2019_2.json"))["test_space"]
     score_sum = 0
     for case in overall_test_space:
-        target_categories = set(case['Tags'].split(' '))
+        target_categories = set(case['Tags'])
         space = overall_test_space[:]
         space.remove(case)
         algo_result = evaluate_algo(algo, case, space, n)
         sum = 0
         for post in algo_result['top_posts']:
-            post_json = [tp for tp in space if tp['Body'] == post.payload][0]
-            post_categories = set(post_json['Tags'].split(' '))
-            sum += post_categories.intersection(target_categories) / len(target_categories)
+            post_json = [tp for tp in space if tp['Body'] == post.payload]
+            post_categories = set(post_json['Tags'])
+            sum += len(post_categories.intersection(target_categories)) / len(target_categories)
         score_sum += sum / n 
     print("<<=====================================>>")
     print(print('FINAL SCORE:', score_sum / len(overall_test_space)))
@@ -101,7 +101,10 @@ def evaluate_algo(algo, test_case, test_space, n):
         load_use_model(use_cpu=True)
 
     start_time = time.process_time()
-    posts = [parse_post(p) for p in test_space]
+    if 'From' in test_case.keys():
+        posts = [json2post1(p) for p in test_space]
+    else:
+        posts = [json2post2(p) for p in test_space]
     post = parse_test_case(test_case)
 
     if algo == 'basic':
@@ -112,7 +115,7 @@ def evaluate_algo(algo, test_case, test_space, n):
         top_posts = tfidf_similarity(post, posts, n)
 
     elif algo == 'use':
-        f_path = join(dirname(__file__), '../../encodings/use/test_space.pickle')
+        f_path = join(dirname(__file__), '../../encodings/use/test_space2.pickle')
         with open(f_path, 'rb') as handle:
             encodings = pickle.load(handle)
         top_posts = use_similarity(post, encodings, n)
@@ -123,16 +126,20 @@ def parse_test_case(post):
     return Post(None, post['Subject'], post['Body'], False)
 
 
-def parse_post(post):
+def json2post1(post):
     date = datetime.datetime.strptime(post["Date"], "%a %b %d %H:%M:%S %Y")
     verified = post['From'] in valid
     return Post(date, post['Subject'], post['Body'], verified)
 
+def json2post2(post):
+    date = datetime.datetime.strptime(post["Date"], "%Y-%m-%d %H:%M:%S")
+    return Post(date, post['Subject'], post['Body'], post['Verified'])
+
 
 def parse_test_space(test_space):
-    posts = [parse_post(post) for post in test_space]
+    posts = [json2post1(post) for post in test_space]
     return group_into_threads(posts)
 
 
 if __name__ == '__main__':   
-    pipeline_test('use')
+    tag_intersection_test('use', 4)

@@ -65,12 +65,12 @@ def encode_posts(posts, save_name):
 
 
 if __name__== '__main__':
-    from testing.similaritytest import parse_post
+    from testing.similaritytest import json2post1, json2post2
 
-    test_space_posts = json.load(open("testing/test_space_2019.json"))["testcases"]
-    posts = [parse_post(p) for p in test_space_posts]
+    test_space_posts = json.load(open("testing/test_space_2019_2.json"))["test_space"]
+    posts = [json2post2(p) for p in test_space_posts]
     load_use_model()
-    encode_posts(posts, 'test_space.pickle')
+    encode_posts(posts, 'test_space2.pickle')
 
 
     
