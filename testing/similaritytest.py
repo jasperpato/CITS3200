@@ -19,8 +19,8 @@ from weights import date_weight, verified_weight
 from pipeline import pipeline
 from parse_file import valid, group_into_threads
 from algorithms import cosine_similarity, jaccard
-from tfidf import tfidf_similarity
-from use import use_similarity, load_use_model
+from alt_similarity_algorithms.tfidf import tfidf_similarity
+from alt_similarity_algorithms.use import use_similarity, load_use_model
 
 
 nltk.download('stopwords')
@@ -45,8 +45,12 @@ substitutes = tuple([])
 # a similarity score for an algorithm in the situation where the optimal targets are known.
 
 def pipeline_test(algo):
+    encodings = None
     if algo == 'use':
-        load_use_model(use_cpu=False)
+        load_use_model(use_cpu=True)
+        f_path = join(dirname(__file__), '../../encodings/use/test_space_2019.pickle')
+        with open(f_path, 'rb') as handle:
+            encodings = pickle.load(handle)
 
     test_space = json.load(open("testing/test_space_2019.json"))["testcases"]
     test_case_posts = json.load(open("testing/test_case_2019.json"))["testcases"]
@@ -58,7 +62,7 @@ def pipeline_test(algo):
         print(f"body: {test_case['Body']}\n")
         print("________________________")
         ###
-        algo_result = evaluate_algo(algo, test_case, test_space, test_case['target_count'])
+        algo_result = evaluate_algo(algo, test_case, test_space, test_case['target_count'], encodings)
         print(f"Time taken: {algo_result['time']}\n")
         print("________________________")
         ###
@@ -96,7 +100,7 @@ def tag_intersection_test(algo, n):
     encodings = None
     if algo == 'use':
         load_use_model(use_cpu=False)
-        f_path = join(dirname(__file__), '../../encodings/use/test_space2.pickle')
+        f_path = join(dirname(__file__), '../../encodings/use/test_space_2019_2.pickle')
         with open(f_path, 'rb') as handle:
             encodings = pickle.load(handle)
 
@@ -128,22 +132,22 @@ def tag_intersection_test(algo, n):
 
 def evaluate_algo(algo, test_case, test_space, n, encodings=None):
     start_time = time.process_time()
-    if 'From' in test_case.keys():
-        post = parse_test_case(test_case)
-        posts = [json_to_post_1(p) for p in test_space]
+    if 'Category' in test_case.keys():
+        input_post = parse_test_case(test_case)
+        all_posts = [json_to_post_1(p) for p in test_space]
     else:
-        posts = [json_to_post_2(p) for p in test_space]
-        post = json_to_post_2(test_case)
+        input_post = json_to_post_2(test_case)
+        all_posts = [json_to_post_2(p) for p in test_space]
 
     if algo == 'basic':
         algs = (cosine_similarity, jaccard)
-        top_posts = pipeline(post, group_into_threads(posts), cleaner, filters, substitutes, weights, algs, n)
+        top_posts = pipeline(input_post, group_into_threads(all_posts), cleaner, filters, substitutes, weights, algs, n)
 
     elif algo == 'tfidf':
-        top_posts = tfidf_similarity(post, posts, n)
+        top_posts = tfidf_similarity(input_post, all_posts, n)
 
     elif algo == 'use':
-        top_posts = use_similarity(post, encodings, posts, n)
+        top_posts = use_similarity(input_post, encodings, all_posts, n)
     return {'top_posts': top_posts, 'time': time.process_time() - start_time}
 
 
@@ -181,4 +185,4 @@ def optimal_tag_intersection(test_case, test_space, n):
 
 
 if __name__ == '__main__':   
-    tag_intersection_test('basic', 4)
+    pipeline_test('use')
