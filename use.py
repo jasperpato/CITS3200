@@ -2,12 +2,10 @@ import pickle
 import tensorflow as tf
 import tensorflow_hub as hub
 
-import numpy as np
 import pandas as pd
 from heapq import nlargest
 from sklearn.metrics.pairwise import cosine_similarity
 import json
-import nltk
 
 from post import Post
 from parse_file import parse_file
