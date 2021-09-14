@@ -2,7 +2,7 @@ import json
 import os 
 import sys 
 
-remake_flag = False
+remake_flag = True
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -21,7 +21,7 @@ def main(in_file, out_file):
     f.close()
 
 if __name__ == '__main__' and remake_flag:
-    main('help2002-2019.txt', 'test_Space_2019_2.json')
+    main('help2002-2019.txt', 'test_space_2019_2.json')
 
 
 
