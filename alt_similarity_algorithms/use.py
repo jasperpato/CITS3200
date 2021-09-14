@@ -1,4 +1,6 @@
 import pickle
+import sys 
+import os
 import tensorflow as tf
 import tensorflow_hub as hub
 
@@ -10,6 +12,10 @@ import json
 from post import Post
 from parse_file import parse_file
 from thread_obj import Thread, all_posts
+
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
 
 
 # load universal sentence encoder module
@@ -64,26 +70,33 @@ def encode_posts(posts, save_name):
     return embeddings
 
 
-def encode_test_space(test_space_file):
-    from testing.similaritytest import json_to_post1, json_to_post2
+def encode_test_spaces():
+    from testing.similaritytest import json_to_post_1, json_to_post_2
 
-    if test_space_file == "test_space_2019_2":
-        test_space_posts = json.load(open(f"testing/{test_space_file}.json"))["test_space"]
-        posts = [json_to_post2(p) for p in test_space_posts]
-    else:
-        test_space_posts = json.load(open(f"testing/{test_space_file}.json"))["testcases"]
-        posts = [json_to_post1(p) for p in test_space_posts]
     load_use_model()
-    encode_posts(posts, f'{test_space_file}')
+    test_space_posts = json.load(open("testing/test_space_2019_2.json"))["test_space"]
+    posts = [json_to_post_2(p) for p in test_space_posts]
+    encode_posts(posts, 'test_space_2019_2')
+
+    test_space_posts = json.load(open("testing/test_space_2019.json"))["testcases"]
+    posts = [json_to_post_1(p) for p in test_space_posts]
+    encode_posts(posts, 'test_space_2019')
+
+
+def encode_dataset():
+    load_use_model()
+
+    posts = all_posts(parse_file('help2002-2017.txt'))
+    encode_posts(posts, '2017')
+
+    posts = all_posts(parse_file('help2002-2018.txt'))
+    encode_posts(posts, '2018')
+
+    posts = all_posts(parse_file('help2002-2019.txt'))
+    encode_posts(posts, '2019')
 
 
 if __name__== '__main__':
-    load_use_model()
-    posts = all_posts(parse_file('help2002-2017.txt'))
-    encode_posts(posts, '2017')
-    posts = all_posts(parse_file('help2002-2018.txt'))
-    encode_posts(posts, '2018')
-    posts = all_posts(parse_file('help2002-2019.txt'))
-    encode_posts(posts, '2019')
+    encode_test_spaces()
 
     

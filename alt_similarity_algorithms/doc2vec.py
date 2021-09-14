@@ -2,6 +2,8 @@ import numpy as np
 import nltk
 import string
 import json
+import os 
+import sys
 from gensim.models.doc2vec import Doc2Vec
 from sklearn.metrics.pairwise import cosine_similarity
 from heapq import nlargest
@@ -13,6 +15,10 @@ nltk.download('punkt')
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
+
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
 
 model = None
 post_text = lambda post: post.subject if len(post.subject.split(' ')) >= 10 else post.payload

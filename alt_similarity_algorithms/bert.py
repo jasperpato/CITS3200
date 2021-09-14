@@ -5,6 +5,12 @@ from heapq import nlargest
 import numpy as np
 import torch
 import json
+import os 
+import sys 
+
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
 
 if not torch.cuda.is_available():
     raise("CUDA is not configured properly")
