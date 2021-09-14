@@ -45,30 +45,31 @@ def get_similarity_dataframe(posts, encoded_posts, encoder):
 
 
 # Identical in use-case to the function defined in algorithm.py
-def use_similarity(post, encodings, n):
-    posts = list(encodings.keys())
-    if post not in encodings.keys():
-        in_vec = encoder([post_text(post)])
+def use_similarity(input_post, encodings, all_posts, n):
+    if input_post.payload not in encodings.keys():
+        in_vec = encoder([post_text(input_post)])
     else:
-        in_vec = encodings[post]
-    scores = cosine_similarity(in_vec, list(encodings.values())).flatten()
-    post_score_map = {posts[i]:scores[i] for i in range(len(posts))}
+        in_vec = [encodings[input_post.payload]]
+        all_posts = [p for p in all_posts if p.payload != input_post.payload]
+    encoding_vecs = [encodings[post.payload] for post in all_posts]
+    scores = cosine_similarity(in_vec, encoding_vecs).flatten()
+    post_score_map = {all_posts[i]:scores[i] for i in range(len(all_posts))}
     return tuple(nlargest(n, post_score_map, key=post_score_map.get))
 
 
 def encode_posts(posts, save_name):
     encoded_posts = encoder([post_text(post) for post in posts])
-    embeddings = {posts[i]:encoded_posts[i] for i in range(len(posts))}
+    embeddings = {posts[i].payload:encoded_posts[i] for i in range(len(posts))}
     with open(f'../encodings/use/{save_name}', 'wb') as handle:
         pickle.dump(embeddings, handle, protocol=pickle.HIGHEST_PROTOCOL)
     return embeddings
 
 
 if __name__== '__main__':
-    from testing.similaritytest import json2post1, json2post2
+    from testing.similaritytest import json_to_post1, json_to_post2
 
     test_space_posts = json.load(open("testing/test_space_2019_2.json"))["test_space"]
-    posts = [json2post2(p) for p in test_space_posts]
+    posts = [json_to_post2(p) for p in test_space_posts]
     load_use_model()
     encode_posts(posts, 'test_space2.pickle')
 
