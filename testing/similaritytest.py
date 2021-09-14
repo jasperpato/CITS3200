@@ -1,5 +1,6 @@
 import json
 import datetime
+import pickle
 import numpy as np
 import time
 import nltk
@@ -39,7 +40,7 @@ substitutes = tuple([])
 
 
 def pipeline_test(algo):
-    test_space_posts = json.load(open("testing/test_space_2019.json"))["testcases"]
+    test_space = json.load(open("testing/test_space_2019.json"))["testcases"]
     test_case_posts = json.load(open("testing/test_case_2019.json"))["testcases"]
     score_sum = 0
     time_sum = 0
@@ -49,19 +50,17 @@ def pipeline_test(algo):
         print(f"body: {test_case['Body']}\n")
         print("________________________")
         ###
-        algo_result = evaluate_algo(algo, test_case, test_space_posts, test_case['target_count'])
+        algo_result = evaluate_algo(algo, test_case, test_space, test_case['target_count'])
         print(f"Time taken: {algo_result['time']}\n")
         print("________________________")
         ###
         target_categories = set(test_case['Category'].split(' '))
         sum = 0
         for j, post in enumerate(algo_result['top_posts']):
-            test_space_post = [tp for tp in test_space_posts if tp['Body'] == post.payload][0]
-            post_categories = set(test_space_post['Category'].split(' '))
+            post_json = [tp for tp in test_space if tp['Body'] == post.payload][0]
+            post_categories = set(post_json['Category'].split(' '))
             sum = sum+1 if len(target_categories.intersection(post_categories)) > 0 else sum
-            #score = len(target_categories.intersection(post_categories)) / len(target_categories)
             print(f"\t{j + 1}'th Post:") 
-            #print(f"Evaluation score: {score}")
             print(f"post category: {post_categories}\n")
             print(f"target category: {target_categories}\n")
             print(f"{post}")
@@ -77,28 +76,46 @@ def pipeline_test(algo):
     print("<<=====================================>>\n")
 
 
-def evaluate_algo(algo, test_case, test_space_posts, n):
+def tag_intersection_test(algo, n):
+    overall_test_space = json.load(open("testing/test_space_2019.json"))["test_space"]
+    score_sum = 0
+    for case in overall_test_space:
+        target_categories = set(case['Tags'].split(' '))
+        space = overall_test_space[:]
+        space.remove(case)
+        algo_result = evaluate_algo(algo, case, space, n)
+        sum = 0
+        for post in algo_result['top_posts']:
+            post_json = [tp for tp in space if tp['Body'] == post.payload][0]
+            post_categories = set(post_json['Tags'].split(' '))
+            sum += post_categories.intersection(target_categories) / len(target_categories)
+        score_sum += sum / n 
+    print("<<=====================================>>")
+    print(print('FINAL SCORE:', score_sum / len(overall_test_space)))
+    print("<<=====================================>>")
+            
+
+
+def evaluate_algo(algo, test_case, test_space, n):
     if algo == 'use':
         load_use_model(use_cpu=True)
-    elif algo == 'bert':
-        #load_bert_model(use_cpu=True)
-        pass
 
     start_time = time.process_time()
-    posts = [parse_post(p) for p in test_space_posts]
+    posts = [parse_post(p) for p in test_space]
     post = parse_test_case(test_case)
+
     if algo == 'basic':
         algs = (cosine_similarity, jaccard)
         top_posts = pipeline(post, parse_test_space(posts), cleaner, filters, substitutes, weights, algs, n)
+
     elif algo == 'tfidf':
         top_posts = tfidf_similarity(post, posts, n)
+
     elif algo == 'use':
-        encoded_posts = np.load(join(dirname(__file__), '../../encodings/use/test_space.npy'))
-        top_posts = use_similarity(post, encoded_posts, posts, n)
-    elif algo == 'bert':
-        #encoded_posts = np.load(join(dirname(__file__), '../../encodings/bert/test_space.npy'))
-        #top_posts = bert_similarity(post, encoded_posts, posts, n)
-        pass
+        f_path = join(dirname(__file__), '../../encodings/use/test_space.pickle')
+        with open(f_path, 'rb') as handle:
+            encodings = pickle.load(handle)
+        top_posts = use_similarity(post, encodings, n)
     return {'top_posts': top_posts, 'time': time.process_time() - start_time}
 
 
@@ -112,10 +129,10 @@ def parse_post(post):
     return Post(date, post['Subject'], post['Body'], verified)
 
 
-def parse_test_space(test_space_posts):
-    posts = [parse_post(post) for post in test_space_posts]
+def parse_test_space(test_space):
+    posts = [parse_post(post) for post in test_space]
     return group_into_threads(posts)
 
 
 if __name__ == '__main__':   
-    pipeline_test('tfidf')
+    pipeline_test('use')
