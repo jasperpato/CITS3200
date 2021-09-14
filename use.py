@@ -10,6 +10,7 @@ import json
 import nltk
 
 from post import Post
+from parse_file import parse_file
 from thread_obj import Thread, all_posts
 
 
@@ -60,18 +61,31 @@ def use_similarity(input_post, encodings, all_posts, n):
 def encode_posts(posts, save_name):
     encoded_posts = encoder([post_text(post) for post in posts])
     embeddings = {posts[i].payload:encoded_posts[i] for i in range(len(posts))}
-    with open(f'../encodings/use/{save_name}', 'wb') as handle:
+    with open(f'../encodings/use/{save_name}.pickle', 'wb') as handle:
         pickle.dump(embeddings, handle, protocol=pickle.HIGHEST_PROTOCOL)
     return embeddings
 
 
-if __name__== '__main__':
+def encode_test_space(test_space_file):
     from testing.similaritytest import json_to_post1, json_to_post2
 
-    test_space_posts = json.load(open("testing/test_space_2019_2.json"))["test_space"]
-    posts = [json_to_post2(p) for p in test_space_posts]
+    if test_space_file == "test_space_2019_2":
+        test_space_posts = json.load(open(f"testing/{test_space_file}.json"))["test_space"]
+        posts = [json_to_post2(p) for p in test_space_posts]
+    else:
+        test_space_posts = json.load(open(f"testing/{test_space_file}.json"))["testcases"]
+        posts = [json_to_post1(p) for p in test_space_posts]
     load_use_model()
-    encode_posts(posts, 'test_space2.pickle')
+    encode_posts(posts, f'{test_space_file}')
 
+
+if __name__== '__main__':
+    load_use_model()
+    posts = all_posts(parse_file('help2002-2017.txt'))
+    encode_posts(posts, '2017')
+    posts = all_posts(parse_file('help2002-2018.txt'))
+    encode_posts(posts, '2018')
+    posts = all_posts(parse_file('help2002-2019.txt'))
+    encode_posts(posts, '2019')
 
     
