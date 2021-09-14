@@ -1,4 +1,3 @@
-import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from heapq import nlargest
@@ -6,8 +5,6 @@ from heapq import nlargest
 
 def tfidf_similarity(post, posts, n):
 	vectorizer = TfidfVectorizer()
-	vec = vectorizer.fit_transform([post.payload])
-
 
 	document_list = [p.payload for p in posts]
 	document_list.insert(0, post.payload)
