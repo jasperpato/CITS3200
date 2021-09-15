@@ -24,7 +24,7 @@ if __name__=="__main__":
                 lambda x: x in stopwords)               # remove stopwords
 
     weights = [ lambda x: 1.5 if x.verified else 1.0]   # give a bit more priority to Chris' posts
-
+    
     cleaners =    ( lambda x: x.lower(),                # lowercase all text
                     lambda x: sub(r'\s+', ' ', x))
 

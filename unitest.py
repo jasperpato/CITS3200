@@ -1,11 +1,12 @@
 from itertools import chain
 import json
 from os import remove 
+from spellchecker import SpellChecker
 import unittest
 import datetime
 import parse_file
-from testing.parse_spell_test import remove_one_letter
-from SpellCorrectionTestMethods.SpellCorrection_difflibMethod_Good import spellCheck
+from testing.parse_spell_test import remove_one_letter, replace_one_letter
+from spell_correction_pysc import spell_correction
 import algorithms
 from post import Post
 
@@ -67,26 +68,15 @@ class TokeniserCase(unittest.TestCase):
         self.assertEqual(test_tokens, tbt_tokens)
 
 
-class AlgorithmTestCase(unittest.TestCase):
-    def setUp(self):
-        return super().setUp()
-
-    def tearDown(self):
-        return super().tearDown()
-
-    def test_find_similar_posts(self):
-        threads = parse_file.parse_file('help2002-2019.txt')
-        input = threads[0].posts[0]
-        num_posts = 10
-        similar_posts = algorithm.find_similar_posts(input, threads, num_posts, True)
-        self.assertEqual(num_posts, len(similar_posts))
-        self.assertTrue(all(type(x) is Post for x in similar_posts))
 
 class SpellcheckTestCase(unittest.TestCase):
     def setUp(self):
+        self.spellchecker = SpellChecker()
         with open("./testing/commonWords.txt") as f:
             read_data = f.read().split("\n")
             self.one_letter_removed,self.one_letter_orig = remove_one_letter(read_data)
+            self.one_letter_replaced,self.one_replace_orig = replace_one_letter(read_data)
+
             f.close
         return super().setUp()
     
@@ -101,14 +91,18 @@ class SpellcheckTestCase(unittest.TestCase):
         self.assertTrue(all(check(a) == b for a in correct_txt for b in corrupted_txt_one_error))
     
     def test_letter_missing(self):
-        
-        result = spellCheck(self.one_letter_removed)
-        result2 = spellCheck(self.one_letter_orig)
+        result = []
+        result2 = []
+        print(spell_correction("hapenning", self.spellchecker))
+        for this in self.one_letter_removed:
+            result.append(spell_correction(this, self.spellchecker)) 
+        for this in self.one_letter_orig:
+            result2.append(spell_correction(this, self.spellchecker)) 
         
         print(f"one letter removed :         {self.one_letter_removed}")
         print(f"orig :                       {self.one_letter_orig}")
         print("one letter diff spellcheck length:", len(result), "origional spellcheck length: ", len(result2))
-        print("one letter diff spellcheck: ", result)
+        print("one letter diff spellcheck: ",result[0])
         print("orig spellcheck:            ", result2)
         self.assertTrue(len(result) == len(result2))
         diff = 0
@@ -120,13 +114,34 @@ class SpellcheckTestCase(unittest.TestCase):
         self.assertTrue(score >= 0.8)
     
     def test_letter_replaced(self):
-        correct_txt=["segmentation", "directory", "clarified", "consistent"]
-        corrupted_txt_one_error=["segmentetion", "dicectory", "clarefied", "consistent"]
-        check = lambda x: x
-        self.assertTrue(all(check(a) == b for a in correct_txt for b in corrupted_txt_one_error))
-    
+        result = []
+        result2 = []
+        print(spell_correction("hapenning", self.spellchecker))
+        for this in self.one_letter_replaced:
+            result.append(spell_correction(this, self.spellchecker)) 
+        for this in self.one_replace_orig:
+            result2.append(spell_correction(this, self.spellchecker)) 
+        
+        print(f"one letter removed :         {self.one_letter_replaced}")
+        print(f"orig :                       {self.one_replace_orig}")
+        print("one letter diff spellcheck length:", len(result), "origional spellcheck length: ", len(result2))
+        print("one letter diff spellcheck: ",result[0])
+        print("orig spellcheck:            ", result2)
+        self.assertTrue(len(result) == len(result2))
+        diff = 0
+        for item in result:
+            if item not in result2:
+                diff +=1 
+        score = 1-(diff / len(result))
+        print("score: ",score)
+        self.assertTrue(score >= 0.8)
 
+class UtilityTestCase(unittest.TestCase):
 
+    def test_tokenizer(self):
+        pass
+    def test_weight(self):
+        pass
 
 def manual_post_parse(post):
     post_lines = post.split('\n')

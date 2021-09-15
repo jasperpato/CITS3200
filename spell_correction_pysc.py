@@ -1,38 +1,39 @@
-from spellchecker import SpellChecker
+
 import time
 
 #way better than difflib
-def spell_correction(thread):
+def spell_correction(thread, spell):
 
-    thread_list = thread.split()
+    # thread_list = thread.split()
 
-    numeric = []
+    # numeric = []
 
-    for i in range(0, len(thread_list)):
+    # for i in range(0, len(thread_list)):
 
-        #removes punctuation for spell correction
-        #if punctuation needs to be removed for output then do this before return
-        thread_list[i] = thread_list[i].strip("""!@#$%^&*()_+-={}[]|\~`:;"'<,>.?/""")
+    #     #removes punctuation for spell correction
+    #     #if punctuation needs to be removed for output then do this before return
+    #     thread_list[i] = thread_list[i].strip("""!@#$%^&*()_+-={}[]|\~`:;"'<,>.?/""")
 
-        #marks words with numbers in them for removal
-        if not thread_list[i].isalpha():
+    #     #marks words with numbers in them for removal
+    #     if not thread_list[i].isalpha():
 
-            numeric.append(i)
+    #         numeric.append(i)
 
     #removes words with numbers in them
-    for i in numeric:
+    # for i in numeric:
 
-        thread_list.pop(i)
+    #     thread_list.pop(i)
     
     #takes ~0.09s for this line to run, should initialize it once instead of for every thread
-    spell = SpellChecker()
+    #spell = SpellChecker()
 
-    misspelled = spell.unknown(thread_list)
+    misspelled = spell.unknown([thread])
 
-    for word in misspelled:
+    # for word in misspelled:
 
-        thread = thread.replace(word, spell.correction(word))
-
+    #thread = thread.replace(word, spell.correction(word))
+    if misspelled !=[]:
+        thread = spell.correction(thread)
     return thread
 
 def main():
