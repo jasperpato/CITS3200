@@ -79,13 +79,11 @@ def pipeline(post : Post,
         similarities = {}
 
         for p in all_posts(threads):
-                subject_similarity = \
-                        sum([alg(subject_toks, process_cached(p, cleaners, filters, substitutes, True)) \
-                        for alg in algorithms]) / len(algorithms)
-                payload_similarity = \
-                        sum([alg(payload_toks, process_cached(p, cleaners, filters, substitutes, False)) \
-                        for alg in algorithms]) / len(algorithms)
-                similarities[p] = pipe(*weights)(p) * (w * subject_similarity + (1.0-w) * payload_similarity)
+          subject_similarity = \
+          sum([alg(subject_toks, process_cached(p, cleaners, filters, substitutes, True)) for alg in algorithms]) / len(algorithms)
+          payload_similarity = \
+          sum([alg(payload_toks, process_cached(p, cleaners, filters, substitutes, False)) for alg in algorithms]) / len(algorithms)
+          similarities[p] = pipe(*weights)(p) * (w * subject_similarity + (1.0-w) * payload_similarity)
 
         return nlargest(n, similarities, key=similarities.get)
         """
