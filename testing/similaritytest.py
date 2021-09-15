@@ -8,7 +8,6 @@ import sys
 from re import sub
 from os.path import dirname, join
 from string import ascii_letters
-from heapq import nlargest
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
