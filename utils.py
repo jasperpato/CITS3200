@@ -1,5 +1,5 @@
 from functools import reduce, lru_cache
-
+from string import ascii_letters
 # in python 3.9 we can just 'da | db'
 def merge(da : dict, db : dict) -> dict:
     z = da.copy()
@@ -26,3 +26,12 @@ def cached(f):
         return f(*args)
 
     return helper
+
+def remove_none_alphabet(x):
+    return x not in ascii_letters
+    
+def remove_stopwords(x, stopwords):
+    x in stopwords
+
+def to_lower():
+    pass

@@ -26,7 +26,7 @@ if __name__=="__main__":
 
     #weights = [ lambda x: 1.5 if x.verified else 1.0]   # give a bit more priority to Chris' posts
     weights = [verified_weight, date_weight] #uses the functions from the weights.py script
-
+    
     cleaners =    ( lambda x: x.lower(),              # lowercase all text
                     lambda x: sub(r'\s+', ' ', x))
 
