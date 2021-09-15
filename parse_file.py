@@ -2,7 +2,7 @@ import email
 import datetime
 from itertools import groupby
 from post import Post
-from thread import Thread
+from thread_obj import Thread
 from typing import List
 
 # expand this with other demonstrators

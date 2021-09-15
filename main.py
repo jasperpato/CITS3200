@@ -1,6 +1,6 @@
 import sys
 from parse_file import parse_file
-from thread import Thread
+from thread_obj import Thread
 from post import Post
 from pipeline import pipeline
 import nltk
