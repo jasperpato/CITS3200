@@ -8,9 +8,9 @@
         },
         {
             "Subject":"about sifs_mkvolume.c",
-            "Body":"Hi Chris, Sorry if its a dumb question to ask. But I couldn't figure out how the sifs_mkvolume.c has never used any function from the mkvolume.c in the library and still be able to create a new volume. It does check the integrity of the input parameters however it seems to have nothing to do with creating a new volume.",
-            "Category":"mkvolume block",
-            "target_count":6
+            "Body":"Sorry if its a dumb question to ask, but where is the function SIFS_mkvolume() being called from? I tried searching around the internet for the correct library but have no luck finding it? ",
+            "Category":"mkvolume",
+            "target_count":2
         },
         {
             "Subject":"which mode to set file",
