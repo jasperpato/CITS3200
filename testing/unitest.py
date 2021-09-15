@@ -87,11 +87,26 @@ class SpellcheckTestCase(unittest.TestCase):
     def tearDown(self):
         return super().tearDown()
     
-    def test_spell_check(self):
+    def test_letter_replaced(self):
         correct_txt=["segmentation", "directory", "clarified", "consistent"]
         corrupted_txt_one_error=["segmentetion", "dicectory", "clarefied", "consistent"]
         check = lambda x: x
         self.assertTrue(all(check(a) == b for a in correct_txt for b in corrupted_txt_one_error))
+    
+    def test_letter_missing(self):
+        correct_txt=["segmentation", "directory", "clarified", "consistent"]
+        corrupted_txt_one_error=["segmentetion", "dicectory", "clarefied", "consistent"]
+        check = lambda x: x
+        self.assertTrue(all(check(a) == b for a in correct_txt for b in corrupted_txt_one_error))
+    
+    def test_letter_replaced(self):
+        correct_txt=["segmentation", "directory", "clarified", "consistent"]
+        corrupted_txt_one_error=["segmentetion", "dicectory", "clarefied", "consistent"]
+        check = lambda x: x
+        self.assertTrue(all(check(a) == b for a in correct_txt for b in corrupted_txt_one_error))
+    
+
+
 
 def manual_post_parse(post):
     post_lines = post.split('\n')

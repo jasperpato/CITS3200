@@ -9,7 +9,7 @@ from re import sub
 from string import ascii_letters
 import nltk
 import time
-
+from weights import verified_weight, date_weight
 app = Flask("Evaluator")
 
 files = ['help2002-2017.txt', 'help2002-2018.txt', 'help2002-2019.txt']
@@ -96,8 +96,12 @@ page = """
                     <input type="checkbox" id="stem" name="stem" checked>
                     <label for="stem">Apply stemming</label><br>
 
-                    <input type=number name="weight" min="1" value="1">
+                    <input type="checkbox" id="d_weight" name="d_weight" checked>
+                    <label for="d_weight">Apply date weights</label><br>
+                    
+                    <input type="number" step="0.001" name="weight" min="1" value="1.35">
                     <label for="weight">scaling applied to Chris' posts</label><br>
+
                     <input type=submit value=Yall>
                 </form>
                 </aside>
@@ -123,7 +127,8 @@ def search():
 
     weights = []
     weights.append(verified(float(request.args['weight'])))
-    
+    if('d_weight' in request.args): weights.append(date_weight)
+
     algos = (jaccard, cosine_similarity)
 
     posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, algos, nposts)

@@ -9,7 +9,13 @@ def merge(da : dict, db : dict) -> dict:
 # apply a list of functions LEFT-TO-RIGHT
 # e.g. pipe(double, double, increment)(10) = 41
 def pipe(*args):
-    return lambda x: reduce(lambda y,z: z(y), args, x)
+    return lambda x: reduce(lambda y, z:z(y), args, x)
+
+def pipe_weight(x,*args):
+    score = 1
+    for arg in args:
+        score *= arg(x) 
+    return score
 
 # memoising a function
 # it'd be great if we could get this to memoize in between program executions
