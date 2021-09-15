@@ -21,7 +21,7 @@ from algorithms import cosine_similarity, jaccard
 from alt_similarity_algorithms.tfidf import tfidf_similarity
 from alt_similarity_algorithms.use import use_similarity, load_use_model
 
-
+nltk.download('punkt')
 nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
 
@@ -184,4 +184,4 @@ def optimal_tag_intersection(test_case, test_space, n):
 
 
 if __name__ == '__main__':   
-    pipeline_test('use')
+    pipeline_test('basic')
