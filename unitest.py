@@ -47,7 +47,6 @@ class FileParseCase(unittest.TestCase):
 
 
 
-
 class SpellcheckTestCase(unittest.TestCase):
     def setUp(self):
         self.spellchecker = SpellChecker()

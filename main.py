@@ -25,6 +25,7 @@ if __name__=="__main__":
     filters = (  remove_none_alphabet, # take non-alphabetical words out
                 remove_stopwords)          # remove stopwords
 
+
     #weights = [ lambda x: 1.5 if x.verified else 1.0]   # give a bit more priority to Chris' posts
     weights = [verified_weight, date_weight] #uses the functions from the weights.py script
     
