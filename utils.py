@@ -31,7 +31,8 @@ def remove_none_alphabet(x):
     return x not in ascii_letters
     
 def remove_stopwords(x, stopwords):
-    x in stopwords
+    return x in stopwords
 
-def to_lower():
-    pass
+def to_lower(x):
+    return x.lower()
+

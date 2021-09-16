@@ -8,6 +8,7 @@ from re import sub
 from string import ascii_letters
 from algorithms import cosine_similarity, jaccard
 from weights import verified_weight, date_weight
+from utils import remove_none_alphabet, remove_stopwords, to_lower
 nltk.download('punkt')
 nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
@@ -21,13 +22,13 @@ if __name__=="__main__":
     N = 3 # number of most similar posts
     W = 0.3 # weight of subject similarity, payload weight is (1.0 - W)
 
-    filters = (  lambda x: x not in ascii_letters, # take non-alphabetical words out
-                lambda x: x in stopwords)          # remove stopwords
+    filters = (  remove_none_alphabet, # take non-alphabetical words out
+                remove_stopwords)          # remove stopwords
 
     #weights = [ lambda x: 1.5 if x.verified else 1.0]   # give a bit more priority to Chris' posts
     weights = [verified_weight, date_weight] #uses the functions from the weights.py script
     
-    cleaners =    ( lambda x: x.lower(),              # lowercase all text
+    cleaners =    ( to_lower,              # lowercase all text
                     lambda x: sub(r'\s+', ' ', x))
 
     substitutes = tuple([])
