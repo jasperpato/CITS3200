@@ -7,6 +7,7 @@ import datetime
 import parse_file
 from testing.parse_spell_test import remove_one_letter, replace_one_letter
 from spell_correction_pysc import spell_correction
+from utils import remove_none_alphabet, remove_stopwords, to_lower
 import algorithms
 from post import Post
 
@@ -44,29 +45,6 @@ class FileParseCase(unittest.TestCase):
         self.assertEqual(test_subject_set, tbt_subject_set)
 
 
-class TokeniserCase(unittest.TestCase):
-    def setUp(self):
-        return super().setUp()
-
-    def tearDown(self):
-        return super().tearDown()
-
-    def test_clean(self):
-        text1 = 'JDJ2$x@esL'
-        test_str = 'JDJ x esL'
-        tbt_str = tokeniser.clean(text1)
-        self.assertEqual(test_str, tbt_str)
-        text2 = ''.join([str(i) for i in range(0, 255)])
-        test_str = ' ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz '
-        tbt_str = tokeniser.clean(text2)
-        self.assertTrue(test_str, tbt_str)
-
-    def test_preprocess(self):
-        text = 'Greeting, traveller. Will you save the dog stuck in the well?'
-        test_tokens = ['greeting', 'traveller', 'save', 'dog', 'stuck', 'well']
-        tbt_tokens = tokeniser.preprocess(text)
-        self.assertEqual(test_tokens, tbt_tokens)
-
 
 
 class SpellcheckTestCase(unittest.TestCase):
@@ -76,20 +54,12 @@ class SpellcheckTestCase(unittest.TestCase):
             read_data = f.read().split("\n")
             self.one_letter_removed,self.one_letter_orig = remove_one_letter(read_data)
             self.one_letter_replaced,self.one_replace_orig = replace_one_letter(read_data)
-
             f.close
         return super().setUp()
     
     def tearDown(self):
         return super().tearDown()
-    
-    def test_letter_replaced(self):
-        correct_txt=["segmentation", "directory", "clarified", "consistent"]
-        corrupted_txt_one_error=["segmentetion", "dicectory", "clarefied", "consistent"]
-        
-        check = lambda x: x
-        self.assertTrue(all(check(a) == b for a in correct_txt for b in corrupted_txt_one_error))
-    
+
     def test_letter_missing(self):
         result = []
         result2 = []
@@ -138,8 +108,12 @@ class SpellcheckTestCase(unittest.TestCase):
 
 class UtilityTestCase(unittest.TestCase):
 
-    def test_tokenizer(self):
-        pass
+    def test_remove_non_alph(self):
+        text1 = 'JDJ2$x@esL'
+        text2 = ' ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz '
+        self.assertTrue(remove_none_alphabet(text1))
+        self.assertFalse(remove_none_alphabet(text2))
+        
     def test_weight(self):
         pass
 
