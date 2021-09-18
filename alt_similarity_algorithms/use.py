@@ -1,102 +1,92 @@
 import pickle
 import sys 
-import os
 import tensorflow as tf
 import tensorflow_hub as hub
-
-import pandas as pd
-from heapq import nlargest
-from sklearn.metrics.pairwise import cosine_similarity
 import json
 
-from post import Post
+from heapq import nlargest
+from sklearn.metrics.pairwise import cosine_similarity
+from os.path import dirname, join
+
+from algorithm import Algorithm
 from parse_file import parse_file
-from thread_obj import Thread, all_posts
-
-currentdir = os.path.dirname(os.path.realpath(__file__))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
+from thread_obj import all_posts
 
 
-# load universal sentence encoder module
-encoder  = None
 post_text = lambda post: post.subject if len(post.subject.split(' ')) >= 10 else post.payload
 
-
-def load_use_model(use_cpu=False):
-    global encoder
-    if use_cpu:
-        tf.config.set_visible_devices([], 'GPU')
-    encoder = hub.load('../pretrained_models/use/universal-sentence-encoder_4')
+filedir = dirname(__file__)
+pretrained_model_path = join(filedir, '../../pretrained_models/use/universal-sentence-encoder_4')
+sys.path.append(dirname(filedir))
 
 
-# return a pandas dataframe that includes the similarity between every post. 
-# can be used to generate clusters
-def get_similarity_dataframe(posts, encoded_posts, encoder):
-    num_posts = len(posts)
-    similarities_df = pd.DataFrame()
-    for i in range(num_posts):
-        for j in range(num_posts): 
-            # cos(theta) = x . y / (mag_x * mag_y)
-            cos_theta = cosine_similarity(encoded_posts[i], encoded_posts[j])
-            similarities_df = similarities_df.append(
-                {
-                    'similarity': cos_theta, 
-                    'post1': posts[i], 
-                    'post2': posts[j]
-                },
-                ignore_index=True
-            )
+class Use(Algorithm):
+    model = None
+    encodings = None
+
+    def __init__(self, model_path, use_cpu=False):
+        if use_cpu:
+            tf.config.set_visible_devices([], 'GPU')
+        self.model = hub.load(model_path)
+
+    def load_encodings(self, encodings_path):
+        with open(encodings_path, 'rb') as handle:
+            self.encodings = pickle.load(handle)
+
+    def encode_posts(self, posts, save_path=None):
+        encoded_posts = self.model([post_text(post) for post in posts])
+        encodings = {posts[i].payload:encoded_posts[i] for i in range(len(posts))}
+        if save_path != None:
+            with open(save_path, 'wb') as handle:
+                pickle.dump(encodings, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        self.encodings = encodings
 
 
-# Identical in use-case to the function defined in algorithm.py
-def use_similarity(input_post, encodings, all_posts, n):
-    if input_post.payload not in encodings.keys():
-        in_vec = encoder([post_text(input_post)])
-    else:
-        in_vec = [encodings[input_post.payload]]
-        all_posts = [p for p in all_posts if p.payload != input_post.payload]
-    encoding_vecs = [encodings[post.payload] for post in all_posts]
-    scores = cosine_similarity(in_vec, encoding_vecs).flatten()
-    post_score_map = {all_posts[i]:scores[i] for i in range(len(all_posts))}
-    return tuple(nlargest(n, post_score_map, key=post_score_map.get))
+    def similarity(self, post, posts, n):
+        if self.encodings == None:
+            raise RuntimeError("Encodings must be loaded from save file (using load_encodings)" +
+            " or computed (using encode_posts)")
 
+        if post.payload not in self.encodings.keys():
+            in_vec = self.model([post_text(post)])
+        else:
+            in_vec = [self.encodings[post.payload]]
+            posts = [p for p in posts if p.payload != post.payload]
 
-def encode_posts(posts, save_name):
-    encoded_posts = encoder([post_text(post) for post in posts])
-    embeddings = {posts[i].payload:encoded_posts[i] for i in range(len(posts))}
-    with open(f'../encodings/use/{save_name}.pickle', 'wb') as handle:
-        pickle.dump(embeddings, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    return embeddings
+        encoding_vecs = [self.encodings[post.payload] for post in posts]
+        scores = cosine_similarity(in_vec, encoding_vecs).flatten()
+        post_score_map = {posts[i]:scores[i] for i in range(len(posts))}
+        return tuple(nlargest(n, post_score_map, key=post_score_map.get))
 
-
+    
 def encode_test_spaces():
     from testing.similaritytest import json_to_post_1, json_to_post_2
-
-    load_use_model()
-    test_space_posts = json.load(open("testing/test_space_2019_2.json"))["test_space"]
+    algo = Use(pretrained_model_path)
+    
+    
+    test_f = open(join(filedir, "../testing/test_space_2019_2.json"))
+    test_space_posts = json.load(test_f)['test_space']
     posts = [json_to_post_2(p) for p in test_space_posts]
-    encode_posts(posts, 'test_space_2019_2')
+    algo.encode_posts(posts, join(filedir, '../../encodings/use/test_space_2019_2.pickle'))
 
-    test_space_posts = json.load(open("testing/test_space_2019.json"))["testcases"]
+    test_f = open(join(filedir, "../testing/test_space_2019.json"))
+    test_space_posts = json.load(test_f)['testcases']
     posts = [json_to_post_1(p) for p in test_space_posts]
-    encode_posts(posts, 'test_space_2019')
+    algo.encode_posts(posts, join(filedir, '../../encodings/use/test_space_2019_1.pickle'))
 
 
 def encode_dataset():
-    load_use_model()
+    algo = Use(pretrained_model_path)
 
-    posts = all_posts(parse_file('help2002-2017.txt'))
-    encode_posts(posts, '2017')
+    posts = all_posts(parse_file(join(filedir, '../help2002-2017.txt')))
+    algo.encode_posts(posts, join(filedir, '../../encodings/use/2017.pickle'))
 
-    posts = all_posts(parse_file('help2002-2018.txt'))
-    encode_posts(posts, '2018')
+    posts = all_posts(parse_file(join(filedir, '../help2002-2018.txt')))
+    algo.encode_posts(posts, join(filedir, '../../encodings/use/2018.pickle'))
 
-    posts = all_posts(parse_file('help2002-2019.txt'))
-    encode_posts(posts, '2019')
+    posts = all_posts(parse_file(join(filedir, '../help2002-2019.txt')))
+    algo.encode_posts(posts, join(filedir, '../../encodings/use/2019.pickle'))
 
 
 if __name__== '__main__':
-    encode_test_spaces()
-
-    
+    encode_dataset()
