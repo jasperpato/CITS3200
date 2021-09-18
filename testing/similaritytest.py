@@ -19,8 +19,8 @@ from weights import date_weight, verified_weight
 from pipeline import pipeline
 from parse_file import valid, group_into_threads
 from algorithms import cosine_similarity, jaccard
-from alt_similarity_algorithms.tfidf import tfidf_similarity
-from alt_similarity_algorithms.use import use_similarity, load_use_model
+from similarity_algorithms.tfidf import Tfidf
+from similarity_algorithms.use import Use, pretrained_model_path
 
 
 nltk.download('stopwords')
@@ -44,13 +44,14 @@ substitutes = tuple([])
 # and dividing by the number of targets. This score is averaged over all test cases. Provides
 # a similarity score for an algorithm in the situation where the optimal targets are known.
 
-def pipeline_test(algo):
-    encodings = None
-    if algo == 'use':
-        load_use_model(use_cpu=True)
-        f_path = join(dirname(__file__), '../../encodings/use/test_space_2019.pickle')
-        with open(f_path, 'rb') as handle:
-            encodings = pickle.load(handle)
+def pipeline_test(algorithm_name):
+    algo = None
+    if algorithm_name == 'use':
+        algo = Use(pretrained_model_path, True)
+        f_path = join(dirname(__file__), '../../encodings/use/test_space_2019_1.pickle')
+        algo.load_encodings(f_path)
+    elif algorithm_name == 'tfidf':
+        algo = Tfidf()
 
     test_space = json.load(open("testing/test_space_2019.json"))["testcases"]
     test_case_posts = json.load(open("testing/test_case_2019.json"))["testcases"]
@@ -62,7 +63,7 @@ def pipeline_test(algo):
         print(f"body: {test_case['Body']}\n")
         print("________________________")
         ###
-        algo_result = evaluate_algo(algo, test_case, test_space, test_case['target_count'], encodings)
+        algo_result = evaluate_algo(algo, test_case, test_space, test_case['target_count'])
         print(f"Time taken: {algo_result['time']}\n")
         print("________________________")
         ###
@@ -90,19 +91,20 @@ def pipeline_test(algo):
 
 # Similarity test. The score between an input post and set of output posts is 
 # calculated by averaging the tag intersection between the input post and the 
-# generated top posts and dividing by the optimal tag intersection (i.e., if a tag matching 
-# algorithm was used). This score is averaged over all posts in test_space_2019_2.json 
-# tested against all other posts in test_space_2019_2.json. Provides
-# a similarity score for an algorithm in the situation where a reasonable
-# sample of the dataset is tagged.
+# generated top posts and dividing by the maximum average tag intersection 
+# (i.e., if a tag matching algorithm was used). This score is averaged over all 
+# posts in test_space_2019_2.json tested against all other posts in 
+# test_space_2019_2.json. Provides a similarity score for an algorithm in the 
+# situation where a reasonable sample of the dataset is tagged.
 
 def tag_intersection_test(algo, n):
-    encodings = None
+    algo = None
     if algo == 'use':
-        load_use_model(use_cpu=False)
-        f_path = join(dirname(__file__), '../../encodings/use/test_space_2019_2.pickle')
-        with open(f_path, 'rb') as handle:
-            encodings = pickle.load(handle)
+        algo = Use(pretrained_model_path, True)
+        f_path = join(dirname(__file__), '../../encodings/use/test_space_2019.pickle')
+        algo.load_encodings(f_path)
+    elif algo == 'tfidf':
+        algo = Tfidf()
 
     overall_test_space = json.load(open("testing/test_space_2019_2.json"))["test_space"]
     overall_score_sum = 0
@@ -110,7 +112,7 @@ def tag_intersection_test(algo, n):
     for case in overall_test_space:
         target_categories = set(case['Tags'])
         space = overall_test_space[:]; space.remove(case)
-        algo_result = evaluate_algo(algo, case, space, n, encodings)
+        algo_result = evaluate_algo(algo, case, space, n)
         sum = 0
         for post in algo_result['top_posts']:
             post_json = [tp for tp in space if tp['Body'] == post.payload][0]
@@ -130,7 +132,7 @@ def tag_intersection_test(algo, n):
 # (top_posts, time_taken), where top_posts is ordered from most similar
 # to least similar.
 
-def evaluate_algo(algo, test_case, test_space, n, encodings=None):
+def evaluate_algo(algo, test_case, test_space, n):
     start_time = time.process_time()
     if 'Category' in test_case.keys():
         input_post = parse_test_case(test_case)
@@ -139,15 +141,12 @@ def evaluate_algo(algo, test_case, test_space, n, encodings=None):
         input_post = json_to_post_2(test_case)
         all_posts = [json_to_post_2(p) for p in test_space]
 
-    if algo == 'basic':
+    if algo == None:
         algs = (cosine_similarity, jaccard)
         top_posts = pipeline(input_post, group_into_threads(all_posts), cleaner, filters, substitutes, weights, algs, n)
+    else:
+        top_posts = algo.similarity(input_post, all_posts, n)
 
-    elif algo == 'tfidf':
-        top_posts = tfidf_similarity(input_post, all_posts, n)
-
-    elif algo == 'use':
-        top_posts = use_similarity(input_post, encodings, all_posts, n)
     return {'top_posts': top_posts, 'time': time.process_time() - start_time}
 
 
@@ -165,8 +164,7 @@ def parse_test_case(post):
     return Post(None, post['Subject'], post['Body'], False)
 
 
-# Because I (Allen) am an absolute Bonobo, the new test_space (test_space_2019_2.json)
-# I made has a different json format than test_space_2019.json, hence this function
+# Used for converting json objects (stored in test_space_2019_1.json) into post objects
 
 def json_to_post_2(post):
     date = datetime.datetime.strptime(post["Date"], "%Y-%m-%d %H:%M:%S")
@@ -174,8 +172,8 @@ def json_to_post_2(post):
 
 
 # Returns the average similarity score (tag intersection) using an algorithm that utilises 
-# tag intersection to find post similarity. I.e., finds the average tag intersection using 
-# an optimal similarity function for a test_case and test_space.
+# tag intersection to find n similar posts. I.e., finds the maximum average tag intersection for 
+# a given test_case and test_space.
 
 def optimal_tag_intersection(test_case, test_space, n):
     intersection_score = lambda list1, list2: len(set(list1) & set(list2)) / len(list1)
