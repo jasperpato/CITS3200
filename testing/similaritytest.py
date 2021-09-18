@@ -8,7 +8,6 @@ import sys
 from re import sub
 from os.path import dirname, join
 from string import ascii_letters
-from heapq import nlargest
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -22,7 +21,7 @@ from algorithms import cosine_similarity, jaccard
 from similarity_algorithms.tfidf import Tfidf
 from similarity_algorithms.use import Use, pretrained_model_path
 
-
+nltk.download('punkt')
 nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
 
@@ -183,4 +182,4 @@ def optimal_tag_intersection(test_case, test_space, n):
 
 
 if __name__ == '__main__':   
-    pipeline_test('use')
+    pipeline_test('basic')
