@@ -8,7 +8,7 @@ from heapq import nlargest
 from sklearn.metrics.pairwise import cosine_similarity
 from os.path import dirname, join
 
-from algorithm import Algorithm
+from .algorithm import Algorithm
 from parse_file import parse_file
 from thread_obj import all_posts
 

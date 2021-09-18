@@ -1,8 +1,13 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from heapq import nlargest
+import os, sys
 
-from algorithm import Algorithm
+from .algorithm import Algorithm
+
+currentdir = os.path.dirname(os.path.realpath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.append(parentdir)
 
 post_text = lambda post: post.subject if len(post.subject.split(' ')) >= 10 else post.payload
 
