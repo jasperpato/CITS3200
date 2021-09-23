@@ -2,6 +2,8 @@
 This is the 'heart' of the program. Developers need to understand how the
 pipeline function works, as this is the main interface that they must use.
 """
+import numpy as np
+
 from post import Post
 from thread_obj import Thread, all_posts
 from typing import List, Callable, Tuple
@@ -74,16 +76,20 @@ def pipeline(post : Post,
           tokens and computes similarity
         - weight functions are then applied
         """
-        subject_toks = process_post(post,cleaners,filters,substitutes,True)
-        payload_toks = process_post(post,cleaners,filters,substitutes,False)
+        in_subject_toks = process_post(post, cleaners, filters, substitutes, True)
+        in_payload_toks = process_post(post, cleaners, filters, substitutes, False)
+        posts = all_posts(threads)
         similarities = {}
 
-        for p in all_posts(threads):
-          subject_similarity = \
-          sum([alg(subject_toks, process_cached(p, cleaners, filters, substitutes, True)) for alg in algorithms]) / len(algorithms)
-          payload_similarity = \
-          sum([alg(payload_toks, process_cached(p, cleaners, filters, substitutes, False)) for alg in algorithms]) / len(algorithms)
-          similarities[p] = pipe_weight(p,*weights) * (w * subject_similarity + (1.0-w) * payload_similarity)
+        all_subject_toks = [process_cached(p, cleaners, filters, substitutes, True) for p in posts]
+        subject_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_subject_toks, toks_array=all_subject_toks) 
+                                        for alg in algorithms])
+        all_payload_toks = [process_cached(p, cleaners, filters, substitutes, False) for p in posts]
+        payload_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_payload_toks, toks_array=all_payload_toks) 
+                                        for alg in algorithms])
+
+        for p, i in enumerate(posts):
+          similarities[p] = pipe_weight(p,*weights) * (w * subject_similarities[i] + (1.0-w) * payload_similarities[i])
 
         return nlargest(n, similarities, key=similarities.get)
         """
