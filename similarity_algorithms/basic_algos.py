@@ -1,9 +1,8 @@
 from collections import Counter
 from math import sqrt
-from typing import List, Set, Dict
+from typing import List, Set
 from utils import merge
 from project_types import Tokens, Vector
-from post import Post
 
 def dot_product(xs : Vector, ys : Vector) -> float:
     return sum([x*y for (x,y) in zip(xs,ys)])
