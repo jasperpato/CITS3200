@@ -41,7 +41,6 @@ class Use(Algorithm):
                 pickle.dump(encodings, handle, protocol=pickle.HIGHEST_PROTOCOL)
         self.encodings = encodings
 
-
     def similarity(self, post, posts, n):
         if self.encodings == None:
             raise RuntimeError("Encodings must be loaded from save file (using load_encodings)" +
