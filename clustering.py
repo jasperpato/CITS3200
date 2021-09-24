@@ -14,6 +14,8 @@ def clustering(threads : List[Thread], subject : bool):
     closest_vector = {}
 
     i = 0
+
+    all_posts_reduced = all_posts(threads)
     
     for post in all_posts(threads):
 
@@ -22,7 +24,7 @@ def clustering(threads : List[Thread], subject : bool):
 
         #if i == 10: break
 
-        for other_post in all_posts(threads):
+        for other_post in all_posts_reduced:
 
             #doesn't find how close the thread is to itself
             if post == other_post:
@@ -37,6 +39,10 @@ def clustering(threads : List[Thread], subject : bool):
                 #previous 0.003
                 closest_vector[post] = (None, 0.002)
 
+            if other_post not in closest_vector:
+
+                closest_vector[other_post] = (None, 0.002)
+
             if cosine_sim < closest_vector[post][1]:
 
                 if cosine_sim == 0.0: continue
@@ -44,6 +50,14 @@ def clustering(threads : List[Thread], subject : bool):
                 closest_vector[post] = (other_post, cosine_sim)
                 #print(cosine_sim)
 
+            if cosine_sim < closest_vector[other_post][1]:
+
+                if cosine_sim == 0.0: continue
+
+                closest_vector[post] = (post, cosine_sim)
+
+        all_posts_reduced.remove(post)
+        
     clusters = {}
     
     for post in all_posts(threads):
@@ -59,6 +73,45 @@ def clustering(threads : List[Thread], subject : bool):
 
     return clusters
 
+from weights import verified_weight
+
+def verified_clustering(threads : List[Thread], subject : bool):
+    k = (lambda x: x.subject) if subject else (lambda x: x.payload)
+    closest_vector = {}
+    verified_all_posts = []
+    for post in all_posts(threads):
+        if verified_weight(post) == 1.35:
+            verified_all_posts.append(post)
+    i = 0
+    all_posts_reduced = all_posts(threads)
+    print(len(verified_all_posts))
+    for post in verified_all_posts:
+        print("post: ", i)
+        i = i + 1
+        for other_post in all_posts_reduced:
+            if post == other_post:
+                continue
+            cosine_sim = cosine_similarity(preprocess(k(post)), preprocess(k(other_post)))
+            if post not in closest_vector:
+                closest_vector[post] = (None, 0.002)
+            if other_post not in closest_vector:
+                closest_vector[other_post] = (None, 0.002)
+            if cosine_sim < closest_vector[post][1]:
+                if cosine_sim == 0.0: continue
+                closest_vector[post] = (other_post, cosine_sim)
+            if cosine_sim < closest_vector[other_post][1]:
+                if cosine_sim == 0.0: continue
+                closest_vector[post] = (post, cosine_sim)
+        all_posts_reduced.remove(post)
+    clusters = {}
+    for post in verified_all_posts:
+        clusters[post] = []
+    for post in closest_vector:
+        if closest_vector[post][0] == None: continue
+        clusters[closest_vector[post][0]].append(post)
+    return clusters
+
+
 #needed to 'borrow' because importing gave encoding issue
 def parse_file(filename):
     with open(filename, 'r', encoding="utf8") as file:
@@ -72,7 +125,7 @@ def main():
 
     threads = parse_file("help2002-2019.txt")
 
-    clusters = clustering(threads, False)
+    clusters = verified_clustering(threads, False)
 
     frequent = 0
     frequent_key = ""
