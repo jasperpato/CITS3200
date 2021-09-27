@@ -1,1 +1,1 @@
-Just wondering how we are expected to report termination of background processes? Currently I have a simple implementation printing to stderr "process blah has terminated" but noticed bash initially gives a process number and prints it and the pid, eg:
+Just wondering how we are expected to report termination of background processes? Currently I have a simple implementation priting to stderr "process blah has terminated" but noticed bash initially gives a process number and prints it and the pid, eg:
