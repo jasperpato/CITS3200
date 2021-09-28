@@ -17,7 +17,7 @@ class Tfidf(Algorithm):
     def __init__(self):
         self.vectorizer = TfidfVectorizer()
 
-    def similarity(self, in_toks, toks_array, *kwargs):
+    def similarity(self, in_toks, toks_array, **kwargs):
         in_text = ' '.join(in_toks)
         document_list = [' '.join(toks) for toks in toks_array]
         document_list.insert(0, in_text)

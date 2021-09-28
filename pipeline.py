@@ -82,14 +82,12 @@ def pipeline(post : Post,
         similarities = {}
 
         all_subject_toks = [process_cached(p, cleaners, filters, substitutes, True) for p in posts]
-        subject_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_subject_toks, toks_array=all_subject_toks) 
-                                        for alg in algorithms])
-        all_payload_toks = [process_cached(p, cleaners, filters, substitutes, False) for p in posts]
-        payload_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_payload_toks, toks_array=all_payload_toks) 
-                                        for alg in algorithms])
+        subject_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_subject_toks, toks_array=all_subject_toks) for alg in algorithms], axis=0)
+        all_payload_toks =  [process_cached(p, cleaners, filters, substitutes, False) for p in posts]
+        payload_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_payload_toks, toks_array=all_payload_toks) for alg in algorithms], axis=0)
 
-        for p, i in enumerate(posts):
-          similarities[p] = pipe_weight(p,*weights) * (w * subject_similarities[i] + (1.0-w) * payload_similarities[i])
+        for i, p in enumerate(posts):
+          similarities[p] = pipe_weight(i,*weights) * (w * subject_similarities[i] + (1.0-w) * payload_similarities[i])
 
         return nlargest(n, similarities, key=similarities.get)
         """
