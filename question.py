@@ -6,7 +6,7 @@ from pipeline import pipeline
 from weights import verified_weight, date_weight
 from spell_correction_pysc import spell_correction
 from similarity_algorithms.tfidf import Tfidf
-from similarity_algorithms.use import Use
+#from similarity_algorithms.use import Use
 from parse_file import parse_file
 import json
 
@@ -21,7 +21,7 @@ def encapsulate(test_cases):
     all_threads = [parse_file(f) for f in files]
     threads = all_threads[2]
     for case in test_cases:
-        post = Post(None, case['Subject'], case['Body'], None)
+        post = Post(case['Date'], case['Subject'], case['Body'], False)
         print(post.payload)
         list_of_tup.append(tuple(generate_post(post, threads, cleaners, filters, substitutes, weight, 5)))
     return list_of_tup
@@ -29,7 +29,7 @@ def encapsulate(test_cases):
 def generate_post(post, threads, cleaners, filters, substitutes, weights, nposts):
     diff_posts = []
     tf = Tfidf()
-    Us = Use()
+    #Us = Use()
     Jaccard_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [jaccard],0.2, nposts)
     Bag_of_words_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [bag_of_words],0.2, nposts)
     Tfidf_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [tf.similarity],0.2, nposts)
