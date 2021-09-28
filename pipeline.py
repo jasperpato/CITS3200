@@ -40,8 +40,7 @@ def process_post(p : Post,
         this is because immutability is required for cacheing.
         """
         text = p.subject if subject else p.payload
-        return [pipe(*substitutes)(tok) for tok in \
-        word_tokenize(pipe(*cleaners)(text)) if any(product(filters,tok))]
+        return [pipe(*substitutes)(tok) for tok in word_tokenize(pipe(*cleaners)(text)) if any(product(filters,tok))]
 
 #process_cached is simply the process_post function, but with memoisation
 process_cached = cached(process_post)

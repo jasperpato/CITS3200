@@ -12,10 +12,10 @@ import json
 
 
 def encapsulate(test_cases):
-    list_of_tup = []
+    list_of_tup = [] 
     cleaners = [to_lower,space]
     filters = [remove_none_alphabet, remove_stopwords]
-    substitutes = [stemmer]
+    substitutes = []
     weight = [date_weight,verified_weight]
     files = ['help2002-2017.txt', 'help2002-2018.txt', 'help2002-2019.txt']
     all_threads = [parse_file(f) for f in files]
