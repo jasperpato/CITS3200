@@ -33,7 +33,7 @@ def generate_post(post, threads, cleaners, filters, substitutes, weights, nposts
     Jaccard_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [jaccard],0.2, nposts)
     Bag_of_words_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [bag_of_words],0.2, nposts)
     Tfidf_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [tf.similarity],0.2, nposts)
-    Use_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [Us.similarity],0.2, nposts)
+    #Use_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [Us.similarity],0.2, nposts)
     print(Jaccard_posts[0].payload)
     #Mod_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, cosine_similarity, nposts)
     list_of_posts = [Bag_of_words_posts, Jaccard_posts, Tfidf_posts, Use_posts]
