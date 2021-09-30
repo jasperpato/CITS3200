@@ -154,20 +154,14 @@ def evaluate_algo(algo, test_case, test_space, n):
 def json_to_post_1(post):
     date = datetime.datetime.strptime(post["Date"], "%a %b %d %H:%M:%S %Y")
     verified = post['From'] in valid
-    return Post(date, post['Subject'], post['Body'], verified)
-
-
-# Used for converting json objects (stored in test_case_2019.json) into post objects
-
-def parse_test_case(post):
-    return Post(None, post['Subject'], post['Body'], False)
+    return Post(date, post['Subject'], post['Body'], False)
 
 
 # Used for converting json objects (stored in test_space_2019_1.json) into post objects
 
 def json_to_post_2(post):
     date = datetime.datetime.strptime(post["Date"], "%Y-%m-%d %H:%M:%S")
-    return Post(date, post['Subject'], post['Body'], post['Verified'])
+    return Post(date, post['Subject'], post['Body'], False)
 
 
 # Returns the average similarity score (tag intersection) using an algorithm that utilises 

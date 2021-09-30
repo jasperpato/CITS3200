@@ -40,8 +40,7 @@ def process_post(p : Post,
         this is because immutability is required for cacheing.
         """
         text = p.subject if subject else p.payload
-        return [pipe(*substitutes)(tok) for tok in \
-        word_tokenize(pipe(*cleaners)(text)) if any(product(filters,tok))]
+        return [pipe(*substitutes)(tok) for tok in word_tokenize(pipe(*cleaners)(text)) if any(product(filters,tok))]
 
 #process_cached is simply the process_post function, but with memoisation
 process_cached = cached(process_post)
@@ -82,13 +81,11 @@ def pipeline(post : Post,
         similarities = {}
 
         all_subject_toks = [process_cached(p, cleaners, filters, substitutes, True) for p in posts]
-        subject_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_subject_toks, toks_array=all_subject_toks) 
-                                        for alg in algorithms])
-        all_payload_toks = [process_cached(p, cleaners, filters, substitutes, False) for p in posts]
-        payload_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_payload_toks, toks_array=all_payload_toks) 
-                                        for alg in algorithms])
+        subject_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_subject_toks, toks_array=all_subject_toks) for alg in algorithms], axis=0)
+        all_payload_toks =  [process_cached(p, cleaners, filters, substitutes, False) for p in posts]
+        payload_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_payload_toks, toks_array=all_payload_toks) for alg in algorithms], axis=0)
 
-        for p, i in enumerate(posts):
+        for i, p in enumerate(posts):
           similarities[p] = pipe_weight(p,*weights) * (w * subject_similarities[i] + (1.0-w) * payload_similarities[i])
 
         return nlargest(n, similarities, key=similarities.get)

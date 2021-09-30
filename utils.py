@@ -1,5 +1,7 @@
 from functools import reduce, lru_cache
 from string import ascii_letters
+from re import sub
+import nltk
 # in python 3.9 we can just 'da | db'
 def merge(da : dict, db : dict) -> dict:
     z = da.copy()
@@ -36,3 +38,9 @@ def remove_stopwords(x, stopwords):
 def to_lower(x):
     return x.lower()
 
+def space(x):
+    return sub(r'\s+', ' ', x)
+
+def stemmer(x):
+    stemmer = nltk.stem.snowball.SnowballStemmer("english")
+    return stemmer.stem
