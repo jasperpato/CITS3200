@@ -39,17 +39,15 @@ class Use(Algorithm):
     def encode_posts(self, toks_array, posts, save_path=None):
         encoded_posts = self.model([' '.join(toks) for toks in toks_array])
         encodings = {posts[i].payload:encoded_posts[i] for i in range(len(posts))}
-        if save_path != None:
+        if save_path:
             with open(save_path, 'wb') as handle:
                 pickle.dump(encodings, handle, protocol=pickle.HIGHEST_PROTOCOL)
         self.encodings = encodings
 
 
-    def similarity(self, in_toks, post, posts, *kwargs):
+    def similarity(self, in_toks, toks_array, post, posts):
         if self.encodings == None:
-            warnings.warn('Warning...............................It is recommended to load encodings' +
-                'from a *.pickle file before running this algorithm for optimal efficiency')
-            self.encode_posts(self, posts)
+            self.encode_posts(toks_array, posts)
             
         in_text = ' '.join(in_toks)
         if post.payload not in self.encodings.keys():
