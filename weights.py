@@ -1,3 +1,11 @@
+"""
+This script has two functions that takes into account who post the post and when the post was posted
+If its a verified person/post, it will have a higher score.
+If the post is older, then the score will be decreased
+The pipeline for the program will first check if its verified, then using the score from that it 
+decreases it based on how old the post is.
+"""
+
 from datetime import datetime
 from post import Post
 

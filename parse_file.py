@@ -1,3 +1,9 @@
+"""
+This script goes through a text file containing the posts of a given year, converts 
+all the posts in Post class object, groups the ones with the same subject into threads
+and returns the final list of posts and threads.
+"""
+
 import email
 import datetime
 from itertools import groupby
@@ -5,7 +11,8 @@ from post import Post
 from thread_obj import Thread
 from typing import List
 
-# expand this with other demonstrators
+# expand this with other demonstrators emails or those who you want
+# their post to appear more frequently
 valid = set(["chris.mcdonald@uwa.edu.au"])
 
 def parse_post(post_str : str) -> Post:
