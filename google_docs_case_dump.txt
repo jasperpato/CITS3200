@@ -1,0 +1,585 @@
+Original Post
+Subject:question on size_t
+Body:Hi chris, what are the uint_32t and size_t constants? Are these constants predefined in the system?
+----------------------------------------------------------------------------------------------------
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result COSINE: OK, have I've finally read through all the comments about memory reads and
+writes and collecting statistics.  Has been really impressive following the
+conversations, and trying to reverse-engineer your collective
+reverse-engineering of the sample solution!
+
+When planning this project, Amitava, the lab facilitators, and I all held
+early discussions about how difficult, or how easy, to make the project so
+that (as ever) the majority of students would be able to complete it, and
+learn enough from it.  We discussed more difficult versions, with multi-line
+caches, tracking locality-of-reference, and cache replacement policies. All
+good fun extensions but, given the available time and size of a solution, we
+settled on what we have.  Hopefully, somewhere in the middle.  Clearly those
+contributing to the three longer threads, here, on memory and caching are
+well advanced with their projects - great! - but we'll see what happens in
+the final 2 weeks when the silent majority (of 300?) reach this point, and
+read this sequence of posts.  And hopefully not simply replicate the
+conversations without reading!
+
+The standard sample solution, as shared amongst the lab facilitators (and
+markers), is probably the most basic one possible that meets the project's
+requirements - direct-mapped, write-back cache, with no additional
+replacement policy. Each cache entry maintains its contents, the RAM address
+being mirrored, and a single dirty-tag.  No valid-tag.  The cache needs to
+be initialised, and is done so by marking all locations as initially dirty.
+That means that the initial read or write for each location will result in a
+write-back,  so care must be taken as to where that occurs so as not to
+'wipe-out' the initial program or data.  This is why even the smallest of
+cool programs have some writes, as a 'start-up' cost (often described in
+textbooks as 'warming up' the cache.  If the dirty-tags were, instead,  all
+set to false, then the first reads from cache will get - what?
+
+So all programs will have a 'start-up' cost of, at most, the size of the
+cache (i.e. up to 32 additional writes),  which is quite insignificant for
+more realistic, longer-running programs, making millions of read requests.
+Of course, students are mostly noticing this when they run very small
+programs and, often, just a single program, without having anything to
+compare it to.
+
+So, why no valid-tag instead? Just for simplicity.  Solutions which employ a
+valid-tag avoid this startup-up cost by working out if the cache location
+has every been used before.  But with only a single CPU/core accessing a
+single cache, and no DMA to modify memory without the cache's knowledge, the
+valid-tag never needs/can change once *it* has warmed-up.  Thus, such
+solutions are always (eventually) checking an unchanging valid-tag.
+
+Things fell off the rails when Purple Square Anonymous suggested we could
+reduce the number of memory reads by reviewing the JEQ instruction.  Great
+to see the detective work, and it worked, so I felt it worwhile to support
+both 'versions' of memory-read statistics, and report them on the webpage.
+That was possible (and eventually got it correct!) until support for the
+write-back cache was added.  Depending on whether the JEQ-false branches
+were taken, or not, the values held in cache, over time, diverge and the
+attempt to report both 'versions' of statistics becomes incorrect.  You
+don't see this in programs without JEQ, or even very small programs, but
+many here have latched on to ackermann-deep.cool as a program that really
+exercises the cache with its very deep stack.
+
+SO - what to do about the varying statistics, so that people's early efforts
+are rewarded, but not to scare off the silent majority?  The sample solution
+on the webpage now implements the 4 combinations of things being discussed,
+and each is a conditionally-compiled and executed program so that its
+variants (hmmm, word of the year) don't interfere with each other.  A bit of
+effort, but it's demonstrative in showing the differences across a variety
+of programs of different sizes and instruction mixes.
+
+I'm very confident that it's correct in all 4 cases and, yes, it's certainly
+a write-back cache and not a write-through cache, once it's warmed up.  We
+could add a valid-tag, and even a time/instruction-counter approach to LRU
+replacement, as one of our lab facilitators, James, and couple of students
+have shown me.  Yes, they can achieve better cache performance, measured
+solely in cache-hits, but *may* suffer if the additional hardware required
+to build them slowed them down (I'm unsure, in the general case, but the
+3rd- paragraph of this post:
+https://secure.csse.uwa.edu.au/run/help2002?p=np&a=422 shows that we *can*
+get carried away).
+
+I don't plan to add any additional variants to the sample solution,  so
+hopefully all the great reverse-engineers here can make their solutions now
+match one of the two sample solutions with caching, and that'll make marking
+so much easier and transparent!
+
+Please continue the relevant discussion in THIS THREAD, and let me know if you
+agree with what you're now seeing.
+
+(I'll now be offline until Monday; ahhh, sunshine at last!)
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result JACCARD: ...and did you try the suggestion implemented in the coolc.sh shellscript, itself?
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result TFIDF: ANONYMOUS wrote:
+
+> So with the replacement of the substring (such as in the examples given), how can the 
+> character array (after replacement) be a greater length than it was originally? It was 
+> my understanding you couldn't change the length of an array once it has been set. 
+
+You are correct - it would be a problem if the string (array) holding the final result was too 
+short to hold the result.  However, in this example, the prototype:
+
+  void replace( char oldword[], char newword[], char whole_sentence[] );
+
+it's the contents of whole_sentence[] that is being updated (in-situ), and holds the result.  
+Thus, the code that calls replace() has the responsibility of passing sufficient space to hold the 
+result.
+
+A better function would also receive the known maximum length of whole_sentence[], as a 4th 
+parameter, and ensure that this length was never exceeded  (and returning an error?).
+
+In the more general case,  and we'll see examples of this in later lectures, the function would 
+dynamically alloc *new* memory to hold the entire result, and return that newly allocated memory:
+
+  char *replace_new( char oldword[], char newword[], char whole_sentence[] );
+
+Good question.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result USE: ANONYMOUS wrote:
+
+> Are we meant to implement a write-back cache with write allocation or a write-back cache 
+> with no-write allocation for the project?
+
+It's an interesting question, you must have been reading widely, but one that doesn't make much 
+sense (have a more-correct answer in the context of our project):
+
+- our project doesn't employ multi-word cache lines.
+- our programs will not be dominated by I/O.
+- we (cannot) focus on referential locality, and have no branch prediction that could dynamically 
+inform the cache.
+- our memory hierarchy is dominated by the stack (reflected in main-memory) and not general-purpose 
+registers for, say, parameter passing.
+
+UNLESS you have already attempted either type of allocation, I suggest that you "don't bother" with 
+either.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+----------------------------------------------------------------------------------------------------
+Original Post
+Subject:about sifs_mkvolume.c
+Body:Sorry if its a dumb question to ask, but where is the function SIFS_mkvolume() being called from? I tried searching around the internet for the correct library but have no luck finding it? 
+----------------------------------------------------------------------------------------------------
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result COSINE: ANONYMOUS wrote:
+
+> During the call function (apart from placing the parameters, return
+> address, previous FP and local vars on the stack) is there something
+> fundamental I'm missing when the function is called? Is the halt
+> instruction following the call there to change the control back to the
+> callers stack frame?
+
+Are you setting/modifying the PC, to indicate where the next instruction (main's 1st 
+instruction) comes from?
+
+The HALT is there to stop the whole program, once control has returned from main().
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result JACCARD: For the strcat_a. It seems that src is altered, but I don't understand why as in the 
+function itself, only the dest is being changed. Is there a specific reason for this? 
+(picture included shows the string before and after the function)
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result TFIDF: ANONYMOUS wrote:
+
+> During the call function (apart from placing the parameters, return
+> address, previous FP and local vars on the stack) is there something
+> fundamental I'm missing when the function is called? Is the halt
+> instruction following the call there to change the control back to the
+> callers stack frame?
+
+Are you setting/modifying the PC, to indicate where the next instruction (main's 1st 
+instruction) comes from?
+
+The HALT is there to stop the whole program, once control has returned from main().
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result USE: ANONYMOUS wrote:
+
+> sorry,I just misundertood question,I thought if we pass an integer, then the next time when running the program, the 
+> Rot needs to be that number.
+
+OK, sounds like you're getting it now.
+
+When a program runs, it starts with a 'fresh' copy of its variables (held in memory).
+When a process terminates, its final values of its variables are entirely forgotten
+(and the memory it was using will soon be used by another process).
+
+No information about a previosuly running program is remembered for the next time it runs -
+UNLESS that program, itself, saves some information somewhere, such as by using a file on disk,
+reading/creating the file each time the program runs, and writing information each time the program finishes.
+
+I think I can see where your earlier confusion with the keyword 'static' came from, but in this context it only means within each 
+*single* execution of a program,  not across multiple executions.
+
+Good luck,
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+----------------------------------------------------------------------------------------------------
+Original Post
+Subject:which mode to set file
+Body:If we wanted to change contents of the file with i.e. mkdir, would fopen() need to have mode r+ or w+ or something else?
+----------------------------------------------------------------------------------------------------
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result COSINE: ANONYMOUS wrote:
+
+> At the end of execute_stackmachine we have a return statement(return read_memory(SP);) 
+> that returns what is on top of the stack. This increments the read count but should 
+> it? My files are coming out with 1 to many reads and I'm wondering if this is the 
+> cause.
+
+If you're returning (or just using) the value on the TOS, then that value must have recently been 
+pushed to the TOS.  If you have a cache implemented, that value will be in the cache as a 
+consequence of the push, and so shouldn't require a read of main-memory to pop it off again.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result JACCARD: ANONYMOUS wrote:
+
+> I just want to double-check, the file we need to submit is the C11 source 
+> file(runcool.c),right?
+
+
+Sometimes I question my own writing ability!
+
+ From THE PROJECT DESCRIPTION:
+
+"Your project must be written in C11 in a single source-code file named runcool.c 
+ This is the only file you should submit for marking."
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result TFIDF: ANONYMOUS wrote:
+
+> The program could not find the file...
+> 
+> mycal.c:10:10: fatal error: './first_day_of_month.c' file not found
+> #include "./first_day_of_month.c"
+
+The C compiler is stating that the file  first_day_of_month.c  is not found in the same 
+directory as your main C file.  You've downloaded it, and copied there?
+
+ 
+> it's all stored in the same file.
+
+Unsure what this means,  but if you've copied the contents of  first_day_of_month.c. 
+into your main C file, then you don't need the #include ...  line at all.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result USE: ANONYMOUS wrote:
+
+> The program could not find the file...
+> 
+> mycal.c:10:10: fatal error: './first_day_of_month.c' file not found
+> #include "./first_day_of_month.c"
+
+The C compiler is stating that the file  first_day_of_month.c  is not found in the same 
+directory as your main C file.  You've downloaded it, and copied there?
+
+ 
+> it's all stored in the same file.
+
+Unsure what this means,  but if you've copied the contents of  first_day_of_month.c. 
+into your main C file, then you don't need the #include ...  line at all.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+----------------------------------------------------------------------------------------------------
+Original Post
+Subject:segmentation fault
+Body: In dirinfo, we tried to define *entrynames = entries (which is array of entry names). But when we try to print elements of entryname out, it gives the segmentation error. Anyone know why this happens?
+----------------------------------------------------------------------------------------------------
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result COSINE: OK, have I've finally read through all the comments about memory reads and
+writes and collecting statistics.  Has been really impressive following the
+conversations, and trying to reverse-engineer your collective
+reverse-engineering of the sample solution!
+
+When planning this project, Amitava, the lab facilitators, and I all held
+early discussions about how difficult, or how easy, to make the project so
+that (as ever) the majority of students would be able to complete it, and
+learn enough from it.  We discussed more difficult versions, with multi-line
+caches, tracking locality-of-reference, and cache replacement policies. All
+good fun extensions but, given the available time and size of a solution, we
+settled on what we have.  Hopefully, somewhere in the middle.  Clearly those
+contributing to the three longer threads, here, on memory and caching are
+well advanced with their projects - great! - but we'll see what happens in
+the final 2 weeks when the silent majority (of 300?) reach this point, and
+read this sequence of posts.  And hopefully not simply replicate the
+conversations without reading!
+
+The standard sample solution, as shared amongst the lab facilitators (and
+markers), is probably the most basic one possible that meets the project's
+requirements - direct-mapped, write-back cache, with no additional
+replacement policy. Each cache entry maintains its contents, the RAM address
+being mirrored, and a single dirty-tag.  No valid-tag.  The cache needs to
+be initialised, and is done so by marking all locations as initially dirty.
+That means that the initial read or write for each location will result in a
+write-back,  so care must be taken as to where that occurs so as not to
+'wipe-out' the initial program or data.  This is why even the smallest of
+cool programs have some writes, as a 'start-up' cost (often described in
+textbooks as 'warming up' the cache.  If the dirty-tags were, instead,  all
+set to false, then the first reads from cache will get - what?
+
+So all programs will have a 'start-up' cost of, at most, the size of the
+cache (i.e. up to 32 additional writes),  which is quite insignificant for
+more realistic, longer-running programs, making millions of read requests.
+Of course, students are mostly noticing this when they run very small
+programs and, often, just a single program, without having anything to
+compare it to.
+
+So, why no valid-tag instead? Just for simplicity.  Solutions which employ a
+valid-tag avoid this startup-up cost by working out if the cache location
+has every been used before.  But with only a single CPU/core accessing a
+single cache, and no DMA to modify memory without the cache's knowledge, the
+valid-tag never needs/can change once *it* has warmed-up.  Thus, such
+solutions are always (eventually) checking an unchanging valid-tag.
+
+Things fell off the rails when Purple Square Anonymous suggested we could
+reduce the number of memory reads by reviewing the JEQ instruction.  Great
+to see the detective work, and it worked, so I felt it worwhile to support
+both 'versions' of memory-read statistics, and report them on the webpage.
+That was possible (and eventually got it correct!) until support for the
+write-back cache was added.  Depending on whether the JEQ-false branches
+were taken, or not, the values held in cache, over time, diverge and the
+attempt to report both 'versions' of statistics becomes incorrect.  You
+don't see this in programs without JEQ, or even very small programs, but
+many here have latched on to ackermann-deep.cool as a program that really
+exercises the cache with its very deep stack.
+
+SO - what to do about the varying statistics, so that people's early efforts
+are rewarded, but not to scare off the silent majority?  The sample solution
+on the webpage now implements the 4 combinations of things being discussed,
+and each is a conditionally-compiled and executed program so that its
+variants (hmmm, word of the year) don't interfere with each other.  A bit of
+effort, but it's demonstrative in showing the differences across a variety
+of programs of different sizes and instruction mixes.
+
+I'm very confident that it's correct in all 4 cases and, yes, it's certainly
+a write-back cache and not a write-through cache, once it's warmed up.  We
+could add a valid-tag, and even a time/instruction-counter approach to LRU
+replacement, as one of our lab facilitators, James, and couple of students
+have shown me.  Yes, they can achieve better cache performance, measured
+solely in cache-hits, but *may* suffer if the additional hardware required
+to build them slowed them down (I'm unsure, in the general case, but the
+3rd- paragraph of this post:
+https://secure.csse.uwa.edu.au/run/help2002?p=np&a=422 shows that we *can*
+get carried away).
+
+I don't plan to add any additional variants to the sample solution,  so
+hopefully all the great reverse-engineers here can make their solutions now
+match one of the two sample solutions with caching, and that'll make marking
+so much easier and transparent!
+
+Please continue the relevant discussion in THIS THREAD, and let me know if you
+agree with what you're now seeing.
+
+(I'll now be offline until Monday; ahhh, sunshine at last!)
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result JACCARD: ANONYMOUS wrote:
+
+> I think where is the problem, this is the result when I was running arthmetic.cool, 
+> but I don't know why there is a "div" at the end of the line
+
+Looks like you're mis-interpreting which instructions have a following word, hitting a 5 
+(=div), and then trying to execute that.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result TFIDF: Previously, <chris.mcdonald@uwa.edu.au> wrote:
+
+> Previously, <poster080@student.uwa.edu.au> wrote:
+> 
+> > Any suggestions as to why this happened cheers
+> 
+> It's not possible to say, definitively, but nearly all segmentation violations are the result 
+> of attempting to access memory other than what you program 'owns', or in a manner inconsistent 
+> with the way it's been declared.
+> 
+> As you're working on the credit card problem, examining individual characters in a string (an 
+> array of characters), my guess is that you're attempting to access somewhere 'outside' of the 
+> memory allocated for that string.  Check the indices you're using to access the array's 
+> characters.
+
+
+It appears there is something wrong with this line of code 
+int numbers = strlen(argv[2]);
+but i am not sure what, this is in the main function and i am trying to get length of the char* 
+argv[2].
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result USE: Previously, <poster080@student.uwa.edu.au> wrote:
+
+> Previously, <chris.mcdonald@uwa.edu.au> wrote:
+> 
+> > Previously, <poster080@student.uwa.edu.au> wrote:
+> > 
+> > > Any suggestions as to why this happened cheers
+> > 
+> > It's not possible to say, definitively, but nearly all segmentation violations are the result 
+> > of attempting to access memory other than what you program 'owns', or in a manner inconsistent 
+> > with the way it's been declared.
+> > 
+> > As you're working on the credit card problem, examining individual characters in a string (an 
+> > array of characters), my guess is that you're attempting to access somewhere 'outside' of the 
+> > memory allocated for that string.  Check the indices you're using to access the array's 
+> > characters.
+> 
+> 
+> It appears there is something wrong with this line of code 
+> int numbers = strlen(argv[2]);
+> but i am not sure what, this is in the main function and i am trying to get length of the char* 
+> argv[2].
+
+argv[0] is the name of the executable, argv[1]... the other command line arguments. I think you are not passing enough command line arguments. You must  pass least 3 strings for argv[2] to be defined.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+----------------------------------------------------------------------------------------------------
+Original Post
+Subject:data block
+Body: i saw in one of the posts that volume is a file but not a text file so for example in every method along with the path of file or directory we are given with the path of volume so is it a directory? 
+----------------------------------------------------------------------------------------------------
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result COSINE: Previously, <poster098@student.uwa.edu.au> wrote:
+
+> Although it's stated that a directory will be given as an argument, in the scenarios 
+> that it's not given, should we examine the current directory by default? ie "./"
+
+No.
+
+
+> Will any sample solutions and sample directories be provided like with project 1?
+
+The code of a sample solution after the deadline.
+If I have time this week (and that's a big IF) I'll write a webpage that allows you to 
+upload a directory of files (as a Zip file), and it'll run the sample solution on that 
+directory.  But it's a busy week for me.
+
+ 
+> Also just in case I'm going off track, is it normal for my program to take 2-3 seconds 
+> to finish (with no options) when examining a directory containing 6 images each ~700 
+> to 900KB each? I'm not sure what file type will be tested against and unsure if my 
+> program is too slow.
+
+That sounds a bit slow for just 5MB, but it'll depend on your available computing 
+resources.  You should notice that most time is been spent in the strSHA2() function, 
+not your code.
+
+The execution speed of the SHA2 algorithm is linear in the length of its inputs.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result JACCARD: ANONYMOUS wrote:
+
+> Hi, I was wondering, that since we are implementing
+> a write-back cache. Is the data only written to main memory
+> when there is a read request for data which is not in cache?
+> Therefore having to write the data in the cache into main memory
+> to free up cache memory. 
+> 
+> When calling write_memory do we ever actually need to write into 
+> main memory, or is it all just written into cache?
+
+This is really a 'big' question that has been well discussed in this forum, and you 
+should be consulting past discussions and (more importantly) a textbook on the topic.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result TFIDF: Previously, <poster098@student.uwa.edu.au> wrote:
+
+> Although it's stated that a directory will be given as an argument, in the scenarios 
+> that it's not given, should we examine the current directory by default? ie "./"
+
+No.
+
+
+> Will any sample solutions and sample directories be provided like with project 1?
+
+The code of a sample solution after the deadline.
+If I have time this week (and that's a big IF) I'll write a webpage that allows you to 
+upload a directory of files (as a Zip file), and it'll run the sample solution on that 
+directory.  But it's a busy week for me.
+
+ 
+> Also just in case I'm going off track, is it normal for my program to take 2-3 seconds 
+> to finish (with no options) when examining a directory containing 6 images each ~700 
+> to 900KB each? I'm not sure what file type will be tested against and unsure if my 
+> program is too slow.
+
+That sounds a bit slow for just 5MB, but it'll depend on your available computing 
+resources.  You should notice that most time is been spent in the strSHA2() function, 
+not your code.
+
+The execution speed of the SHA2 algorithm is linear in the length of its inputs.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result USE: Hello,
+
+I am a bit confused in reagard to the collexe file.
+
+I'm trying to put the 16-bitkeywords into the memory array, however every time it just 
+fills the array with 0.
+
+Yet if I try with the non exe file (.cool), it reads the file correctly (using the fgets())
+
+Basically what is the contents of the .coolexe file? Is it integers?
+
+Yet if I go and to atoi() why do I still get 0 for every thing?
+
+Thank you for the help.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+----------------------------------------------------------------------------------------------------
