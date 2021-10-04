@@ -44,9 +44,10 @@ def generate_post(post, threads, cleaners, filters, substitutes, weights, nposts
 
 def find_diff_posts(algo_results, start_index):
     out_posts = []
-    ind = (start_index + 1) % len(algo_results)
+    ind = (start_index + 1) % 4
+    out_posts.append(algo_results[ind][0])
     while ind != start_index:
-        ind = (ind + 1) % len(algo_results)
+        ind = (ind + 1) % 4
         similar_posts = algo_results[ind]
         for post in similar_posts:
             if post in out_posts:
