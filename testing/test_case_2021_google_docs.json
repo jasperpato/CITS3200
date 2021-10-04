@@ -1,0 +1,24 @@
+{
+    "testcases": [
+        {
+            "Subject":"General Questions",
+            "Body":"Hello Chris, 1-) Can you please clarify the difference between a shell, terminal and Bash? Are  they the same? Because I keep hearing them but i am not sure if they are used  interchangeably or...? 2-) Just curious, how did you change the colour of your shell's background (or terminal or what ever)? 3-) When you were in the vi editor, how do you switch between the two modes? What do you press? Cheers"
+        },
+        {
+            "Subject":"error: inactive developer path",
+            "Body":"Hi Chris, I have this error when trying to compile a file: xcrun: error: invalid active developer path (/Library/Developer CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun. What does this mean?"
+        },
+        {
+            "Subject":"char data type",
+            "Body":"Hi Chris/Amitava, I was doing Lab 1 question 9 and I realize some things: 1. I can use atoi on an argument, but I get an error when I try to use it on the individual characters of the argument. 2. I can use isdigit on the individual characters of an argument, but I get an error when I try to use it on the argument. Can you explain why this is the case? Thanks."
+        },
+        {
+            "Subject":"Segmentation fault (core dumped)",
+            "Body":"I was doing the credt card task in the labsheet and i encounted this error after i had compiled my code and tried to run it\n Segmentation fault (core dumped)"
+        },
+        {
+            "Subject":"How to actually open rotate.c",
+            "Body":"Hey, I've got a few questions that I need clarifying;\n1) When using ubuntu, do I use it through powershell (I use Microsoft) and docker desktop, or do I directly use it on ubuntu? (Could be a confusing question but I honestly have confused myself siginificantly)\n2) I downloaded VIM, supposedly the improved version of Vi, how do I open the rotate.c file through VIM?\n3) Depending on the answers to the other questions, this one may be negligent but do I run an ubuntu (myubuntu) container on powershell then supposedly access the rotate.c file through VIM on powershell, and if so how do I access files on my laptop in the terminal? Sorry if these questions have been asked before but I honestly don't know if the other questions I've seen are actually asking the same question, just cause I'm befuddled.\nAlso I have done this: https://teaching.csse.uwa.edu.au/units/CITS2002/labsheets/install-linux.php Pretty much I'm confused on how to open the C file as to start editing it and executing it etc. Thank you so much."
+        }
+    ]
+}
