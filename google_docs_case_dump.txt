@@ -1,251 +1,37 @@
 Original Post
-Subject:question on size_t
-Body:Hi chris, what are the uint_32t and size_t constants? Are these constants predefined in the system?
-----------------------------------------------------------------------------------------------------
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-result COSINE: OK, have I've finally read through all the comments about memory reads and
-writes and collecting statistics.  Has been really impressive following the
-conversations, and trying to reverse-engineer your collective
-reverse-engineering of the sample solution!
-
-When planning this project, Amitava, the lab facilitators, and I all held
-early discussions about how difficult, or how easy, to make the project so
-that (as ever) the majority of students would be able to complete it, and
-learn enough from it.  We discussed more difficult versions, with multi-line
-caches, tracking locality-of-reference, and cache replacement policies. All
-good fun extensions but, given the available time and size of a solution, we
-settled on what we have.  Hopefully, somewhere in the middle.  Clearly those
-contributing to the three longer threads, here, on memory and caching are
-well advanced with their projects - great! - but we'll see what happens in
-the final 2 weeks when the silent majority (of 300?) reach this point, and
-read this sequence of posts.  And hopefully not simply replicate the
-conversations without reading!
-
-The standard sample solution, as shared amongst the lab facilitators (and
-markers), is probably the most basic one possible that meets the project's
-requirements - direct-mapped, write-back cache, with no additional
-replacement policy. Each cache entry maintains its contents, the RAM address
-being mirrored, and a single dirty-tag.  No valid-tag.  The cache needs to
-be initialised, and is done so by marking all locations as initially dirty.
-That means that the initial read or write for each location will result in a
-write-back,  so care must be taken as to where that occurs so as not to
-'wipe-out' the initial program or data.  This is why even the smallest of
-cool programs have some writes, as a 'start-up' cost (often described in
-textbooks as 'warming up' the cache.  If the dirty-tags were, instead,  all
-set to false, then the first reads from cache will get - what?
-
-So all programs will have a 'start-up' cost of, at most, the size of the
-cache (i.e. up to 32 additional writes),  which is quite insignificant for
-more realistic, longer-running programs, making millions of read requests.
-Of course, students are mostly noticing this when they run very small
-programs and, often, just a single program, without having anything to
-compare it to.
-
-So, why no valid-tag instead? Just for simplicity.  Solutions which employ a
-valid-tag avoid this startup-up cost by working out if the cache location
-has every been used before.  But with only a single CPU/core accessing a
-single cache, and no DMA to modify memory without the cache's knowledge, the
-valid-tag never needs/can change once *it* has warmed-up.  Thus, such
-solutions are always (eventually) checking an unchanging valid-tag.
-
-Things fell off the rails when Purple Square Anonymous suggested we could
-reduce the number of memory reads by reviewing the JEQ instruction.  Great
-to see the detective work, and it worked, so I felt it worwhile to support
-both 'versions' of memory-read statistics, and report them on the webpage.
-That was possible (and eventually got it correct!) until support for the
-write-back cache was added.  Depending on whether the JEQ-false branches
-were taken, or not, the values held in cache, over time, diverge and the
-attempt to report both 'versions' of statistics becomes incorrect.  You
-don't see this in programs without JEQ, or even very small programs, but
-many here have latched on to ackermann-deep.cool as a program that really
-exercises the cache with its very deep stack.
-
-SO - what to do about the varying statistics, so that people's early efforts
-are rewarded, but not to scare off the silent majority?  The sample solution
-on the webpage now implements the 4 combinations of things being discussed,
-and each is a conditionally-compiled and executed program so that its
-variants (hmmm, word of the year) don't interfere with each other.  A bit of
-effort, but it's demonstrative in showing the differences across a variety
-of programs of different sizes and instruction mixes.
-
-I'm very confident that it's correct in all 4 cases and, yes, it's certainly
-a write-back cache and not a write-through cache, once it's warmed up.  We
-could add a valid-tag, and even a time/instruction-counter approach to LRU
-replacement, as one of our lab facilitators, James, and couple of students
-have shown me.  Yes, they can achieve better cache performance, measured
-solely in cache-hits, but *may* suffer if the additional hardware required
-to build them slowed them down (I'm unsure, in the general case, but the
-3rd- paragraph of this post:
-https://secure.csse.uwa.edu.au/run/help2002?p=np&a=422 shows that we *can*
-get carried away).
-
-I don't plan to add any additional variants to the sample solution,  so
-hopefully all the great reverse-engineers here can make their solutions now
-match one of the two sample solutions with caching, and that'll make marking
-so much easier and transparent!
-
-Please continue the relevant discussion in THIS THREAD, and let me know if you
-agree with what you're now seeing.
-
-(I'll now be offline until Monday; ahhh, sunshine at last!)
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-result JACCARD: ...and did you try the suggestion implemented in the coolc.sh shellscript, itself?
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-result TFIDF: ANONYMOUS wrote:
-
-> So with the replacement of the substring (such as in the examples given), how can the 
-> character array (after replacement) be a greater length than it was originally? It was 
-> my understanding you couldn't change the length of an array once it has been set. 
-
-You are correct - it would be a problem if the string (array) holding the final result was too 
-short to hold the result.  However, in this example, the prototype:
-
-  void replace( char oldword[], char newword[], char whole_sentence[] );
-
-it's the contents of whole_sentence[] that is being updated (in-situ), and holds the result.  
-Thus, the code that calls replace() has the responsibility of passing sufficient space to hold the 
-result.
-
-A better function would also receive the known maximum length of whole_sentence[], as a 4th 
-parameter, and ensure that this length was never exceeded  (and returning an error?).
-
-In the more general case,  and we'll see examples of this in later lectures, the function would 
-dynamically alloc *new* memory to hold the entire result, and return that newly allocated memory:
-
-  char *replace_new( char oldword[], char newword[], char whole_sentence[] );
-
-Good question.
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-result USE: ANONYMOUS wrote:
-
-> Are we meant to implement a write-back cache with write allocation or a write-back cache 
-> with no-write allocation for the project?
-
-It's an interesting question, you must have been reading widely, but one that doesn't make much 
-sense (have a more-correct answer in the context of our project):
-
-- our project doesn't employ multi-word cache lines.
-- our programs will not be dominated by I/O.
-- we (cannot) focus on referential locality, and have no branch prediction that could dynamically 
-inform the cache.
-- our memory hierarchy is dominated by the stack (reflected in main-memory) and not general-purpose 
-registers for, say, parameter passing.
-
-UNLESS you have already attempted either type of allocation, I suggest that you "don't bother" with 
-either.
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-----------------------------------------------------------------------------------------------------
-Original Post
-Subject:about sifs_mkvolume.c
-Body:Sorry if its a dumb question to ask, but where is the function SIFS_mkvolume() being called from? I tried searching around the internet for the correct library but have no luck finding it? 
+Subject:General Questions
+Body:Hello Chris, 1-) Can you please clarify the difference between a shell, terminal and Bash? Are  they the same? Because I keep hearing them but i am not sure if they are used  interchangeably or...? 2-) Just curious, how did you change the colour of your shell's background (or terminal or what ever)? 3-) When you were in the vi editor, how do you switch between the two modes? What do you press? Cheers
 ----------------------------------------------------------------------------------------------------
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
 result COSINE: ANONYMOUS wrote:
 
-> During the call function (apart from placing the parameters, return
-> address, previous FP and local vars on the stack) is there something
-> fundamental I'm missing when the function is called? Is the halt
-> instruction following the call there to change the control back to the
-> callers stack frame?
+> Hello Chris,
+> 
+> 1-) Can you please clarify the difference between a shell, terminal and Bash? Are 
+> they the same? Because I keep hearing them but i am not sure if they are used 
+> interchangeably or...?
+> 
+> 2-) Just curious, how did you change the colour of your shell's background (or 
+> terminal or what ever)?
+> 
+> 3-) When you were in the vi editor, how do you switch between the two modes? What do 
+> you press?
+> 
+> Cheers
 
-Are you setting/modifying the PC, to indicate where the next instruction (main's 1st 
-instruction) comes from?
 
-The HALT is there to stop the whole program, once control has returned from main().
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-result JACCARD: For the strcat_a. It seems that src is altered, but I don't understand why as in the 
-function itself, only the dest is being changed. Is there a specific reason for this? 
-(picture included shows the string before and after the function)
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-result TFIDF: ANONYMOUS wrote:
 
-> During the call function (apart from placing the parameters, return
-> address, previous FP and local vars on the stack) is there something
-> fundamental I'm missing when the function is called? Is the halt
-> instruction following the call there to change the control back to the
-> callers stack frame?
+Not Chris,
 
-Are you setting/modifying the PC, to indicate where the next instruction (main's 1st 
-instruction) comes from?
+Firstly, yeah they are in a way interchangeable they are just basically allow the user(Us) 
+and/or programs to interact with the operating system. 
 
-The HALT is there to stop the whole program, once control has returned from main().
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-result USE: ANONYMOUS wrote:
+Secondly, depends on what OS you are using for your command line. Google it("How to alter 
+terminal on OSX" something like that.
 
-> sorry,I just misundertood question,I thought if we pass an integer, then the next time when running the program, the 
-> Rot needs to be that number.
-
-OK, sounds like you're getting it now.
-
-When a program runs, it starts with a 'fresh' copy of its variables (held in memory).
-When a process terminates, its final values of its variables are entirely forgotten
-(and the memory it was using will soon be used by another process).
-
-No information about a previosuly running program is remembered for the next time it runs -
-UNLESS that program, itself, saves some information somewhere, such as by using a file on disk,
-reading/creating the file each time the program runs, and writing information each time the program finishes.
-
-I think I can see where your earlier confusion with the keyword 'static' came from, but in this context it only means within each 
-*single* execution of a program,  not across multiple executions.
-
-Good luck,
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-----------------------------------------------------------------------------------------------------
-Original Post
-Subject:which mode to set file
-Body:If we wanted to change contents of the file with i.e. mkdir, would fopen() need to have mode r+ or w+ or something else?
-----------------------------------------------------------------------------------------------------
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-result COSINE: ANONYMOUS wrote:
-
-> At the end of execute_stackmachine we have a return statement(return read_memory(SP);) 
-> that returns what is on top of the stack. This increments the read count but should 
-> it? My files are coming out with 1 to many reads and I'm wondering if this is the 
-> cause.
-
-If you're returning (or just using) the value on the TOS, then that value must have recently been 
-pushed to the TOS.  If you have a cache implemented, that value will be in the cache as a 
-consequence of the push, and so shouldn't require a read of main-memory to pop it off again.
+Thirdly, Can't help you there sorry.
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -254,16 +40,65 @@ consequence of the push, and so shouldn't require a read of main-memory to pop i
 |                                         |
 result JACCARD: ANONYMOUS wrote:
 
-> I just want to double-check, the file we need to submit is the C11 source 
-> file(runcool.c),right?
+> 1-) Can you please clarify the difference between a shell, terminal and Bash? Are 
+> they the same? Because I keep hearing them but i am not sure if they are used 
+> interchangeably or...?
+
+Many textbook authors and writers on the internet will use the terms interchangeably, so it takes a bit of context to 
+work out what's being discussed.  Pedantically, they 3 are distinct things, so sorry if that wasn't clear from Friday's 
+workshop.
+
+A *terminal* program renders and manages the rectangular graphical window, rendering colours, fonts, etc, and responds 
+to keyboard, mouse, and scrollbar events. Some common examples include xterm (on Linux), and Terminal and iTerm2 (on 
+macOS):
+
+  https://en.wikipedia.org/wiki/List_of_terminal_emulators
+
+A terminal runs as an operating system process, and can itself created and manage one or more other processes, receive 
+the direct *their* keyboard events, and receive and render the character output of those processes.  While terminal 
+programs can usually permit each of these other processes to be individually specified, each is usually an instance of a 
+*shell* program. If a terminal program simultaneously runs several shell processes, each is usually managed within a 
+separate tab (as on a browser) to separate their inputs and outputs.  We often say that these other processes runs 
+'behind' the terminal process.
+
+A *shell* program is the thing that issues a prompt, receives a line of character input, breaks the line into space- and 
+tab-separated words, and based on the first word on each line performs and 'internal' action, or executes and waits for 
+an external program (such as 'date', 'cal', or 'cc'). When the shell creates an external process, it passes to that 
+process each of the words from the command-line as its arguments, so that the process knows what to do: 'cal -y',
+'cc -o try try.c',  etc.
+Of note, the shell does not know what any of the words/arguments mean, and just passes them on.
+When each new process produces some character-based output, it is received and rendered by the terminal process.
+
+*bash* is one type of shell program,  just like C and Java are types of programming languages. There's many different 
+shells - others include zsh (the default on macOS), zsh, csh, ash, rc, ...)  Each different shell supports/recognizes a 
+different syntax, but each has the same primary role of creating and managing other processes.
+
+ 
+> 2-) Just curious, how did you change the colour of your shell's background (or 
+> terminal or what ever)?
+
+(with respect to the descriptions above) I use iTerm2 on macOS (highly recommended!).  It supports 'profiles' which 
+group together (the program/shell to run, the size of the window, the background and foreground colours, the font, ...)
+Other terminal programs have their own mechanisms for setting these attributes and, as suggested,  you'll need to read 
+their manuals or online documentation.
+This from 2004!  https://www.linuxquestions.org/questions/debian-26/how-to-change-background-and-fonts-color-in-xterm-156290/
 
 
-Sometimes I question my own writing ability!
 
- From THE PROJECT DESCRIPTION:
+> 3-) When you were in the vi editor, how do you switch between the two modes? What do 
+> you press?
 
-"Your project must be written in C11 in a single source-code file named runcool.c 
- This is the only file you should submit for marking."
+vi is always in one of two modes - command-mode (the starting state) and insert-mode.  You move to insert-mode by 
+invoking an insertion command (such as i for insert or a for append).  From there you stay in insert-mode until you 
+press the Escape key (usually top-left of keyboard),  which takes you back to command-mode.
+
+And, almost an internet meme, the most important knowledge is how to get out of vi!
+
+  https://www.howtogeek.com/411210/how-to-exit-the-vi-or-vim-editor/
+  https://stackoverflow.com/questions/11828270/how-do-i-exit-the-vim-editor
+
+___
+Hope this all helps,
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -272,136 +107,55 @@ Sometimes I question my own writing ability!
 |                                         |
 result TFIDF: ANONYMOUS wrote:
 
-> The program could not find the file...
-> 
-> mycal.c:10:10: fatal error: './first_day_of_month.c' file not found
-> #include "./first_day_of_month.c"
+> This helps a lot, but still, a little unclear how to actually open that C file. Are we working in the terminal 
+> or in the Docker desktop? where are we supposed to actually change the C code according to the labsheet?
 
-The C compiler is stating that the file  first_day_of_month.c  is not found in the same 
-directory as your main C file.  You've downloaded it, and copied there?
+Hi,  I'm a bit confused as to where "you're up to" in the steps of:
 
- 
-> it's all stored in the same file.
+  http://teaching.csse.uwa.edu.au/units/CITS2002/labsheets/install-linux.php
 
-Unsure what this means,  but if you've copied the contents of  first_day_of_month.c. 
-into your main C file, then you don't need the #include ...  line at all.
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-result USE: ANONYMOUS wrote:
+If you have a Ubuntu image downloaded and populated with necessary packages - providing the C compiler (essential) and 
+your choice of tezt editor (vi/vim recommended if you don't already have a favourite - then you can run a new Linux 
+terminal within DockerDesktop, or just through the existing terminal program on your system (my preference, as it saves 
+on screen real-estate to use the same terminal program with multiple open tabs).
 
-> The program could not find the file...
-> 
-> mycal.c:10:10: fatal error: './first_day_of_month.c' file not found
-> #include "./first_day_of_month.c"
+Then (assuming vi as your editor, and that you have the required C file in your present working directory), you run vi 
+and pass the file's name on the command-line:
 
-The C compiler is stating that the file  first_day_of_month.c  is not found in the same 
-directory as your main C file.  You've downloaded it, and copied there?
+  prompt>  vi rotate.c
 
- 
-> it's all stored in the same file.
+Then you're 'in' vi, and you can issue vi's commands navigate around the file or to edit it (switching backwards and 
+forwards between command-mode and insert-mode:
 
-Unsure what this means,  but if you've copied the contents of  first_day_of_month.c. 
-into your main C file, then you don't need the #include ...  line at all.
+  https://secure.csse.uwa.edu.au/run/help2002?hl=insert%20mode&a=26 )
+
+When you've made all the edits you wish, you simply leave vi with two capital Z's - ZZ
+and you'll be returned to the shell prompt, where you can compile the modified file:
+
+  prompt>  cc -o rotate rotate.c
+
+If there's no compilation errors (otherwise, back to editing....) you can run the successfully compiled program with:
+
+  prompt>  ./rotate  yourstring
+
+Does that help?
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
 ----------------------------------------------------------------------------------------------------
 Original Post
-Subject:segmentation fault
-Body: In dirinfo, we tried to define *entrynames = entries (which is array of entry names). But when we try to print elements of entryname out, it gives the segmentation error. Anyone know why this happens?
+Subject:error: inactive developer path
+Body:Hi Chris, I have this error when trying to compile a file: xcrun: error: invalid active developer path (/Library/Developer CommandLineTools), missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun. What does this mean?
 ----------------------------------------------------------------------------------------------------
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
-result COSINE: OK, have I've finally read through all the comments about memory reads and
-writes and collecting statistics.  Has been really impressive following the
-conversations, and trying to reverse-engineer your collective
-reverse-engineering of the sample solution!
+result COSINE: Previously, <poster008@student.uwa.edu.au> wrote:
 
-When planning this project, Amitava, the lab facilitators, and I all held
-early discussions about how difficult, or how easy, to make the project so
-that (as ever) the majority of students would be able to complete it, and
-learn enough from it.  We discussed more difficult versions, with multi-line
-caches, tracking locality-of-reference, and cache replacement policies. All
-good fun extensions but, given the available time and size of a solution, we
-settled on what we have.  Hopefully, somewhere in the middle.  Clearly those
-contributing to the three longer threads, here, on memory and caching are
-well advanced with their projects - great! - but we'll see what happens in
-the final 2 weeks when the silent majority (of 300?) reach this point, and
-read this sequence of posts.  And hopefully not simply replicate the
-conversations without reading!
+> I found the following StackExchange posting by searching for some of the specific text from the error message:
+>   https://apple.stackexchange.com/questions/254380/why-am-i-getting-an-invalid-active-developer-path-when-attempting-to-use-git-a
 
-The standard sample solution, as shared amongst the lab facilitators (and
-markers), is probably the most basic one possible that meets the project's
-requirements - direct-mapped, write-back cache, with no additional
-replacement policy. Each cache entry maintains its contents, the RAM address
-being mirrored, and a single dirty-tag.  No valid-tag.  The cache needs to
-be initialised, and is done so by marking all locations as initially dirty.
-That means that the initial read or write for each location will result in a
-write-back,  so care must be taken as to where that occurs so as not to
-'wipe-out' the initial program or data.  This is why even the smallest of
-cool programs have some writes, as a 'start-up' cost (often described in
-textbooks as 'warming up' the cache.  If the dirty-tags were, instead,  all
-set to false, then the first reads from cache will get - what?
-
-So all programs will have a 'start-up' cost of, at most, the size of the
-cache (i.e. up to 32 additional writes),  which is quite insignificant for
-more realistic, longer-running programs, making millions of read requests.
-Of course, students are mostly noticing this when they run very small
-programs and, often, just a single program, without having anything to
-compare it to.
-
-So, why no valid-tag instead? Just for simplicity.  Solutions which employ a
-valid-tag avoid this startup-up cost by working out if the cache location
-has every been used before.  But with only a single CPU/core accessing a
-single cache, and no DMA to modify memory without the cache's knowledge, the
-valid-tag never needs/can change once *it* has warmed-up.  Thus, such
-solutions are always (eventually) checking an unchanging valid-tag.
-
-Things fell off the rails when Purple Square Anonymous suggested we could
-reduce the number of memory reads by reviewing the JEQ instruction.  Great
-to see the detective work, and it worked, so I felt it worwhile to support
-both 'versions' of memory-read statistics, and report them on the webpage.
-That was possible (and eventually got it correct!) until support for the
-write-back cache was added.  Depending on whether the JEQ-false branches
-were taken, or not, the values held in cache, over time, diverge and the
-attempt to report both 'versions' of statistics becomes incorrect.  You
-don't see this in programs without JEQ, or even very small programs, but
-many here have latched on to ackermann-deep.cool as a program that really
-exercises the cache with its very deep stack.
-
-SO - what to do about the varying statistics, so that people's early efforts
-are rewarded, but not to scare off the silent majority?  The sample solution
-on the webpage now implements the 4 combinations of things being discussed,
-and each is a conditionally-compiled and executed program so that its
-variants (hmmm, word of the year) don't interfere with each other.  A bit of
-effort, but it's demonstrative in showing the differences across a variety
-of programs of different sizes and instruction mixes.
-
-I'm very confident that it's correct in all 4 cases and, yes, it's certainly
-a write-back cache and not a write-through cache, once it's warmed up.  We
-could add a valid-tag, and even a time/instruction-counter approach to LRU
-replacement, as one of our lab facilitators, James, and couple of students
-have shown me.  Yes, they can achieve better cache performance, measured
-solely in cache-hits, but *may* suffer if the additional hardware required
-to build them slowed them down (I'm unsure, in the general case, but the
-3rd- paragraph of this post:
-https://secure.csse.uwa.edu.au/run/help2002?p=np&a=422 shows that we *can*
-get carried away).
-
-I don't plan to add any additional variants to the sample solution,  so
-hopefully all the great reverse-engineers here can make their solutions now
-match one of the two sample solutions with caching, and that'll make marking
-so much easier and transparent!
-
-Please continue the relevant discussion in THIS THREAD, and let me know if you
-agree with what you're now seeing.
-
-(I'll now be offline until Monday; ahhh, sunshine at last!)
+And, wow, look at how many times the question and the accepted answer have been upvoted!
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -410,175 +164,286 @@ agree with what you're now seeing.
 |                                         |
 result JACCARD: ANONYMOUS wrote:
 
-> I think where is the problem, this is the result when I was running arthmetic.cool, 
-> but I don't know why there is a "div" at the end of the line
+> Hi Chris,
+> 
+> I have this error when trying to compile  a file:
+> 
+> xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), 
+> missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun
+> 
+> What does this mean?
 
-Looks like you're mis-interpreting which instructions have a following word, hitting a 5 
-(=div), and then trying to execute that.
+Not seen the error before - but it's (only) from macOS.
+
+Have you downloaded the Xcode package, from the App Store?
+Did you run xcrun yourself (by typing it in), or did 'cc' throw up that error?
+
+On my (working) Big Sur installation of Xcode, I do not have the file 
+/Library/Developer/CommandLineTools/usr/bin/xcrun. either.
+
+My xcrun is located in. /usr/bin/xcrun
+
+What is the output when you run:
+
+   prompt> which xcrun
+
+??
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
-result TFIDF: Previously, <chris.mcdonald@uwa.edu.au> wrote:
+result TFIDF: ANONYMOUS wrote:
 
-> Previously, <poster080@student.uwa.edu.au> wrote:
-> 
-> > Any suggestions as to why this happened cheers
-> 
-> It's not possible to say, definitively, but nearly all segmentation violations are the result 
-> of attempting to access memory other than what you program 'owns', or in a manner inconsistent 
-> with the way it's been declared.
-> 
-> As you're working on the credit card problem, examining individual characters in a string (an 
-> array of characters), my guess is that you're attempting to access somewhere 'outside' of the 
-> memory allocated for that string.  Check the indices you're using to access the array's 
-> characters.
+> the prompt: which xcrun returns /usr/bin/xcrun so I don't know why this is happening. It 
+> happened when I tried the cc command. so the cc threw up the error.
 
+Sorry, but I can't imagine what the problem is, based on what you're described.
 
-It appears there is something wrong with this line of code 
-int numbers = strlen(argv[2]);
-but i am not sure what, this is in the main function and i am trying to get length of the char* 
-argv[2].
+My first thought would be that Xcode (and/or the supplementary tools) have not been installed 
+correctly,  but I can't tell that for sure.  If it's a laptop, are you able to bring it in to 
+UWA?  Perhaps email me to arrange a time  (not before 2PM today).
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+----------------------------------------------------------------------------------------------------
+Original Post
+Subject:char data type
+Body:Hi Chris/Amitava, I was doing Lab 1 question 9 and I realize some things: 1. I can use atoi on an argument, but I get an error when I try to use it on the individual characters of the argument. 2. I can use isdigit on the individual characters of an argument, but I get an error when I try to use it on the argument. Can you explain why this is the case? Thanks.
+----------------------------------------------------------------------------------------------------
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result COSINE: ANONYMOUS wrote:
+
+Hi,
+
+> I was doing Lab 1 question 9 and I realize some things:
+> 1. I can use atoi on an argument, but I get an error when I try to use it on the 
+> individual characters of the argument.
+
+As in most programming languages, the datatypes of a function's parameters, and its returned 
+value are very important.  n the case of the atoi() function, its single parameter must be a 
+sequence of characters (a string in C), because formatted representations of integers are 
+often longer than a single character (e.g. "123").
+
+A single character is not a string, and the value and internal representation of the 
+character '3' is different to the string "3".
+
+> 2. I can use isdigit on the individual characters of an argument, but I get an error 
+> when I try to use it on the argument.
+
+Similarly, the isdigit() function requires a single character argument, but not a string. In 
+all cases, a single character can be checked to see if it's a digit, or not, but strings can 
+contain more than a single character - and the function is not named  isnumber().
+
+Amitava will be discussing the relationship and differences between C's characters and 
+strings, in Lecture 6, tomorrow.
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
-result USE: Previously, <poster080@student.uwa.edu.au> wrote:
+result JACCARD: ANONYMOUS wrote:
 
-> Previously, <chris.mcdonald@uwa.edu.au> wrote:
-> 
-> > Previously, <poster080@student.uwa.edu.au> wrote:
-> > 
-> > > Any suggestions as to why this happened cheers
-> > 
-> > It's not possible to say, definitively, but nearly all segmentation violations are the result 
-> > of attempting to access memory other than what you program 'owns', or in a manner inconsistent 
-> > with the way it's been declared.
-> > 
-> > As you're working on the credit card problem, examining individual characters in a string (an 
-> > array of characters), my guess is that you're attempting to access somewhere 'outside' of the 
-> > memory allocated for that string.  Check the indices you're using to access the array's 
-> > characters.
-> 
-> 
+> By data I was referring to the numeric values held by the addresses. However, this still raises the question on 
+> how basic.cool can achieve 4 hits if there are only 2 instances of an address being repeated
+
+It's always the addresses, never the numeric values held in any addresses.
+
+Instructions like CALL and RETURN involve/manipulate the stack (which is in memory) and if CALL pushes something onto 
+the stack, and it's still there when you RETURN, you'll get a hit.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result TFIDF: ANONYMOUS wrote:
+
+> I mean question9 asks program to recieve an argument if it's a number, then the rotation amount changes 
+> to this value.Can you give me some idea how to achieve this? What do I need to do with the "Rot" 
+> variable?
+You can only read strings from the command line, if you want an argument to be an integer, you have to use the atoi() (ascii to integer) function. Is that the problem?
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+----------------------------------------------------------------------------------------------------
+Original Post
+Subject:Segmentation fault (core dumped)
+Body:I was doing the credt card task in the labsheet and i encounted this error after i had compiled my code and tried to run it
+ Segmentation fault (core dumped)
+----------------------------------------------------------------------------------------------------
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result COSINE: Previously, <poster080@student.uwa.edu.au> wrote:
+
 > It appears there is something wrong with this line of code 
 > int numbers = strlen(argv[2]);
 > but i am not sure what, this is in the main function and i am trying to get length of the char* 
 > argv[2].
 
-argv[0] is the name of the executable, argv[1]... the other command line arguments. I think you are not passing enough command line arguments. You must  pass least 3 strings for argv[2] to be defined.
+That line looks quite harmless - assuming that you're invoking your program with sufficient command-line 
+arguments.  You'll be needing:
+
+  ./program  huge  elephant
+
+to be able to get the length of the string  elephant.
+Providing sufficient arguments?
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result JACCARD: Previously, <poster080@student.uwa.edu.au> wrote:
+
+> Any suggestions as to why this happened cheers
+
+It's not possible to say, definitively, but nearly all segmentation violations are the result 
+of attempting to access memory other than what you program 'owns', or in a manner inconsistent 
+with the way it's been declared.
+
+As you're working on the credit card problem, examining individual characters in a string (an 
+array of characters), my guess is that you're attempting to access somewhere 'outside' of the 
+memory allocated for that string.  Check the indices you're using to access the array's 
+characters.
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result TFIDF: Previously, <poster080@student.uwa.edu.au> wrote:
+
+> definitely isn't as even my computer is giving me warnings about attempting to access stuff within 
+> the computer I don't have access to
+
+This 2nd part of your reply has me very confused ??
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
 ----------------------------------------------------------------------------------------------------
 Original Post
-Subject:data block
-Body: i saw in one of the posts that volume is a file but not a text file so for example in every method along with the path of file or directory we are given with the path of volume so is it a directory? 
+Subject:How to actually open rotate.c
+Body:Hey, I've got a few questions that I need clarifying;
+1) When using ubuntu, do I use it through powershell (I use Microsoft) and docker desktop, or do I directly use it on ubuntu? (Could be a confusing question but I honestly have confused myself siginificantly)
+2) I downloaded VIM, supposedly the improved version of Vi, how do I open the rotate.c file through VIM?
+3) Depending on the answers to the other questions, this one may be negligent but do I run an ubuntu (myubuntu) container on powershell then supposedly access the rotate.c file through VIM on powershell, and if so how do I access files on my laptop in the terminal? Sorry if these questions have been asked before but I honestly don't know if the other questions I've seen are actually asking the same question, just cause I'm befuddled.
+Also I have done this: https://teaching.csse.uwa.edu.au/units/CITS2002/labsheets/install-linux.php Pretty much I'm confused on how to open the C file as to start editing it and executing it etc. Thank you so much.
 ----------------------------------------------------------------------------------------------------
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
-result COSINE: Previously, <poster098@student.uwa.edu.au> wrote:
+result COSINE: ANONYMOUS wrote:
 
-> Although it's stated that a directory will be given as an argument, in the scenarios 
-> that it's not given, should we examine the current directory by default? ie "./"
-
-No.
-
-
-> Will any sample solutions and sample directories be provided like with project 1?
-
-The code of a sample solution after the deadline.
-If I have time this week (and that's a big IF) I'll write a webpage that allows you to 
-upload a directory of files (as a Zip file), and it'll run the sample solution on that 
-directory.  But it's a busy week for me.
-
- 
-> Also just in case I'm going off track, is it normal for my program to take 2-3 seconds 
-> to finish (with no options) when examining a directory containing 6 images each ~700 
-> to 900KB each? I'm not sure what file type will be tested against and unsure if my 
-> program is too slow.
-
-That sounds a bit slow for just 5MB, but it'll depend on your available computing 
-resources.  You should notice that most time is been spent in the strSHA2() function, 
-not your code.
-
-The execution speed of the SHA2 algorithm is linear in the length of its inputs.
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-result JACCARD: ANONYMOUS wrote:
-
-> Hi, I was wondering, that since we are implementing
-> a write-back cache. Is the data only written to main memory
-> when there is a read request for data which is not in cache?
-> Therefore having to write the data in the cache into main memory
-> to free up cache memory. 
+> Hey,
 > 
-> When calling write_memory do we ever actually need to write into 
-> main memory, or is it all just written into cache?
+> I've got a few questions that I need clarifying;
+> 
+> 1) When using ubuntu, do I use it through powershell (I use Microsoft) and docker 
+> desktop, or do I directly use it on ubuntu? (Could be a confusing question but I 
+> honestly have confused myself siginificantly)
+> 
+> 2) I downloaded VIM, supposedly the improved version of Vi, how do I open the rotate.c 
+> file through VIM?
+> 
+> 3) Depending on the answers to the other questions, this one may be negligent but do I 
+> run an ubuntu (myubuntu) container on powershell then supposedly access the rotate.c 
+> file through VIM on powershell, and if so how do I access files on my laptop in the 
+> terminal?
+> 
+> Sorry if these questions have been asked before but I honestly don't know if the other 
+> questions I've seen are actually asking the same question, just cause I'm befuddled. 
+> Also I have done this:
+> https://teaching.csse.uwa.edu.au/units/CITS2002/labsheets/install-linux.php
+> 
+> Pretty much I'm confused on how to open the C file as to start editing it and 
+> executing it etc.
+> 
+> Thank you so much.
 
-This is really a 'big' question that has been well discussed in this forum, and you 
-should be consulting past discussions and (more importantly) a textbook on the topic.
+I'm not a lecturer or a lab facilitator so by all means I could be somewhat wrong.
+
+1) Confusing question but the idea if your intending to use docker is to run ubuntu using 
+docker through powershell. Docker is an application that you can interact with through ur 
+powershell, the docker application is quite interesting, it creates "images" (think of it as 
+a little portal) of different Operating systems (in our case, Ubuntu) within ur local/host OS 
+(yours being Windows). 
+
+Within the images there are "containers" (I could be wrong but I imagine they are the 
+different user's of the OS), throughout the unit you can create new containers as you like, 
+or keep coming back to the same container so your files in that container can be interacted 
+with each session. You will be using your powershell to communicate with docker through 
+commands and open your little Ubuntu portal, in this portal you should be doing your software 
+development in this unit.
+
+2) Navigate to the folder holding rotate.c through your powershell and then type "vim 
+rotate.c" to edit the file. However, as stated before this file should be within your 
+container, you can do this by using docker commands to copy or simply creating a new c file 
+in the container and copy and pasting the text.
+
+3) This question is also confusing and I think it's important to understand the role of 
+certain tools we are using:
+Docker - application we use to create images of other OS within our host OS, with each 
+container representing a different user (with different folders) of those images
+VIM - a simple text editor
+Powershell - a command driven application that we use to communicate to our OS and it's 
+applications.
+
+With that in mind, through powershell we communicate to our docker application and instruct 
+it to open our myubuntu container ("portal"). Once opened the prompt will change to "root" 
+with a bunch of numbers/letters indicating the powershell is now communicating to the 
+container. We then can create our own files in this container, including rotate.c, we can use 
+VIM to create such files since it is a text editor (high level software language files are 
+essentially just text files with special syntax). Once done you can simply exit your 
+container by communicating through powershell to the docker container, putting you back onto 
+your host OS command-line (powershell).
+
+I've ommitted specific commands used etc because it would take ages laying them all out, what 
+helps is understanding what each tool use is, and then researching how to do certain tasks 
+that are in each tools breadth. Such as opening and editing a file in vim, or navigating to a 
+different folder in powershell, or creating a new container in your docker container.
+
+Hope this helps.
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
-result TFIDF: Previously, <poster098@student.uwa.edu.au> wrote:
+result JACCARD: Thanks for your great reply Lewis.
 
-> Although it's stated that a directory will be given as an argument, in the scenarios 
-> that it's not given, should we examine the current directory by default? ie "./"
-
-No.
-
-
-> Will any sample solutions and sample directories be provided like with project 1?
-
-The code of a sample solution after the deadline.
-If I have time this week (and that's a big IF) I'll write a webpage that allows you to 
-upload a directory of files (as a Zip file), and it'll run the sample solution on that 
-directory.  But it's a busy week for me.
-
- 
-> Also just in case I'm going off track, is it normal for my program to take 2-3 seconds 
-> to finish (with no options) when examining a directory containing 6 images each ~700 
-> to 900KB each? I'm not sure what file type will be tested against and unsure if my 
-> program is too slow.
-
-That sounds a bit slow for just 5MB, but it'll depend on your available computing 
-resources.  You should notice that most time is been spent in the strSHA2() function, 
-not your code.
-
-The execution speed of the SHA2 algorithm is linear in the length of its inputs.
+Hopefully we can encourage more students to answer each others' questions, here, by offering their 
+suggestions and success-stories.
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
-result USE: Hello,
+result TFIDF: Previously, <poster084@student.uwa.edu.au> wrote:
 
-I am a bit confused in reagard to the collexe file.
+> So I am using ubuntu 20.04 LTS and I am going through "Linux and compiler basics". But 
+> when I am  going through cat "linux-cc-basics.php" command, it says there is no such 
+> file or directory. Where should I save my file? I am using windows 10 and I saved the 
+> file previously under This pc>(c)>users> my account name. 
 
-I'm trying to put the 16-bitkeywords into the memory array, however every time it just 
-fills the array with 0.
+The file "linux-cc-basics.php" is a webpage so, unless you've downloaded it to somewhere on your 
+local Windows file-system (such as the Desktop), you will not have it on your local system and, 
+thus, cannot display it with 'cat'.
 
-Yet if I try with the non exe file (.cool), it reads the file correctly (using the fgets())
+Before running a docker image (to become a container) you need to indicate through its command-
+line arguments which parts of your local file-system that docker should able to access.
 
-Basically what is the contents of the .coolexe file? Is it integers?
+I believe that this is the same under both Windows and macOS, and has been described here:
 
-Yet if I go and to atoi() why do I still get 0 for every thing?
+  https://secure.csse.uwa.edu.au/run/help2002?p=np&a=55
 
-Thank you for the help.
+??
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
