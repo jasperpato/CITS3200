@@ -107,6 +107,32 @@ Hope this all helps,
 |                                         |
 result TFIDF: ANONYMOUS wrote:
 
+> Hi,
+> for lab1,I'm confusing about why I have to use a pointer for isdigit()
+
+You do not need a pointer as the parameter to isdigit() - the only valid parameter is a 
+character. However, the whole discussion about pointers and their relationship to character 
+strings is coming up in a later lecture:
+
+In effect, if you wish to access the first character of the second command-line argument (a string), 
+then want:
+
+    char mychar = argv[1][0];
+
+as if you're accessing a 2-dimensional array or characters.
+ 
+> function,without using it,it shows "sementation fault"
+
+If your program has compiled (without any errors or warnings) and it only crashes when it's 
+run, I wonder/suspect that you're not using the suggest switches to 'cc' ?
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result USE: ANONYMOUS wrote:
+
 > This helps a lot, but still, a little unclear how to actually open that C file. Are we working in the terminal 
 > or in the Docker desktop? where are we supposed to actually change the C code according to the labsheet?
 
@@ -150,19 +176,7 @@ Body:Hi Chris, I have this error when trying to compile a file: xcrun: error: in
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
-result COSINE: Previously, <poster008@student.uwa.edu.au> wrote:
-
-> I found the following StackExchange posting by searching for some of the specific text from the error message:
->   https://apple.stackexchange.com/questions/254380/why-am-i-getting-an-invalid-active-developer-path-when-attempting-to-use-git-a
-
-And, wow, look at how many times the question and the accepted answer have been upvoted!
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-result JACCARD: ANONYMOUS wrote:
+result COSINE: ANONYMOUS wrote:
 
 > Hi Chris,
 > 
@@ -194,6 +208,18 @@ What is the output when you run:
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
+result JACCARD: Previously, <poster008@student.uwa.edu.au> wrote:
+
+> I found the following StackExchange posting by searching for some of the specific text from the error message:
+>   https://apple.stackexchange.com/questions/254380/why-am-i-getting-an-invalid-active-developer-path-when-attempting-to-use-git-a
+
+And, wow, look at how many times the question and the accepted answer have been upvoted!
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
 result TFIDF: ANONYMOUS wrote:
 
 > the prompt: which xcrun returns /usr/bin/xcrun so I don't know why this is happening. It 
@@ -204,6 +230,26 @@ Sorry, but I can't imagine what the problem is, based on what you're described.
 My first thought would be that Xcode (and/or the supplementary tools) have not been installed 
 correctly,  but I can't tell that for sure.  If it's a laptop, are you able to bring it in to 
 UWA?  Perhaps email me to arrange a time  (not before 2PM today).
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result USE: Hi ANONYMOUS,
+
+I found the following StackExchange posting by searching for some of the specific text from the error message:
+  https://apple.stackexchange.com/questions/254380/why-am-i-getting-an-invalid-active-developer-path-when-attempting-to-use-git-a
+
+Unfortunately I don't have access to an Apple system to test (and this question was asked about errors with `git`, not `cc`), but I suspect the solution proposed will also work for your case.
+
+Try running the command
+
+    $ xcode-select --install
+
+and then invoking `cc` after that is done.
+
+The post also links to an Apple technical note (https://developer.apple.com/library/archive/technotes/tn2339/_index.html) that explains a little more about what xcrun and CommandLineTools are.
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -248,6 +294,41 @@ strings, in Lecture 6, tomorrow.
 |                                         |
 result JACCARD: ANONYMOUS wrote:
 
+> I can't seem to save and run coolexe files on my laptop. I use the website but can't save 
+> the files as they disappear in 20 seconds, so I tried coolc.sh, which seemed as though they 
+> were saving to my laptop, but then the results are wrong when I execute them. I tested to 
+> see if my code was at fault by using the workshop 5 example but that's running fine so it 
+> must be a problem with the coolexe file. Can anyone help? 
+
+Hello,
+
+I can't quite understand whether you're having problems with the website
+(as no-one else has reported similar problems), or not.  I suspect it's
+more a mis-understanding about the 'workflow', as the first reply has
+explained.
+
+The .coolexe file is available for only 20seconds, because with tens
+of students accessing the website at the same time (hopefully not
+maliciously!), I wish to keep the disk free of no-longer- required
+temporary files.  If you feel that 20secs is not long enough to download
+a .coolexe file over a slow network connection, the time limit could be
+increased a bit.
+
+Unsure what this means:
+
+  > but then the results are wrong when I execute them.
+
+The code developed in Workshop-5 is a minimal example to get students
+started; far from a complete solution against which you should compare
+anything (and if it did everything, what would you need to complete??)
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result TFIDF: ANONYMOUS wrote:
+
 > By data I was referring to the numeric values held by the addresses. However, this still raises the question on 
 > how basic.cool can achieve 4 hits if there are only 2 instances of an address being repeated
 
@@ -261,7 +342,7 @@ the stack, and it's still there when you RETURN, you'll get a hit.
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
-result TFIDF: ANONYMOUS wrote:
+result USE: ANONYMOUS wrote:
 
 > I mean question9 asks program to recieve an argument if it's a number, then the rotation amount changes 
 > to this value.Can you give me some idea how to achieve this? What do I need to do with the "Rot" 
@@ -323,6 +404,36 @@ result TFIDF: Previously, <poster080@student.uwa.edu.au> wrote:
 > the computer I don't have access to
 
 This 2nd part of your reply has me very confused ??
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result USE: Previously, <poster080@student.uwa.edu.au> wrote:
+
+> Previously, <chris.mcdonald@uwa.edu.au> wrote:
+> 
+> > Previously, <poster080@student.uwa.edu.au> wrote:
+> > 
+> > > Any suggestions as to why this happened cheers
+> > 
+> > It's not possible to say, definitively, but nearly all segmentation violations are the result 
+> > of attempting to access memory other than what you program 'owns', or in a manner inconsistent 
+> > with the way it's been declared.
+> > 
+> > As you're working on the credit card problem, examining individual characters in a string (an 
+> > array of characters), my guess is that you're attempting to access somewhere 'outside' of the 
+> > memory allocated for that string.  Check the indices you're using to access the array's 
+> > characters.
+> 
+> 
+> It appears there is something wrong with this line of code 
+> int numbers = strlen(argv[2]);
+> but i am not sure what, this is in the main function and i am trying to get length of the char* 
+> argv[2].
+
+argv[0] is the name of the executable, argv[1]... the other command line arguments. I think you are not passing enough command line arguments. You must  pass least 3 strings for argv[2] to be defined.
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -415,7 +526,90 @@ Hope this helps.
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
-result JACCARD: Thanks for your great reply Lewis.
+result JACCARD: Previously, <poster055@student.uwa.edu.au> wrote:
+
+> ANONYMOUS wrote:
+> 
+> > Hey,
+> > 
+> > I've got a few questions that I need clarifying;
+> > 
+> > 1) When using ubuntu, do I use it through powershell (I use Microsoft) and docker 
+> > desktop, or do I directly use it on ubuntu? (Could be a confusing question but I 
+> > honestly have confused myself siginificantly)
+> > 
+> > 2) I downloaded VIM, supposedly the improved version of Vi, how do I open the rotate.c 
+> > file through VIM?
+> > 
+> > 3) Depending on the answers to the other questions, this one may be negligent but do I 
+> > run an ubuntu (myubuntu) container on powershell then supposedly access the rotate.c 
+> > file through VIM on powershell, and if so how do I access files on my laptop in the 
+> > terminal?
+> > 
+> > Sorry if these questions have been asked before but I honestly don't know if the other 
+> > questions I've seen are actually asking the same question, just cause I'm befuddled. 
+> > Also I have done this:
+> > https://teaching.csse.uwa.edu.au/units/CITS2002/labsheets/install-linux.php
+> > 
+> > Pretty much I'm confused on how to open the C file as to start editing it and 
+> > executing it etc.
+> > 
+> > Thank you so much.
+> 
+> I'm not a lecturer or a lab facilitator so by all means I could be somewhat wrong.
+> 
+> 1) Confusing question but the idea if your intending to use docker is to run ubuntu using 
+> docker through powershell. Docker is an application that you can interact with through ur 
+> powershell, the docker application is quite interesting, it creates "images" (think of it as 
+> a little portal) of different Operating systems (in our case, Ubuntu) within ur local/host OS 
+> (yours being Windows). 
+> 
+> Within the images there are "containers" (I could be wrong but I imagine they are the 
+> different user's of the OS), throughout the unit you can create new containers as you like, 
+> or keep coming back to the same container so your files in that container can be interacted 
+> with each session. You will be using your powershell to communicate with docker through 
+> commands and open your little Ubuntu portal, in this portal you should be doing your software 
+> development in this unit.
+> 
+> 2) Navigate to the folder holding rotate.c through your powershell and then type "vim 
+> rotate.c" to edit the file. However, as stated before this file should be within your 
+> container, you can do this by using docker commands to copy or simply creating a new c file 
+> in the container and copy and pasting the text.
+> 
+> 3) This question is also confusing and I think it's important to understand the role of 
+> certain tools we are using:
+> Docker - application we use to create images of other OS within our host OS, with each 
+> container representing a different user (with different folders) of those images
+> VIM - a simple text editor
+> Powershell - a command driven application that we use to communicate to our OS and it's 
+> applications.
+> 
+> With that in mind, through powershell we communicate to our docker application and instruct 
+> it to open our myubuntu container ("portal"). Once opened the prompt will change to "root" 
+> with a bunch of numbers/letters indicating the powershell is now communicating to the 
+> container. We then can create our own files in this container, including rotate.c, we can use 
+> VIM to create such files since it is a text editor (high level software language files are 
+> essentially just text files with special syntax). Once done you can simply exit your 
+> container by communicating through powershell to the docker container, putting you back onto 
+> your host OS command-line (powershell).
+> 
+> I've ommitted specific commands used etc because it would take ages laying them all out, what 
+> helps is understanding what each tool use is, and then researching how to do certain tasks 
+> that are in each tools breadth. Such as opening and editing a file in vim, or navigating to a 
+> different folder in powershell, or creating a new container in your docker container.
+> 
+> Hope this helps.
+
+Appreciate it, helps a lot more than you think.
+
+Thanks a lot!
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+result TFIDF: Thanks for your great reply Lewis.
 
 Hopefully we can encourage more students to answer each others' questions, here, by offering their 
 suggestions and success-stories.
@@ -425,7 +619,7 @@ suggestions and success-stories.
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
-result TFIDF: Previously, <poster084@student.uwa.edu.au> wrote:
+result USE: Previously, <poster084@student.uwa.edu.au> wrote:
 
 > So I am using ubuntu 20.04 LTS and I am going through "Linux and compiler basics". But 
 > when I am  going through cat "linux-cc-basics.php" command, it says there is no such 
