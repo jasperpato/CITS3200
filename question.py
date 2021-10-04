@@ -72,12 +72,13 @@ for i in range (len(result)):
     print(s)
     out_file.write(s)
     for j in range (len(result[i])):
-        use = key_list[val_list.index(j)]
-        res = result[i][j].payload
+        algo_name = key_list[val_list.index(j)]
         s = "<<<<----------------------------------->>>>\n"\
         +   "|                                         |\n"\
         +   "|                                         |\n"\
-        +               f"result {use}: {res}\n"           \
+        +  f"Result {algo_name}                         \n"\
+        +  f"Subject:{result[i][j].subject}           \n\n"\
+        +  f"Body:{result[i][j].payload}                \n"\
         +   "|                                         |\n"\
         +   "|                                         |\n"\
         +   "<<<<----------------------------------->>>>\n"
