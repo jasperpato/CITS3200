@@ -27,39 +27,39 @@ def encapsulate(test_cases):
     files = ['testing/test_space_2021_google_docs.txt']
     all_threads = [parse_file(f) for f in files]
     threads = all_threads[0]
-    for case in test_cases:
+    for i, case in enumerate(test_cases):
         date = datetime.strptime("2019-07-28 16:54:49", "%Y-%m-%d %H:%M:%S")
         post = Post(date, case['Subject'], case['Body'], False)
-        list_of_tup.append(tuple(generate_post(post, threads, cleaners, filters, substitutes, weight, 5)))
+        list_of_tup.append(tuple(generate_post(post, threads, cleaners, filters, substitutes, weight, 10, i % 4)))
     return list_of_tup, test_cases
 
-def generate_post(post, threads, cleaners, filters, substitutes, weights, nposts):
-    diff_posts = []
+def generate_post(post, threads, cleaners, filters, substitutes, weights, nposts, start_algo):
     jaccard_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [jaccard],0.2, nposts)
     bag_of_words_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [bag_of_words],0.2, nposts)
     tfidf_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [tfidf.similarity],0.2, nposts)
     use_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [use.similarity],0.2, nposts)
     list_of_posts = [bag_of_words_posts, jaccard_posts, tfidf_posts, use_posts]
-    diff_posts = find_diff_posts(list_of_posts, diff_posts)
+    diff_posts = find_diff_posts(list_of_posts, start_algo)
     return diff_posts
 
-def find_diff_posts(list, diff: list):
-    for item in list:
-        for cos in item:
-            select = 0
-            for it in list:
-                if it is not item and cos not in it:
-                    select += 1
-            if select == 2 or cos == item[-1]:
-                diff.append(cos)
+def find_diff_posts(algo_results, start_index):
+    out_posts = []
+    ind = (start_index + 1) % len(algo_results)
+    while ind != start_index:
+        ind = (ind + 1) % len(algo_results)
+        similar_posts = algo_results[ind]
+        for post in similar_posts:
+            if post in out_posts:
+                continue
+            else:
+                out_posts.append(post)
                 break
-
-    return diff
+    return out_posts
 
 out_file = open('google_docs_case_dump.txt', 'w')
 tfidf = Tfidf()
 use = Use(os.path.join(currentdir, "../pretrained_models/universal-sentence-encoder_4/"))
-test = json.load(open("./testing/test_case_2019.json"))["testcases"]
+test = json.load(open("./testing/test_case_2021_google_docs.json"))["testcases"]
 result, cases = encapsulate(test)
 
 my_dict = {"COSINE":0, "JACCARD":1, "TFIDF":2, "USE":3}
