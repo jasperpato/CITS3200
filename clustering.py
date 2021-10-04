@@ -19,7 +19,7 @@ cleaners =    ( to_lower,              # lowercase all text
 filters = (  remove_none_alphabet, # take non-alphabetical words out
                 remove_stopwords)          # remove stopwords
 
-def clustering(threads : List[Thread], subject : bool):
+def clustering(threads : List[Thread]):
 
     closest_vector = {}
 
@@ -86,7 +86,7 @@ def clustering(threads : List[Thread], subject : bool):
 
 from weights import verified_weight
 
-def verified_clustering(threads : List[Thread], subject : bool):
+def verified_clustering(threads : List[Thread]):
     closest_vector = {}
     verified_all_posts = []
     for post in all_posts(threads):
@@ -132,36 +132,34 @@ def parse_file(filename):
         
     return group_into_threads(posts)
 
+def build_affinity(threads : List[Thread]):
+    all_posts_reduced = all_posts(threads)
+    graph = []
+    cutoff = 0.002
+    for post in all_posts(threads):
+        graph.append([])
+        for other_post in all_posts_reduced:
+            payload_toks = process_post(post, cleaners, filters, tuple([]), False)
+            cosine_sim = cosine_similarity(payload_toks, process_cached(other_post, cleaners, filters, tuple([]), False))
+            graph[len(graph)-1].append(cosine_sim)
+    return graph
+
+from sklearn.cluster import AffinityPropagation
+import numpy
+
 def main():
 
     threads = parse_file("help2002-2019.txt")
 
     start = time.time()
-    clusters = verified_clustering(threads, False)
+    affinity_graph = build_affinity(threads)
+    numpy.save("graph", numpy.array(affinity_graph))
+    #affinity_graph = numpy.load("graph.npy", allow_pickle=True)
+    print("graph built")
+    aff_prop = AffinityPropagation(affinity = "precomputed")
+    aff_prop.fit(affinity_graph)
+    labels = aff_prop.fit_predict(affinity_graph)
     end = time.time()
-
-    print(end - start)
-
-    frequent = 0
-    frequent_key = ""
-
-    for key in clusters:
-
-        if len(clusters[key]) > frequent:
-            frequent = len(clusters[key])
-            frequent_key = key
-
-    print(frequent_key.payload)
-
-    print()
-    print("-----------------------------------------------------------")
-    print()
-
-    print(frequent)
-
-    for post in clusters[frequent_key]:
-
-        print(post.payload)
-        print("----------------")
-
-    keys = list(clusters.keys())
+    print(labels)
+    print("time taken: ", end-start)
+    
