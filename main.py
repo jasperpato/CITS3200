@@ -1,3 +1,12 @@
+"""
+This is one of the scripts to run our project, however this has been abandoned for the pipeline.py.
+To use the code enter this code into the command line:
+
+python3 main.py [text_data_file_with_posts]
+
+The system will prompt you to write a subject and body of text.
+Then it wil lreturn 3 of the most similiar post.
+"""
 import sys
 from parse_file import parse_file
 from thread_obj import Thread

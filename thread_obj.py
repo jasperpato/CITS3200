@@ -3,6 +3,9 @@ from post import Post
 from itertools import chain
 from collections import Counter
 
+#This Thread class object should store any post under the same subject heading into a list.
+#This is to take into account that user will likely be more intrested in the entire discussion 
+#of the discussion of the topic, instead of just having a single post with the answer.
 class Thread:
     def __init__(self, subject : str, posts : List[Post]):
         self.subject = subject
@@ -22,7 +25,8 @@ def all_posts(threads : List[Thread]) -> List[Post]:
     """
     return list(chain(*[t.posts for t in threads]))
 
-# debug
+#This function is for printing all the threads in the class
+#This was mainly used for testing/debugging
 def print_threads(threads : List[Thread]) -> None:
     for num, t in enumerate(threads):
         title = " Thread " + str(num) + ' '
