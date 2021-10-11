@@ -147,19 +147,41 @@ def build_affinity(threads : List[Thread]):
 from sklearn.cluster import AffinityPropagation
 import numpy
 
-def main():
-
-    threads = parse_file("help2002-2019.txt")
-
-    start = time.time()
-    affinity_graph = build_affinity(threads)
-    numpy.save("graph", numpy.array(affinity_graph))
-    #affinity_graph = numpy.load("graph.npy", allow_pickle=True)
-    print("graph built")
+def affinity_clustering(threads : List[Thread]):
+    try:
+        affinity_graph = numpy.load("graph.npy", allow_pickle=True)
+    except:
+        affinity_graph = build_affinity(threads)
+        print("graph built")
+        numpy.save("graph", numpy.array(affinity_graph))
     aff_prop = AffinityPropagation(affinity = "precomputed")
     aff_prop.fit(affinity_graph)
     labels = aff_prop.fit_predict(affinity_graph)
+    cluster_centers = aff_prop.cluster_centers_indices_
+    n_clusters = len(cluster_centers)
+    cluster_sizes = [0]*n_clusters
+    for label in labels:
+        cluster_sizes[label] = cluster_sizes[label] + 1
+    biggest_clusters = []
+    for i in range(0, 5):
+        maxi = 0
+        pos = 0
+        for i in range(n_clusters):
+            if i in biggest_clusters: continue
+            if cluster_sizes[i] > maxi:
+                maxi = cluster_sizes[i]
+                pos = i
+        biggest_clusters.append(pos)
+    posts = all_posts(threads)
+    for clus in biggest_clusters:
+        print(posts[cluster_centers[clus]])
+
+    
+def main():
+
+    threads = parse_file("help2002-2019.txt")
+    start = time.time()
+    affinity_clustering(threads)
     end = time.time()
-    print(labels)
     print("time taken: ", end-start)
     
