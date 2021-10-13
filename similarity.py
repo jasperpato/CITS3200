@@ -22,13 +22,10 @@ nltk.download('punkt')
 nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
 
-if __name__=="__main__":
-    threads = parse_file(sys.argv[1])
-    new_post = Post(None,None,None,None)
-    print("Enter a new post and view the most similar existing posts.")
-    new_post.subject = input("Subject: ")
-    new_post.payload = input("Question body: ")
-    N = 3 # number of most similar posts
+def similarity(filename, post_subject, post_text, N=3):
+    threads = parse_file(filename)
+    
+    new_post = Post(None,post_subject,post_text,None)
     W = 0.3 # weight of subject similarity, payload weight is (1.0 - W)
 
     filters = (  remove_none_alphabet, # take non-alphabetical words out
@@ -45,5 +42,14 @@ if __name__=="__main__":
 
     algorithms = (cosine_similarity, jaccard)
 
-    for p in pipeline(new_post, threads, cleaners, filters, substitutes,  weights, algorithms, W, N):
-        print(p)
+    return [p for p in pipeline(new_post, threads, cleaners, filters, substitutes,  weights, algorithms, W, N)]
+
+if __name__ == "__main__":
+    
+    if len(sys.argv) < 3: exit()
+    filename = sys.argv[1]
+    N = sys.argv[2]
+    subject = input("Subject: ")
+    payload = input("Payload: ")
+    
+    print(similarity(filename, subject, payload, N)
