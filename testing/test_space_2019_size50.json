@@ -1,0 +1,354 @@
+{
+    "test_space": [
+        {
+            "Date": "2019-07-28 16:54:49",
+            "Subject": "Hello Everyone, welcome to CITS2002 Systems Programming in 2019",
+            "Body": "FIRSTLY, if you read nothing else, please read this section.\n\nOur unit this year has a record enrolment - 401 students, up from 320 last\nyear.  Our lecture theatre holds 340, so it'll be an impossible squeeze\nfor the first week.  Further, we don't have sufficient lab times or spaces\nfor all students to be guaranteed a seat in our weekly lab sessions.\n\n*** If you're a student who prefers to NOT ATTEND LECTURES, then this week\n*** will be a great time to make that choice!   I'm confident that from\n*** week-2 our venues will comfortably hold everyone who turns up.\n\n(I'm not panicking about this and I don't think that you'll need\n to either.  In previous years I have worried about this, adding extra\n repeat lectures, only to find that the only available times and venues\n were at 5PM or 6PM;  barely 20 students attended the repeat sessions,\n and students drifted away from the original lectures anyway.)\n\n-------\n\nWe'll spend part of the first lecture on Monday discussing how the unit\nwill run this year, but first I'll head off some common questions that\nstudents are asking by email:\n\nFirstly, we're NOT using LMS/Blackboard for this unit.\nAll information and teaching materials will be available from:\n\n    http://teaching.csse.uwa.edu.au/units/CITS2002/  -  bookmark it!\n\nLECTURES:\n    We have 2 45 minute lectures each week. All lectures will be recorded\n    and available via LCS. The schedule of lecture topics, in fact all\n    sessions in the unit, is available from the left-margin of the\n    unit's homepage. The HTML of all lectures will be available to read or\n    download ahead of time.\n    Attendance at lectures is not compulsory.\n\nWORKSHOPS:\n    Most weeks we'll hold a workshop on Fridays, to review the week's\n    material by focusing on the design and implementation of a short\n    program addressing a single problem. You'll receive the problem\n    ahead of time, hopefully sketch out a solution, and we'll discuss\n    it in the Friday workshops. The workshops are in our standard lecture\n    venue, not a computing lab, so you should bring your laptops along.\n    Attendance at workshops is not compulsory.\n\nLABORATORIES:\n    The announced laboratory times are times at which there'll be someone\n    there to assist you;  see:\n\n        http://timetable.applications.uwa.edu.au/?selectunits=CITS2002\n\n    Most weeks, when the two projects are not \"running\", will have a\n    laboratory sheet of 3-4 \"standard\" questions, and often a couple of more\n    difficult questions, for you to attempt that week.  Sample solutions to\n    the standard questions will be provided.  If you can successfully complete\n    the sample questions, each week, then you're keeping up in the unit.\n    Attendance at laboratories is not compulsory.  Come along if you need to\n    use a computer, or if you need some help with a question.  There's no\n    requirement to stay the full 2 hours.  Labs are open 24/7 although,\n    of course, students allocated to other units' lab sessions have priority.\n\nI hope that you'll enjoy CITS2002 this semester.\n\nChris McDonald",
+            "Verified": "True",
+            "Tags": ["lecture times", "lab times", "welcome"]
+        },
+        {
+            "Date": "2019-07-30 10:04:43",
+            "Subject": "Seeking representatives for the Guild's Class Representative System ",
+            "Body": "*** NEW DEADLINE for applications: 11:59PM Sunday, 4th August.\n\nCITS2002 is taking part in the Guild's Class Representative System for\nsemester 2. The system provides you a simple method to raise feedback,\nsuggest ideas, and resolve any potential challenges in a timely way.\n\nThe Guild is looking for applications for students in this unit to become\nrepresentatives.  Reps are trained by the Guild, and volunteering hours\nwill be recorded on your transcript.\n\nAs we start week 1, the semester will breeze past rapidly, so timing\nis essential. In order for the system to be effective within your unit,\nit'll require students to apply and be appointed as representatives. To\nbecome a rep, students will need to register their interest via an\napplication online next week. Following this, 1-3 students will be\nselected by the Guild.\n\nIf you are interested then please register your interest here:\nhttps://bit.ly/310G8k3",
+            "Verified": "True",
+            "Tags": ["class representative", "guild"]
+        },
+        {
+            "Date": "2019-07-30 10:10:33",
+            "Subject": "Windows Subsystem for Linux Documentation",
+            "Body": "This series of webpages will help students wishing to run Unix (macOS- and Linux-type) \nshell commands on their personal Windows-10 machines:\n\n  https://docs.microsoft.com/en-us/windows/wsl/about\n\nIf you're still running Windows-7, you should seriously consider upgrading to Windows-10 \n(it's free) because Windows-7 is reaching its official end-of-life (no more support or \nupgrades) in December this year.",
+            "Verified": "True",
+            "Tags": ["wsl", "linux", "unix", "osx", "shell"]
+        },
+        {
+            "Date": "2019-08-03 09:07:50",
+            "Subject": "Labsheet 1 is now available",
+            "Body": "Labsheet 1 is now available, from our unit's Schedule page:\n\n  http://teaching.csse.uwa.edu.au/units/CITS2002/schedule.php\n\nSample solutions will be released in a week.\n\nMost of the questions on this first labsheet use the following code,\nwhich you can download from the labsheet's webpage:\n\n{{{\n#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <ctype.h>\n\n// Compile this program with:\n//      cc -std=c99 -Wall -Werror -pedantic -o rotate rotate.c\n\n#define ROT 13\n\n//  The rotate function returns the character ROT positions further along the\n//  alphabetic character sequence from c, or c if c is not lower-case\nchar rotate(char c)\n{\n    // Check if c is lower-case or not\n    if (islower(c))\n    {\n        // The ciphered character is ROT positions beyond c,\n        // allowing for wrap-around\n        return ('a' + (c - 'a' + ROT) % 26);\n    }\n    else\n    {\n        return c;\n    }\n}\n\n// Execution of the whole program begins at the main function\nint main(int argcount, char *argvalue[])\n{\n    // Exit with an error if the number of arguments (including\n    // the name of the executable) is not precisely 2\n    if(argcount != 2)\n    {\n        fprintf(stderr, \"%s: program expected 1 argument, but instead received %d\\n\",\n\t\t\t\t\targvalue[0], argcount-1);\n        exit(EXIT_FAILURE);\n    }\n    else\n    {\n        // Define a variable for a later loop\n        int i;\n        // Calculate the length of the first argument\n        int length = strlen(argvalue[1]);\n\n        // Loop for every character in the text\n        for(i = 0; i < length; i++)\n        {\n            // Determine and print the ciphered character\n            printf(\"%c\", rotate(argvalue[1][i]));\n        }\n\n        // Print one final new-line character\n        printf(\"\\n\");\n\n        // Exit indicating success\n        exit(EXIT_SUCCESS);\n    }\n    return 0;\n}\n}}}\n\nGood luck,",
+            "Verified": "True",
+            "Tags": ["lab1","rotate", "rot", "labs"]
+        },
+        {
+            "Date": "2019-08-05 12:05:50",
+            "Subject": "Where is ROT initialised",
+            "Body": "I might be asking a stupid question but I can't seem to find where ROT = 13 is initialised \nand how when executing the code it is able to Cipher by 13 when input is given? I \nunderstand I believed everything else in the source code but this part is confusing me. \nSome help would be appreciated.\n\nThanks.",
+            "Verified": "False",
+            "Tags": ["lab1", "rotate", "rot", "labs"]
+        },
+        {
+            "Date": "2019-08-05 13:32:53",
+            "Subject": "Where is ROT initialised",
+            "Body": "Never mind figured it out",
+            "Verified": "False",
+            "Tags": ["lab1", "rotate", "rot", "labs"]
+        },
+        {
+            "Date": "2019-08-06 05:42:35",
+            "Subject": "Software for laboratory exercises and projects",
+            "Body": "A number of students have been asking about suitable software for completing our laboratory \nexercises and projects on their own laptops.  Here's a new page outlining some details:\n\n  http://teaching.csse.uwa.edu.au/units/CITS2002/labsheets/software.php\n\nIf you feel some additional instructions will help other students, please let me know.",
+            "Verified": "True",
+            "Tags": ["labs", "project", "programming software"]
+        },
+        {
+            "Date": "2019-08-06 11:11:01",
+            "Subject": "Wave goodbye to your floppy disks under Linux",
+            "Body": "The Linux OS was first distributed on floppy disks in 1991 (I remember my first Yggdrasil distribution \nrequired 71 floppy disks), but the Linux source maintainers have now decided to no longer support floppy \ndisks under Linux:\n\n  https://www.zdnet.com/article/linus-torvalds-prepares-to-wave-goodbye-to-linux-floppy-drives/\n\nOne of their justifications is that the maintainer of the floppy driver source code no longer has any \nworking hardware!\n\n___\nThe history of the floppy disk:\nhttps://www.hpe.com/us/en/insights/articles/the-history-of-the-floppy-disk-1703.html",
+            "Verified": "True",
+            "Tags": ["article" , "floppy disk", "linux", "unix", "hard drive"]
+        },
+        {
+            "Date": "2019-08-07 07:12:17",
+            "Subject": "Hard drive reliability statistics",
+            "Body": "While the use of spinning magnetic hard drives is clearly in decline in most of today's \ncomputing, such as in laptops and nearly all mobile devices, hard drives remain important \nwhere much larger, cheaper, storage space is required - in desktop computers and server \nfarms.\n\nBackblaze runs a number of hard drive reliability surveys each year, which can make for \ninteresting reading, and possibly influence your buying decisions:\n\n  https://www.backblaze.com/blog/hard-drive-stats-q2-2019/\n  https://hardware.slashdot.org/story/19/08/06/145206/backblaze-hard-drive-stats-q2-2019",
+            "Verified": "True",
+            "Tags": ["article", "hard drive", "magnetic hard drive"]
+        },
+        {
+            "Date": "2019-08-07 16:51:18",
+            "Subject": "Date of our Mid-semester test",
+            "Body": "In case there's any confusion,  the date of our Mid-Semester test is definitely:\n\n  9am Friday 30th August (during the standard Workshop time)\n\nIt appeared correctly in 4 places, but one astute reader found that it was wrong on our \nSchedule page :-(\n\nAll (correct!) details at:  http://teaching.csse.uwa.edu.au/units/CITS2002/examinations.php",
+            "Verified": "True",
+            "Tags": ["midsem", "midsem date"]
+        },
+        {
+            "Date": "2019-08-07 17:11:56",
+            "Subject": "Questions on Lab 1",
+            "Body": "I dont quite understand what do question 8 in Lab 1(worksheet) mean?",
+            "Verified": "False",
+            "Tags": ["lab1", "lab1q8", "labs"]
+        },
+        {
+            "Date": "2019-08-07 19:39:46",
+            "Subject": "Starting C Programming on Windows 10 Subsystem",
+            "Body": "Hello, \n\nonce Ubuntu is installed, how do we compile C files? The cc command is not working \nfor me, and neither is gcc.\n\nThanks in advance",
+            "Verified": "False",
+            "Tags": ["wsl", "ubuntu", "linux", "compiling", "cc"]
+        },
+        {
+            "Date": "2019-08-07 19:56:48",
+            "Subject": "Questions on Lab 1",
+            "Body": "ANONYMOUS wrote:\n\n> I dont quite understand what do question 8 in Lab 1(worksheet) mean?\n\nBasically, if you give an input of something like \"13 hello\", your program should set the \nvalue of ROT as 13 because it's the first argument.\n\nIf your input is \"1 hello\", then ROT should be 1 instead.",
+            "Verified": "False",
+            "Tags": ["lab1", "lab1q8", "rot", "labs"]
+        },
+        {
+            "Date": "2019-08-07 20:06:43",
+            "Subject": "Starting C Programming on Windows 10 Subsystem",
+            "Body": "ANONYMOUS wrote:\n\n> Hello, \n> \n> once Ubuntu is installed, how do we compile C files? The cc command is not working \n> for me, and neither is gcc.\n\n\nThere's a couple more steps:\n\nprompt>  sudo apt update\n(need to type your password)\n\nprompt>  sudo apt install gcc\n(to install gcc, its headers, and libraries)\n\nNow the command 'cc' should work from the next prompt.\n\nGood luck,",
+            "Verified": "True",
+            "Tags": ["wsl", "ubuntu", "linux", "cc"]
+        },
+        {
+            "Date": "2019-08-07 20:09:19",
+            "Subject": "Questions on Lab 1",
+            "Body": "And then in the next Q9, you should be able to support\n\nprompt>  ./rotate hello 3 wednesday 14 night time\n\nin the which the rotate amount keeps changing and is used to rotate the following words.",
+            "Verified": "True",
+            "Tags": ["lab1", "lab1q9", "rotate", "labs"]
+        },
+        {
+            "Date": "2019-08-09 10:05:29",
+            "Subject": "Email",
+            "Body": "Hi \nwhat is Ryan Bunney's email address?\nKind regards",
+            "Verified": "False",
+            "Tags": ["email", "contact", "lab facilitator"]
+        },
+        {
+            "Date": "2019-08-09 13:20:06",
+            "Subject": "Email",
+            "Body": "Previously, <poster117@student.uwa.edu.au> wrote:\n\n> Hi \n> what is Ryan Bunney's email address?\n> Kind regards\n\nHi Madeline,\n\nI'm afraid that I need to provide an 'official' response to this, but it's not \ndirected to you personally.\n\nUWA discourages our lab demonstrators from directly contacting students in their \nunits.  One reason is that lab demonstrators are only paid for the time they \nspend helping in labs and when marking assessments,  but the more important \nreason centres around ensuring that all students are treated equitably, and none \nreceive any individual advantage.  For these reasons, our lab demonstrators (and \nme) are not permitted to undertake any private tutoring for students in their \nunits.\n\nI appreciate that your question may be a harmless one, such as \"did anyone find \nmy textbook that I left in the lab?\",  and such questions are perfectly welcome \non our help2002 forum (it doesn't all have to be about the teaching material).\n\nIf you, or anyone, has any more personal questions about their enrolment, or \nperformance in the unit compared to other students, then please contact me by \nemail, or anytime my office door's open (Rm 2.20).\n\nHope this helps.",
+            "Verified": "True",
+            "Tags": ["email", "contact", "lab facilitator"]
+        },
+        {
+            "Date": "2019-08-09 13:23:02",
+            "Subject": "Solutions available",
+            "Body": "The solutions for this week's first Labsheet and today's second Workshop are now \navailable via our unit's Schedule page.\n\nThey'll similarly be available each week, on either Friday or Saturday, so I \nwon't post an announcement every week.\n\nGood luck,",
+            "Verified": "True",
+            "Tags": ["announcement", "lab1", "workshop2", "solutions", "labs", "workshops"]
+        },
+        {
+            "Date": "2019-08-09 21:52:38",
+            "Subject": "Workshop 2 - vc not available",
+            "Body": "Hi,\n\nWhen I typed vc to the shell, it returned \"vc: command not found\". I tried \"sudo apt-\nget install vc-dev\" to get vc installed and it appeared that vc package was installed \nsuccessfully but still returned \"command not found\".\n\nBTW I'm using Ubuntu on Win-10.\n\nCan someone help me with this?\n\nThanks.",
+            "Verified": "False",
+            "Tags": ["workshop2", "shell", "vc", "command not found", "workshops"]
+        },
+        {
+            "Date": "2019-08-10 07:04:50",
+            "Subject": "Workshop 2 - vc not available",
+            "Body": "ANONYMOUS wrote:\n\n> When I typed vc to the shell, it returned \"vc: command not found\". I tried \"sudo apt-\n> get install vc-dev\" to get vc installed and it appeared that vc package was installed \n> successfully but still returned \"command not found\".\n\nHi,\n\nYour approach to finding the command is correct, but it's not a command available in Ubuntu \nrepositories.\n\nInstead, like our 'mycc' shell alias, it's a local command that can be added to your startup files and \nis then available each time you login.   We tend to use aliases for short single-line commands, but my \n'vc' is a multi-line command sequence termed a shell function.  Just like 'mycc' it should be added to \nyour  ~/.bash_profile  file, which is read each time you login.\n\nAdd all of lines from 'function vc' to the last '}' to your ~/.bash_profile file.\nInvoking 'vc' will create a new short C file named t.c, but will not overwrite an existing one.\n\n{{{\n#!/bin/bash\n\nfunction vc {\nif [ ! -r t.c ]\nthen\ncat << END_OF_PROGRAM > t.c\n#include <stdio.h>\n#include <stdlib.h>\n#include <stdbool.h>\n\nint main(int argcount, char *argvalue[])\n{\n\n    return 0;\n}\nEND_OF_PROGRAM\nfi\nvim +7 t.c\n}\n}}}",
+            "Verified": "True",
+            "Tags": ["workshop2", "shell", "vc", "workshops"]
+        },
+        {
+            "Date": "2019-08-11 13:59:30",
+            "Subject": "Why do arguments to terminal commands often use the - sign",
+            "Body": "For example to call the C compiler (ignoring all the additional arguments we provide for Werror etc):\n\ncc -o myProgram myProgram.c\n\nWhy is a minus symbol used for \"-o\", why couldn't it be o?",
+            "Verified": "False",
+            "Tags": ["- sign", "shell", "compiling", "cc"]
+        },
+        {
+            "Date": "2019-08-11 19:09:16",
+            "Subject": "Why do arguments to terminal commands often use the - sign",
+            "Body": "Hi Edward,\n\nThe primary reason is to provide consistency with the many other commands - so that we don't need to remember \nwhich command's options require a minus-sign, and which don't.\n\nConsider a different example, the program to remove files, named 'rm'.\nrm takes a -f switch to request that files be 'forcibly' removed - if a file can't be removed, the rm command \nattempts to change the file permissions of the file, and then tries to remove it again.\nProviding -f also requests that the rm command not complain if a named file doesn't exist.\n\nFor example,       rm -f myfile\nwill 'successfully' delete  myfile  even if it doesn't exist.\n\nIf we had a file named 'f' in the current directory (I often do, to hold a small temporary result),\nthen the command   rm f myfile   would have a different, probably undesirable, outcome.",
+            "Verified": "True",
+            "Tags": ["- sign", "shell", "compiling", "cc", "rm"]
+        },
+        {
+            "Date": "2019-08-11 19:12:49",
+            "Subject": "Project partners",
+            "Body": "Posting this question from a student, and its answer, so that all students can see it:\n\n> I was wondering whether our project partners would have to be from our assigned lab?\n\nThe question doesn't quite make sense.  In this unit, students are not assigned to fixed \nlab sessions, and may attend any or all lab sessions to get assistance.\n\nHowever, when choosing a project partner, it certainly makes sense to choose someone that \nwill be able to work on the project at similar times to yourself, and possibly attend the \nsame lab session(s) if you need to.\n\nHope this helps,",
+            "Verified": "True",
+            "Tags": ["project partner", "labs"]
+        },
+        {
+            "Date": "2019-08-11 19:41:33",
+            "Subject": "Project partners",
+            "Body": "On the subject of project partners, is it compulsory to find partners? I'd understand if it \nwould make the work on projects easier, but are we able to do this ourselves?",
+            "Verified": "False",
+            "Tags": ["project partner"]
+        },
+        {
+            "Date": "2019-08-11 20:19:43",
+            "Subject": "That cool vc command Chris used in the lectures",
+            "Body": "Hi Chris,\n\nI noticed in the last workshop you used a custom shell alias called \"vc\" (I think it was vc anyway) which opened a vim editor window with the boilerplate code for a C program. \n\nI had a go at making my own shell alias to achieve the same effect, which worked but was slightly buggy. \n\nI made a file called \"template.c\" in my home directory and then placed the following shell alias in my .bashrc file: \n\nalias vc=\"cp ~/template.c . | vim template.c\"\n\nIs there a way of improving my method? How did you do it? \n\nEvery time I run vc on my shell I get the output:\n\n Warning: Input is not from terminal. \n\nCheers :)",
+            "Verified": "False",
+            "Tags": ["vc", "alias", "vim", "input is not from terminal"]
+        },
+        {
+            "Date": "2019-08-12 05:19:10",
+            "Subject": "That cool vc command Chris used in the lectures",
+            "Body": "I trust that you saw my reply to an earlier question:\n\n  https://secure.csse.uwa.edu.au/run/help2002?p=np&a=18&all=y2\n?\n\nvim demands that its input comes from a keyboard, so that's why you're getting \"Warning: Input is not from terminal\".\n\nHowever, you don't want to use the pipe symbol '|' to separate successive processes - separate them with a semi-colon ';'",
+            "Verified": "True",
+            "Tags": ["vc", "vim", "pipe", "input is not from terminal"]
+        },
+        {
+            "Date": "2019-08-12 05:25:20",
+            "Subject": "Project partners",
+            "Body": "ANONYMOUS wrote:\n\n> On the subject of project partners, is it compulsory to find partners? I'd understand if it \n> would make the work on projects easier, but are we able to do this ourselves?\n\nYou may choose to undertake each project individually, or with one other student.\n\n(I think I said it in the first lecture, but can only find it written on the official Unit Outline)",
+            "Verified": "True",
+            "Tags": ["project partner"]
+        },
+        {
+            "Date": "2019-08-12 06:40:14",
+            "Subject": "[TV] Secrets of Silicon Valley",
+            "Body": "(yes, I know, no-one younger than 30 watches television :-)\n\nA new series started on ABC-2 (and iView) last night;  not very technical:\n\n\"Silicon Valley is transforming the way we think, work and live. Who is in charge, are \nthere any rules, and what does it mean for the future? Journalist Jamie Bartlett meets the \nyoung entrepreneurs keen to make their mark.\n\nEpisode 1 The Disruptors\nJamie Bartlett uncovers the reality behind Silicon Valley's glittering promise to build a \nbetter world. The tech gods believe progress is powered by technology tearing up the world \nas it is - a process they call disruption\"",
+            "Verified": "True",
+            "Tags": ["announcement", "silicon valley", "article"]
+        },
+        {
+            "Date": "2019-08-12 10:52:50",
+            "Subject": "%i , %d ,%c ",
+            "Body": "ive noticed these operators appear numerously.\n\nWhat do they mean ? I tried googling but the answers seem to ambigious. Can u give me \nan example of how to use them as well ? All i get is that d is for intergers and c is \nfor characters.",
+            "Verified": "False",
+            "Tags": ["operators", "%i", "%c", "%d"]
+        },
+        {
+            "Date": "2019-08-12 11:05:55",
+            "Subject": "%i , %d ,%c ",
+            "Body": "ANONYMOUS wrote:\n\n> ive noticed these operators appear numerously.\n> \n> What do they mean ? I tried googling but the answers seem to ambigious. Can u give me \n> an example of how to use them as well ? All i get is that d is for intergers and c is \n> for characters.\n\n\nHave a read of Chapter 21 of the very useful (and free):\n\n  https://goalkicker.com/CBook/\n\nFor our (simple) programming, use %i for integers, and not %d .\n\nYou can also look at the online manual for the printf() function.\nIt's in Section 3 of the online manuals, so you'd run:\n\n  man 3 printf",
+            "Verified": "True",
+            "Tags": ["printf", "operators", "%i", "%d", "%c"]
+        },
+        {
+            "Date": "2019-08-13 20:33:46",
+            "Subject": "Segmentation fault(core dumped)",
+            "Body": "Hi, I got this error when ./(code) and am just asking what is this error how do I \nsolve it.",
+            "Verified": "False",
+            "Tags": ["segmentation fault"]
+        },
+        {
+            "Date": "2019-08-14 04:48:36",
+            "Subject": "Segmentation fault(core dumped)",
+            "Body": "ANONYMOUS wrote:\n\n> Hi, I got this error when ./(code) and am just asking what is this error how do I \n> solve it.\n\nThis problem occurs when your program accesses memory that it does not own (it's attempting \nto access memory owned by the OS, another process, or even unallocated memory).  We'll me \ndiscussing the what and why of this when discussing memory management in the unit.\n\nThe most common way for your code to trigger the error is for it to access beyond the bounds \nof a fixed-sized array.  If your code is attempting an exercise on our lab sheets, check your \naccesses to the argvalue[] array - ensure that you're not accessing element [argcount] or \nhigher.  Similarly, if you're accessing any other array, ensure that your accesses are not \nbelong [arraysize-1] or even negative.\n\n??",
+            "Verified": "True",
+            "Tags": ["memory access", "array", "segmentation fault"]
+        },
+        {
+            "Date": "2019-08-14 09:00:42",
+            "Subject": "The 10 Most Influential Programming Languages of the Last 50 years",
+            "Body": "I've mentioned in lectures a number of times that the features of programming languages are often very \nsimilar, just 'hidden' within different syntax, and that C borrowed ideas from earlier languages, and \nprovided ideas for later languages.\n\nThe following article may be of interest  (warning - it's behind the medium.com paywall, but you can \nread 5 articles a week) :\n\n    \"These are the languages which have contributed immensely to the software\n     development world and that's why they made [] this list of the ten most\n     influential programming language of the last five decades.\n\n     Since programming languages are the single most important thing in the\n     software development world and are often discussed, criticized, and\n     improved over the years, it bothers me when someone using a programming\n     language doesn't know the history behind it.\"\n\n  https://medium.com/better-programming/the-10-most-influential-programming-languages-of-the-last-50-years-and-their-creators-6559bb9ce224",
+            "Verified": "True",
+            "Tags": ["programming language", "c", "article"]
+        },
+        {
+            "Date": "2019-08-14 16:48:49",
+            "Subject": "about cc [EXTRAOPTIONS]",
+            "Body": "Hi Chris,\n\nI tried to use the function sqrt() as you showed in the lecture to perform a \ncalculation and I've included the header #include <math.h>\n\nHowever, when I tried to compile with the command cc [EXTRAOPTIONS] -o ... ... -lm, it \nshowed that No such file or directory. \n\nPlease advise.\n\nThank you",
+            "Verified": "False",
+            "Tags": ["sqrt()", "compiling", "cc", "no such file or directory"]
+        },
+        {
+            "Date": "2019-08-14 17:09:58",
+            "Subject": "about cc [EXTRAOPTIONS]",
+            "Body": "Previously, <poster123@student.uwa.edu.au> wrote:\n\n> Hi Chris,\n> \n> I tried to use the function sqrt() as you showed in the lecture to perform a \n> calculation and I've included the header #include <math.h>\n> \n> However, when I tried to compile with the command cc [EXTRAOPTIONS] -o ... ... -lm, it \n> showed that No such file or directory. \n> \n> Please advise.\n> \n> Thank you\n\nAre you in the correct directory when trying to compile the file?",
+            "Verified": "False",
+            "Tags": ["sqrt()", "compiling", "cc", "no such file or directory"]
+        },
+        {
+            "Date": "2019-08-14 18:05:45",
+            "Subject": "about cc [EXTRAOPTIONS]",
+            "Body": "Previously, <poster123@student.uwa.edu.au> wrote:\n\n> However, when I tried to compile with the command cc [EXTRAOPTIONS] -o ... ... -lm, it \n> showed that No such file or directory. \n\n\nSorry if this is too basic a response, but are you interpreting the above command correctly?\nIt means:\n\n  cc -std=c99 -Wall -Werror -pedantic -o myprogram myprogram.c -lm\n\n??",
+            "Verified": "True",
+            "Tags": ["compiling", "cc", "no such file or directory"]
+        },
+        {
+            "Date": "2019-08-14 21:22:27",
+            "Subject": "about cc [EXTRAOPTIONS]",
+            "Body": "Previously, <chris.mcdonald@uwa.edu.au> wrote:\n\n> Previously, <poster123@student.uwa.edu.au> wrote:\n> \n> > However, when I tried to compile with the command cc [EXTRAOPTIONS] -o ... ... -lm, it \n> > showed that No such file or directory. \n> \n> \n> Sorry if this is too basic a response, but are you interpreting the above command correctly?\n> It means:\n> \n>   cc -std=c99 -Wall -Werror -pedantic -o myprogram myprogram.c -lm\n> \n> ?? \n\n\nOh sorry my fault I thought the [EXTRAOPTIONS] was an actual command after cc. \nThe program can be perfectly compiled now. \n\nThank you",
+            "Verified": "False",
+            "Tags": ["compiling", "cc", "no such file or directory"]
+        },
+        {
+            "Date": "2019-08-15 17:09:23",
+            "Subject": "UWA CITS Discord - For your learning and discussion in this unit",
+            "Body": "Hi everyone\n\nBelow is an invite to the unofficial UWA CITS Discord channel. This comprises of channels \nfor each CITS unit available each semester. Feel free to ask questions and discuss areas \nyou are unsure of in relation to this unit.\n\nPlease take note of the server rules once you join.\n\n\nInvite: https://discord.gg/rusMKYU\n\n\nThanks :)",
+            "Verified": "False",
+            "Tags": ["discord", "forum"]
+        },
+        {
+            "Date": "2019-08-15 18:54:13",
+            "Subject": "UWA CITS Discord - For your learning and discussion in this unit",
+            "Body": "Are you able to suggest what is lacking on this forum;  how it can be improved?\n\nI'm concerned that valuable discussion, which all students should be\nreading, becomes spread across multiple locations, and there's the danger\nof incorrect information being accidentally posted and not corrected.\n\nNothing against students helping each other out, though; it's just that we've\nseen previous cases where wrong information has been spread (within residential\ncollege tutorials) and students' test outcomes suffered.\n\nDiscord often looks more like a Twitter exchange, than a serious forum,\nbut maybe some students learn better that way.",
+            "Verified": "True",
+            "Tags": ["help forum", "forum", "discord"]
+        },
+        {
+            "Date": "2019-08-15 21:25:11",
+            "Subject": "Find a partner for the project",
+            "Body": "Hi guys,\n\nI'm the green hand of the c program and I am looking for a partner who wants to make \nthe project with me.\n\nIf you are also finding a partner, just send me an e-mail to \nposter109@student.uwa.edu.au ! Sorry for any inconvenience.\n\nBest wishes,\nDaniel",
+            "Verified": "False",
+            "Tags": ["project partner"]
+        },
+        {
+            "Date": "2019-08-16 06:14:24",
+            "Subject": "Inviting your early feedback",
+            "Body": "Please provide early feedback on our unit via:\n\n    http://uwa.qualtrics.com/jfe/form/SV_6omVOZqrsL2mTJ3\n\nSurvey open until Monday 19th August.  Thank you.",
+            "Verified": "True",
+            "Tags": ["unit feedback"]
+        },
+        {
+            "Date": "2019-08-16 10:10:25",
+            "Subject": "On the solution to Workshop-3",
+            "Body": "The completed solution to Workshop-3 is now posted on our Schedule page.\nWe didn't quite finish it in the class this morning, but were close.\n\nYou should see it report that the distance between Computer Science and the Science Library \n(as the crow flies) is about 630 metres.\n\nYou'll notice in the solution's code that a few extra lines are required under Linux (and, \nthus, under WSL) to have the C compiler find the M_PI constant in the <math.h> header file.",
+            "Verified": "True",
+            "Tags": ["workshop3", "workshops"]
+        },
+        {
+            "Date": "2019-08-16 11:47:41",
+            "Subject": "Questions about \"grep\" running in the terminal",
+            "Body": "Hello Chris,\n\nActually, I have listened the morning workshop recording but I found that there is \nsomething running strange for the code of \"grep grep /haversine hh.c\".\n\nIt shows nothing and I do not how to continue the following steps.\n\nWould u like to tell me the solution or why I get nothing?\n\nFurthermore, last workshop, when I ran \"jobs\"\u27a1\ufe0f\u201cfg\u201d there is nothing showing out \nbut \"'fg' command cannot be found\".\n\nI do not know how to solve it out.\n\nPlease help me out.\n\nThanks.",
+            "Verified": "False",
+            "Tags": ["grep", "workshop3", "fg", "workshop2", "command not found", "workshops"]
+        },
+        {
+            "Date": "2019-08-16 11:53:19",
+            "Subject": "Questions about \"grep\" running in the terminal",
+            "Body": "ANONYMOUS wrote:\n\n> Actually, I have listened the morning workshop recording but I found that there is \n> something running strange for the code of \"grep grep /haversine hh.c\".\n> \n> It shows nothing and I do not how to continue the following steps.\n\nThe command would have been just. \"grep /haversine hh.c\"\nwhich finds/prints the pattern  /haversine  in the file hh.c\n\nIf you don't have a file named  hh.c,  then grep will report the file missing.\n\n\n> Furthermore, last workshop, when I ran \"jobs\"\u27a1\ufe0f\u201cfg\u201d there is nothing showing out \n> but \"'fg' command cannot be found\".\n\nAre you running this on WSL?\nI'm unsure if WSL supports foreground/background job execution in the shell.",
+            "Verified": "True",
+            "Tags": ["grep", "workshop3", "fg", "workshop2", "command not found", "wsl", "workshops"]
+        },
+        {
+            "Date": "2019-08-16 12:21:38",
+            "Subject": "Questions about \"grep\" running in the terminal",
+            "Body": "Hello Chris,\nMy computer is MacBook so that I run IOS system actually.\n\nIf it is Mac system, why doesn't it work?",
+            "Verified": "False",
+            "Tags": ["grep", "osx"]
+        },
+        {
+            "Date": "2019-08-16 12:29:36",
+            "Subject": "Questions about \"grep\" running in the terminal",
+            "Body": "ANONYMOUS wrote:\n\n> My computer is MacBook so that I run IOS system actually.\n\nIf using a MacBook you're running macOS - iOS is on iPhones and iPads.\n\nCan you run through that you were doing?\nIf you just typed 'jobs' at the prompt, it'll report nothing (just display next prompt) if \nyou have no fg/bg jobs running.\n\nIf you're running, say, vim and you then suspend it with ^Z. (control-Z),\nthen you'll see the next prompt, and running  'jobs'. will now report\n\n  [1]  + suspended  vim myfilename",
+            "Verified": "True",
+            "Tags": ["grep", "shell", "osx", "fg", "bg"]
+        },
+        {
+            "Date": "2019-08-16 13:11:09",
+            "Subject": "Questions about \"grep\" running in the terminal",
+            "Body": "Hello Chris,\n\nThanks for ur message. I will try later \n\nThanks :)",
+            "Verified": "False",
+            "Tags": ["grep", "shell"]
+        },
+        {
+            "Date": "2019-08-16 13:25:28",
+            "Subject": "Find a partner for the project",
+            "Body": "I already get a partner, thanks all!",
+            "Verified": "False",
+            "Tags": ["project partner"]
+        },
+        {
+            "Date": "2019-08-17 05:06:08",
+            "Subject": "UWA CITS Discord - For your learning and discussion in this unit",
+            "Body": "Previously, <chris.mcdonald@uwa.edu.au> wrote:\n\n> Are you able to suggest what is lacking on this forum;  how it can be improved?\n> \n> I'm concerned that valuable discussion, which all students should be\n> reading, becomes spread across multiple locations, and there's the danger\n> of incorrect information being accidentally posted and not corrected.\n> \n> Nothing against students helping each other out, though; it's just that we've\n> seen previous cases where wrong information has been spread (within residential\n> college tutorials) and students' test outcomes suffered.\n> \n> Discord often looks more like a Twitter exchange, than a serious forum,\n> but maybe some students learn better that way.\n\nI think one of the things that is lacking in the this forum is the ability to write \ncodes or more on the documentation that allows the writing of code (i dont know how \nto write formatted codes here) unlike stackoverflow [uses indentation] , discord [use \n```js or any programming languange], github[uses ```]).\n\nIf there is a documentation to write code here, the documentation is not easy to \nfind. I know its possible because of this \nhttps://secure.csse.uwa.edu.au/run/help2002?p=np&a=18&all=y2",
+            "Verified": "False",
+            "Tags": ["discord", "cshelp", "forum", "formatted code"]
+        },
+        {
+            "Date": "2019-08-17 05:47:07",
+            "Subject": "UWA CITS Discord - For your learning and discussion in this unit",
+            "Body": "Previously, <poster131@student.uwa.edu.au> wrote:\n\n> I think one of the things that is lacking in the this forum is the ability to write \n> codes or more on the documentation that allows the writing of code (i dont know how \n> to write formatted codes here) unlike stackoverflow [uses indentation] , discord [use \n> ```js or any programming languange], github[uses ```]).\n> \n> If there is a documentation to write code here, the documentation is not easy to \n> find. I know its possible because of this \n> https://secure.csse.uwa.edu.au/run/help2002?p=np&a=18&all=y2\n\nThanks for your comment Frinze.\n\nCoincidently, I've only been adding syntax highlighting to our forums in the last week, and a \ncouple of our staff offered to test it.\nAnother example:  https://secure.csse.uwa.edu.au/run/help2002?a=3\n\nI haven't yet added some short on-screen documentation for it, and am still awaiting feedback, \nbut it works (similarly) by including special tags at the beginning of lines:\n\n {{{\n your-code-here\n }}}\n\nYour feedback welcome, too.",
+            "Verified": "True",
+            "Tags": ["discord", "cshelp", "forum", "formatted code"]
+        }
+    ]
+}

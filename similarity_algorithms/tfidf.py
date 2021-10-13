@@ -17,11 +17,11 @@ class Tfidf(Algorithm):
     def __init__(self):
         self.vectorizer = TfidfVectorizer()
 
-    def similarity(self, post, posts, n):
-        document_list = [post_text(p) for p in posts]
-        document_list.insert(0, post_text(post))
-        embeddings = self.vectorizer.fit_transform(document_list)
+    def similarity(self, in_toks, toks_array, **kwargs):
 
+        in_text = ' '.join(in_toks) 
+        document_list = [' '.join(toks) for toks in toks_array]
+        document_list.insert(0, in_text)
+        embeddings = self.vectorizer.fit_transform(document_list)
         scores = cosine_similarity(embeddings[0], embeddings[1:]).flatten()
-        post_scores = {posts[i]:scores[i] for i in range(len(posts))}
-        return nlargest(n, post_scores, key=post_scores.get)
+        return scores

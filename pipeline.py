@@ -2,6 +2,8 @@
 This is the 'heart' of the program. Developers need to understand how the
 pipeline function works, as this is the main interface that they must use.
 """
+import numpy as np
+
 from post import Post
 from thread_obj import Thread, all_posts
 from typing import List, Callable, Tuple
@@ -38,8 +40,7 @@ def process_post(p : Post,
         this is because immutability is required for cacheing.
         """
         text = p.subject if subject else p.payload
-        return [pipe(*substitutes)(tok) for tok in \
-        word_tokenize(pipe(*cleaners)(text)) if any(product(filters,tok))]
+        return [pipe(*substitutes)(tok) for tok in word_tokenize(pipe(*cleaners)(text)) if any(product(filters,tok))]
 
 #process_cached is simply the process_post function, but with memoisation
 process_cached = cached(process_post)
@@ -74,16 +75,18 @@ def pipeline(post : Post,
           tokens and computes similarity
         - weight functions are then applied
         """
-        subject_toks = process_post(post,cleaners,filters,substitutes,True)
-        payload_toks = process_post(post,cleaners,filters,substitutes,False)
+        in_subject_toks = process_post(post, cleaners, filters, substitutes, True)
+        in_payload_toks = process_post(post, cleaners, filters, substitutes, False)
+        posts = all_posts(threads)
         similarities = {}
 
-        for p in all_posts(threads):
-          subject_similarity = \
-          sum([alg(subject_toks, process_cached(p, cleaners, filters, substitutes, True)) for alg in algorithms]) / len(algorithms)
-          payload_similarity = \
-          sum([alg(payload_toks, process_cached(p, cleaners, filters, substitutes, False)) for alg in algorithms]) / len(algorithms)
-          similarities[p] = pipe_weight(p,*weights) * (w * subject_similarity + (1.0-w) * payload_similarity)
+        all_subject_toks = [process_cached(p, cleaners, filters, substitutes, True) for p in posts]
+        subject_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_subject_toks, toks_array=all_subject_toks) for alg in algorithms], axis=0)
+        all_payload_toks =  [process_cached(p, cleaners, filters, substitutes, False) for p in posts]
+        payload_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_payload_toks, toks_array=all_payload_toks) for alg in algorithms], axis=0)
+
+        for i, p in enumerate(posts):
+          similarities[p] = pipe_weight(p,*weights) * (w * subject_similarities[i] + (1.0-w) * payload_similarities[i])
 
         return nlargest(n, similarities, key=similarities.get)
         """
