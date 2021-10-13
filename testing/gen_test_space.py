@@ -1,3 +1,8 @@
+"""
+This script converts the text document into json files for the simlaritytesting.py.
+Currently the script will only convert the 2019 text data.
+"""
+
 import json 
 import os 
 import sys 

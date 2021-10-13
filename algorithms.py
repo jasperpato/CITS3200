@@ -1,3 +1,7 @@
+"""
+This script contains the functions to run jaccard and cosine similarity algorithm.
+The main functions are the cosine_similarity function and the jaccard function.
+"""
 from collections import Counter
 from math import sqrt
 from typing import List, Set
@@ -13,6 +17,8 @@ def norm(xs : Vector) -> float:
 def word_vector(toks : Tokens, words : Set[str]) -> Vector:
     return list(merge({w : 0 for w in words}, Counter(toks)).values())
 
+# uses the angle between the 2 posts to denote how similiar they are
+# The smaller the angle between them are, the higher the score
 def cosine_similarity(A : Tokens, B : Tokens) -> float:
     if(len(A) == 0 or len(B) == 0):
         return 0.0

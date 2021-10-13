@@ -1,3 +1,9 @@
+"""
+This script randomly picks a letter in the post and either removes it or replaces 
+it with another word.
+This is used to test whether the spell correction works, or whether our search will
+still be accurate even with mispellings
+"""
 import random
 import string
 def remove_one_letter(read_data):

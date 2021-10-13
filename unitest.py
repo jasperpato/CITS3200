@@ -1,3 +1,6 @@
+"""
+This script contains the unittest to test out the different functions required in our project.
+"""
 from itertools import chain
 import json
 from os import remove 
@@ -14,7 +17,9 @@ from post import Post
 class testConfig():
     pass
 
-
+# Unit test for the parse_file.py
+# Expect the script to succsessful extract and organise data from a text file
+# All output should be in a list belonging to class Post
 class FileParseCase(unittest.TestCase):
     def setUp(self):
         self.f = open('help2002-2019.txt')
@@ -46,7 +51,9 @@ class FileParseCase(unittest.TestCase):
 
 
 
-
+# Unit test for the spell_correction_pysc.py
+# expected to successfully correct any mispelling
+# either by adding, removing or changing words.
 class SpellcheckTestCase(unittest.TestCase):
     def setUp(self):
         self.spellchecker = SpellChecker()
@@ -106,6 +113,8 @@ class SpellcheckTestCase(unittest.TestCase):
         print("score: ",score)
         self.assertTrue(score >= 0.8)
 
+# Unit test to test the functions in util.py
+# This mainly tested whether utils successfully removes symbols that are not alphabets
 class UtilityTestCase(unittest.TestCase):
 
     def test_remove_non_alph(self):
@@ -133,6 +142,7 @@ def suite():
     suite.addTest(FileParseCase('test_parse'))
     return suite
 
+# Main coomand to run the test
 if __name__=='__main__':
     unittest.main(verbosity=2)
 
