@@ -52,4 +52,4 @@ if __name__ == "__main__":
     subject = input("Subject: ")
     payload = input("Payload: ")
     
-    print(similarity(filename, subject, payload, N)
+    print(similarity(filename, subject, payload, N))
