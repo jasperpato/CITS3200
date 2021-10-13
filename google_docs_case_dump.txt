@@ -10,6 +10,76 @@ Subject:General Questions
 
 Body:ANONYMOUS wrote:
 
+> 1-) Can you please clarify the difference between a shell, terminal and Bash? Are 
+> they the same? Because I keep hearing them but i am not sure if they are used 
+> interchangeably or...?
+
+Many textbook authors and writers on the internet will use the terms interchangeably, so it takes a bit of context to 
+work out what's being discussed.  Pedantically, they 3 are distinct things, so sorry if that wasn't clear from Friday's 
+workshop.
+
+A *terminal* program renders and manages the rectangular graphical window, rendering colours, fonts, etc, and responds 
+to keyboard, mouse, and scrollbar events. Some common examples include xterm (on Linux), and Terminal and iTerm2 (on 
+macOS):
+
+  https://en.wikipedia.org/wiki/List_of_terminal_emulators
+
+A terminal runs as an operating system process, and can itself created and manage one or more other processes, receive 
+the direct *their* keyboard events, and receive and render the character output of those processes.  While terminal 
+programs can usually permit each of these other processes to be individually specified, each is usually an instance of a 
+*shell* program. If a terminal program simultaneously runs several shell processes, each is usually managed within a 
+separate tab (as on a browser) to separate their inputs and outputs.  We often say that these other processes runs 
+'behind' the terminal process.
+
+A *shell* program is the thing that issues a prompt, receives a line of character input, breaks the line into space- and 
+tab-separated words, and based on the first word on each line performs and 'internal' action, or executes and waits for 
+an external program (such as 'date', 'cal', or 'cc'). When the shell creates an external process, it passes to that 
+process each of the words from the command-line as its arguments, so that the process knows what to do: 'cal -y',
+'cc -o try try.c',  etc.
+Of note, the shell does not know what any of the words/arguments mean, and just passes them on.
+When each new process produces some character-based output, it is received and rendered by the terminal process.
+
+*bash* is one type of shell program,  just like C and Java are types of programming languages. There's many different 
+shells - others include zsh (the default on macOS), zsh, csh, ash, rc, ...)  Each different shell supports/recognizes a 
+different syntax, but each has the same primary role of creating and managing other processes.
+
+ 
+> 2-) Just curious, how did you change the colour of your shell's background (or 
+> terminal or what ever)?
+
+(with respect to the descriptions above) I use iTerm2 on macOS (highly recommended!).  It supports 'profiles' which 
+group together (the program/shell to run, the size of the window, the background and foreground colours, the font, ...)
+Other terminal programs have their own mechanisms for setting these attributes and, as suggested,  you'll need to read 
+their manuals or online documentation.
+This from 2004!  https://www.linuxquestions.org/questions/debian-26/how-to-change-background-and-fonts-color-in-xterm-156290/
+
+
+
+> 3-) When you were in the vi editor, how do you switch between the two modes? What do 
+> you press?
+
+vi is always in one of two modes - command-mode (the starting state) and insert-mode.  You move to insert-mode by 
+invoking an insertion command (such as i for insert or a for append).  From there you stay in insert-mode until you 
+press the Escape key (usually top-left of keyboard),  which takes you back to command-mode.
+
+And, almost an internet meme, the most important knowledge is how to get out of vi!
+
+  https://www.howtogeek.com/411210/how-to-exit-the-vi-or-vim-editor/
+  https://stackoverflow.com/questions/11828270/how-do-i-exit-the-vim-editor
+
+___
+Hope this all helps,                
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+Result JACCARD                         
+Subject:General Questions           
+
+Body:ANONYMOUS wrote:
+
 > Hello Chris,
 > 
 > 1-) Can you please clarify the difference between a shell, terminal and Bash? Are 
@@ -41,7 +111,43 @@ Thirdly, Can't help you there sorry.
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
-Result JACCARD                         
+Result TFIDF                         
+Subject:General Questions           
+
+Body:ANONYMOUS wrote:
+
+> Hello Chris,
+> 
+> 1-) Can you please clarify the difference between a shell, terminal and Bash? Are 
+> they the same? Because I keep hearing them but i am not sure if they are used 
+> interchangeably or...?
+> 
+> 2-) Just curious, how did you change the colour of your shell's background (or 
+> terminal or what ever)?
+> 
+> 3-) When you were in the vi editor, how do you switch between the two modes? What do 
+> you press?
+> 
+> Cheers
+
+
+
+Not Chris,
+
+Firstly, yeah they are in a way interchangeable they are just basically allow the user(Us) 
+and/or programs to interact with the operating system. 
+
+Secondly, depends on what OS you are using for your command line. Google it("How to alter 
+terminal on OSX" something like that.
+
+Thirdly, Can't help you there sorry.                
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+Result USE                         
 Subject:General Questions           
 
 Body:ANONYMOUS wrote:
@@ -108,78 +214,6 @@ Hope this all helps,
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-Result TFIDF                         
-Subject:difference between using a pointer           
-
-Body:ANONYMOUS wrote:
-
-> Hi,
-> for lab1,I'm confusing about why I have to use a pointer for isdigit()
-
-You do not need a pointer as the parameter to isdigit() - the only valid parameter is a 
-character. However, the whole discussion about pointers and their relationship to character 
-strings is coming up in a later lecture:
-
-In effect, if you wish to access the first character of the second command-line argument (a string), 
-then want:
-
-    char mychar = argv[1][0];
-
-as if you're accessing a 2-dimensional array or characters.
- 
-> function,without using it,it shows "sementation fault"
-
-If your program has compiled (without any errors or warnings) and it only crashes when it's 
-run, I wonder/suspect that you're not using the suggest switches to 'cc' ?                
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
-Result USE                         
-Subject:lab 1           
-
-Body:ANONYMOUS wrote:
-
-> This helps a lot, but still, a little unclear how to actually open that C file. Are we working in the terminal 
-> or in the Docker desktop? where are we supposed to actually change the C code according to the labsheet?
-
-Hi,  I'm a bit confused as to where "you're up to" in the steps of:
-
-  http://teaching.csse.uwa.edu.au/units/CITS2002/labsheets/install-linux.php
-
-If you have a Ubuntu image downloaded and populated with necessary packages - providing the C compiler (essential) and 
-your choice of tezt editor (vi/vim recommended if you don't already have a favourite - then you can run a new Linux 
-terminal within DockerDesktop, or just through the existing terminal program on your system (my preference, as it saves 
-on screen real-estate to use the same terminal program with multiple open tabs).
-
-Then (assuming vi as your editor, and that you have the required C file in your present working directory), you run vi 
-and pass the file's name on the command-line:
-
-  prompt>  vi rotate.c
-
-Then you're 'in' vi, and you can issue vi's commands navigate around the file or to edit it (switching backwards and 
-forwards between command-mode and insert-mode:
-
-  https://secure.csse.uwa.edu.au/run/help2002?hl=insert%20mode&a=26 )
-
-When you've made all the edits you wish, you simply leave vi with two capital Z's - ZZ
-and you'll be returned to the shell prompt, where you can compile the modified file:
-
-  prompt>  cc -o rotate rotate.c
-
-If there's no compilation errors (otherwise, back to editing....) you can run the successfully compiled program with:
-
-  prompt>  ./rotate  yourstring
-
-Does that help?                
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
 ----------------------------------------------------------------------------------------------------
 Original Post
 Subject:error: inactive developer path
@@ -226,12 +260,32 @@ What is the output when you run:
 Result JACCARD                         
 Subject:error: inactive developer path           
 
-Body:Previously, <poster008@student.uwa.edu.au> wrote:
+Body:ANONYMOUS wrote:
 
-> I found the following StackExchange posting by searching for some of the specific text from the error message:
->   https://apple.stackexchange.com/questions/254380/why-am-i-getting-an-invalid-active-developer-path-when-attempting-to-use-git-a
+> Hi Chris,
+> 
+> I have this error when trying to compile  a file:
+> 
+> xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), 
+> missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun
+> 
+> What does this mean?
 
-And, wow, look at how many times the question and the accepted answer have been upvoted!                
+Not seen the error before - but it's (only) from macOS.
+
+Have you downloaded the Xcode package, from the App Store?
+Did you run xcrun yourself (by typing it in), or did 'cc' throw up that error?
+
+On my (working) Big Sur installation of Xcode, I do not have the file 
+/Library/Developer/CommandLineTools/usr/bin/xcrun. either.
+
+My xcrun is located in. /usr/bin/xcrun
+
+What is the output when you run:
+
+   prompt> which xcrun
+
+??                
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -243,14 +297,30 @@ Subject:error: inactive developer path
 
 Body:ANONYMOUS wrote:
 
-> the prompt: which xcrun returns /usr/bin/xcrun so I don't know why this is happening. It 
-> happened when I tried the cc command. so the cc threw up the error.
+> Hi Chris,
+> 
+> I have this error when trying to compile  a file:
+> 
+> xcrun: error: invalid active developer path (/Library/Developer/CommandLineTools), 
+> missing xcrun at: /Library/Developer/CommandLineTools/usr/bin/xcrun
+> 
+> What does this mean?
 
-Sorry, but I can't imagine what the problem is, based on what you're described.
+Not seen the error before - but it's (only) from macOS.
 
-My first thought would be that Xcode (and/or the supplementary tools) have not been installed 
-correctly,  but I can't tell that for sure.  If it's a laptop, are you able to bring it in to 
-UWA?  Perhaps email me to arrange a time  (not before 2PM today).                
+Have you downloaded the Xcode package, from the App Store?
+Did you run xcrun yourself (by typing it in), or did 'cc' throw up that error?
+
+On my (working) Big Sur installation of Xcode, I do not have the file 
+/Library/Developer/CommandLineTools/usr/bin/xcrun. either.
+
+My xcrun is located in. /usr/bin/xcrun
+
+What is the output when you run:
+
+   prompt> which xcrun
+
+??                
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -260,20 +330,12 @@ UWA?  Perhaps email me to arrange a time  (not before 2PM today).
 Result USE                         
 Subject:error: inactive developer path           
 
-Body:Hi ANONYMOUS,
+Body:Previously, <poster008@student.uwa.edu.au> wrote:
 
-I found the following StackExchange posting by searching for some of the specific text from the error message:
-  https://apple.stackexchange.com/questions/254380/why-am-i-getting-an-invalid-active-developer-path-when-attempting-to-use-git-a
+> I found the following StackExchange posting by searching for some of the specific text from the error message:
+>   https://apple.stackexchange.com/questions/254380/why-am-i-getting-an-invalid-active-developer-path-when-attempting-to-use-git-a
 
-Unfortunately I don't have access to an Apple system to test (and this question was asked about errors with `git`, not `cc`), but I suspect the solution proposed will also work for your case.
-
-Try running the command
-
-    $ xcode-select --install
-
-and then invoking `cc` after that is done.
-
-The post also links to an Apple technical note (https://developer.apple.com/library/archive/technotes/tn2339/_index.html) that explains a little more about what xcrun and CommandLineTools are.                
+And, wow, look at how many times the question and the accepted answer have been upvoted!                
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -320,37 +382,33 @@ strings, in Lecture 6, tomorrow.
 |                                         |
 |                                         |
 Result JACCARD                         
-Subject:saving and running coolexe files           
+Subject:char data type           
 
 Body:ANONYMOUS wrote:
 
-> I can't seem to save and run coolexe files on my laptop. I use the website but can't save 
-> the files as they disappear in 20 seconds, so I tried coolc.sh, which seemed as though they 
-> were saving to my laptop, but then the results are wrong when I execute them. I tested to 
-> see if my code was at fault by using the workshop 5 example but that's running fine so it 
-> must be a problem with the coolexe file. Can anyone help? 
+Hi,
 
-Hello,
+> I was doing Lab 1 question 9 and I realize some things:
+> 1. I can use atoi on an argument, but I get an error when I try to use it on the 
+> individual characters of the argument.
 
-I can't quite understand whether you're having problems with the website
-(as no-one else has reported similar problems), or not.  I suspect it's
-more a mis-understanding about the 'workflow', as the first reply has
-explained.
+As in most programming languages, the datatypes of a function's parameters, and its returned 
+value are very important.  n the case of the atoi() function, its single parameter must be a 
+sequence of characters (a string in C), because formatted representations of integers are 
+often longer than a single character (e.g. "123").
 
-The .coolexe file is available for only 20seconds, because with tens
-of students accessing the website at the same time (hopefully not
-maliciously!), I wish to keep the disk free of no-longer- required
-temporary files.  If you feel that 20secs is not long enough to download
-a .coolexe file over a slow network connection, the time limit could be
-increased a bit.
+A single character is not a string, and the value and internal representation of the 
+character '3' is different to the string "3".
 
-Unsure what this means:
+> 2. I can use isdigit on the individual characters of an argument, but I get an error 
+> when I try to use it on the argument.
 
-  > but then the results are wrong when I execute them.
+Similarly, the isdigit() function requires a single character argument, but not a string. In 
+all cases, a single character can be checked to see if it's a digit, or not, but strings can 
+contain more than a single character - and the function is not named  isnumber().
 
-The code developed in Workshop-5 is a minimal example to get students
-started; far from a complete solution against which you should compare
-anything (and if it did everything, what would you need to complete??)                
+Amitava will be discussing the relationship and differences between C's characters and 
+strings, in Lecture 6, tomorrow.                
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -358,17 +416,33 @@ anything (and if it did everything, what would you need to complete??)
 |                                         |
 |                                         |
 Result TFIDF                         
-Subject:Cache Questions           
+Subject:char data type           
 
 Body:ANONYMOUS wrote:
 
-> By data I was referring to the numeric values held by the addresses. However, this still raises the question on 
-> how basic.cool can achieve 4 hits if there are only 2 instances of an address being repeated
+Hi,
 
-It's always the addresses, never the numeric values held in any addresses.
+> I was doing Lab 1 question 9 and I realize some things:
+> 1. I can use atoi on an argument, but I get an error when I try to use it on the 
+> individual characters of the argument.
 
-Instructions like CALL and RETURN involve/manipulate the stack (which is in memory) and if CALL pushes something onto 
-the stack, and it's still there when you RETURN, you'll get a hit.                
+As in most programming languages, the datatypes of a function's parameters, and its returned 
+value are very important.  n the case of the atoi() function, its single parameter must be a 
+sequence of characters (a string in C), because formatted representations of integers are 
+often longer than a single character (e.g. "123").
+
+A single character is not a string, and the value and internal representation of the 
+character '3' is different to the string "3".
+
+> 2. I can use isdigit on the individual characters of an argument, but I get an error 
+> when I try to use it on the argument.
+
+Similarly, the isdigit() function requires a single character argument, but not a string. In 
+all cases, a single character can be checked to see if it's a digit, or not, but strings can 
+contain more than a single character - and the function is not named  isnumber().
+
+Amitava will be discussing the relationship and differences between C's characters and 
+strings, in Lecture 6, tomorrow.                
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -376,14 +450,33 @@ the stack, and it's still there when you RETURN, you'll get a hit.
 |                                         |
 |                                         |
 Result USE                         
-Subject:about static variable           
+Subject:char data type           
 
 Body:ANONYMOUS wrote:
 
-> I mean question9 asks program to recieve an argument if it's a number, then the rotation amount changes 
-> to this value.Can you give me some idea how to achieve this? What do I need to do with the "Rot" 
-> variable?
-You can only read strings from the command line, if you want an argument to be an integer, you have to use the atoi() (ascii to integer) function. Is that the problem?                
+Hi,
+
+> I was doing Lab 1 question 9 and I realize some things:
+> 1. I can use atoi on an argument, but I get an error when I try to use it on the 
+> individual characters of the argument.
+
+As in most programming languages, the datatypes of a function's parameters, and its returned 
+value are very important.  n the case of the atoi() function, its single parameter must be a 
+sequence of characters (a string in C), because formatted representations of integers are 
+often longer than a single character (e.g. "123").
+
+A single character is not a string, and the value and internal representation of the 
+character '3' is different to the string "3".
+
+> 2. I can use isdigit on the individual characters of an argument, but I get an error 
+> when I try to use it on the argument.
+
+Similarly, the isdigit() function requires a single character argument, but not a string. In 
+all cases, a single character can be checked to see if it's a digit, or not, but strings can 
+contain more than a single character - and the function is not named  isnumber().
+
+Amitava will be discussing the relationship and differences between C's characters and 
+strings, in Lecture 6, tomorrow.                
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -424,6 +517,29 @@ Subject:Segmentation fault (core dumped)
 
 Body:Previously, <poster080@student.uwa.edu.au> wrote:
 
+> It appears there is something wrong with this line of code 
+> int numbers = strlen(argv[2]);
+> but i am not sure what, this is in the main function and i am trying to get length of the char* 
+> argv[2].
+
+That line looks quite harmless - assuming that you're invoking your program with sufficient command-line 
+arguments.  You'll be needing:
+
+  ./program  huge  elephant
+
+to be able to get the length of the string  elephant.
+Providing sufficient arguments?                
+|                                         |
+|                                         |
+<<<<----------------------------------->>>>
+<<<<----------------------------------->>>>
+|                                         |
+|                                         |
+Result TFIDF                         
+Subject:Segmentation fault (core dumped)           
+
+Body:Previously, <poster080@student.uwa.edu.au> wrote:
+
 > Any suggestions as to why this happened cheers
 
 It's not possible to say, definitively, but nearly all segmentation violations are the result 
@@ -440,48 +556,23 @@ characters.
 <<<<----------------------------------->>>>
 |                                         |
 |                                         |
-Result TFIDF                         
-Subject:Segmentation fault (core dumped)           
-
-Body:Previously, <poster080@student.uwa.edu.au> wrote:
-
-> definitely isn't as even my computer is giving me warnings about attempting to access stuff within 
-> the computer I don't have access to
-
-This 2nd part of your reply has me very confused ??                
-|                                         |
-|                                         |
-<<<<----------------------------------->>>>
-<<<<----------------------------------->>>>
-|                                         |
-|                                         |
 Result USE                         
 Subject:Segmentation fault (core dumped)           
 
 Body:Previously, <poster080@student.uwa.edu.au> wrote:
 
-> Previously, <chris.mcdonald@uwa.edu.au> wrote:
-> 
-> > Previously, <poster080@student.uwa.edu.au> wrote:
-> > 
-> > > Any suggestions as to why this happened cheers
-> > 
-> > It's not possible to say, definitively, but nearly all segmentation violations are the result 
-> > of attempting to access memory other than what you program 'owns', or in a manner inconsistent 
-> > with the way it's been declared.
-> > 
-> > As you're working on the credit card problem, examining individual characters in a string (an 
-> > array of characters), my guess is that you're attempting to access somewhere 'outside' of the 
-> > memory allocated for that string.  Check the indices you're using to access the array's 
-> > characters.
-> 
-> 
 > It appears there is something wrong with this line of code 
 > int numbers = strlen(argv[2]);
 > but i am not sure what, this is in the main function and i am trying to get length of the char* 
 > argv[2].
 
-argv[0] is the name of the executable, argv[1]... the other command line arguments. I think you are not passing enough command line arguments. You must  pass least 3 strings for argv[2] to be defined.                
+That line looks quite harmless - assuming that you're invoking your program with sufficient command-line 
+arguments.  You'll be needing:
+
+  ./program  huge  elephant
+
+to be able to get the length of the string  elephant.
+Providing sufficient arguments?                
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -580,83 +671,77 @@ Hope this helps.
 Result JACCARD                         
 Subject:How to actually open rotate.c           
 
-Body:Previously, <poster055@student.uwa.edu.au> wrote:
+Body:ANONYMOUS wrote:
 
-> ANONYMOUS wrote:
+> Hey,
 > 
-> > Hey,
-> > 
-> > I've got a few questions that I need clarifying;
-> > 
-> > 1) When using ubuntu, do I use it through powershell (I use Microsoft) and docker 
-> > desktop, or do I directly use it on ubuntu? (Could be a confusing question but I 
-> > honestly have confused myself siginificantly)
-> > 
-> > 2) I downloaded VIM, supposedly the improved version of Vi, how do I open the rotate.c 
-> > file through VIM?
-> > 
-> > 3) Depending on the answers to the other questions, this one may be negligent but do I 
-> > run an ubuntu (myubuntu) container on powershell then supposedly access the rotate.c 
-> > file through VIM on powershell, and if so how do I access files on my laptop in the 
-> > terminal?
-> > 
-> > Sorry if these questions have been asked before but I honestly don't know if the other 
-> > questions I've seen are actually asking the same question, just cause I'm befuddled. 
-> > Also I have done this:
-> > https://teaching.csse.uwa.edu.au/units/CITS2002/labsheets/install-linux.php
-> > 
-> > Pretty much I'm confused on how to open the C file as to start editing it and 
-> > executing it etc.
-> > 
-> > Thank you so much.
+> I've got a few questions that I need clarifying;
 > 
-> I'm not a lecturer or a lab facilitator so by all means I could be somewhat wrong.
+> 1) When using ubuntu, do I use it through powershell (I use Microsoft) and docker 
+> desktop, or do I directly use it on ubuntu? (Could be a confusing question but I 
+> honestly have confused myself siginificantly)
 > 
-> 1) Confusing question but the idea if your intending to use docker is to run ubuntu using 
-> docker through powershell. Docker is an application that you can interact with through ur 
-> powershell, the docker application is quite interesting, it creates "images" (think of it as 
-> a little portal) of different Operating systems (in our case, Ubuntu) within ur local/host OS 
-> (yours being Windows). 
+> 2) I downloaded VIM, supposedly the improved version of Vi, how do I open the rotate.c 
+> file through VIM?
 > 
-> Within the images there are "containers" (I could be wrong but I imagine they are the 
-> different user's of the OS), throughout the unit you can create new containers as you like, 
-> or keep coming back to the same container so your files in that container can be interacted 
-> with each session. You will be using your powershell to communicate with docker through 
-> commands and open your little Ubuntu portal, in this portal you should be doing your software 
-> development in this unit.
+> 3) Depending on the answers to the other questions, this one may be negligent but do I 
+> run an ubuntu (myubuntu) container on powershell then supposedly access the rotate.c 
+> file through VIM on powershell, and if so how do I access files on my laptop in the 
+> terminal?
 > 
-> 2) Navigate to the folder holding rotate.c through your powershell and then type "vim 
-> rotate.c" to edit the file. However, as stated before this file should be within your 
-> container, you can do this by using docker commands to copy or simply creating a new c file 
-> in the container and copy and pasting the text.
+> Sorry if these questions have been asked before but I honestly don't know if the other 
+> questions I've seen are actually asking the same question, just cause I'm befuddled. 
+> Also I have done this:
+> https://teaching.csse.uwa.edu.au/units/CITS2002/labsheets/install-linux.php
 > 
-> 3) This question is also confusing and I think it's important to understand the role of 
-> certain tools we are using:
-> Docker - application we use to create images of other OS within our host OS, with each 
-> container representing a different user (with different folders) of those images
-> VIM - a simple text editor
-> Powershell - a command driven application that we use to communicate to our OS and it's 
-> applications.
+> Pretty much I'm confused on how to open the C file as to start editing it and 
+> executing it etc.
 > 
-> With that in mind, through powershell we communicate to our docker application and instruct 
-> it to open our myubuntu container ("portal"). Once opened the prompt will change to "root" 
-> with a bunch of numbers/letters indicating the powershell is now communicating to the 
-> container. We then can create our own files in this container, including rotate.c, we can use 
-> VIM to create such files since it is a text editor (high level software language files are 
-> essentially just text files with special syntax). Once done you can simply exit your 
-> container by communicating through powershell to the docker container, putting you back onto 
-> your host OS command-line (powershell).
-> 
-> I've ommitted specific commands used etc because it would take ages laying them all out, what 
-> helps is understanding what each tool use is, and then researching how to do certain tasks 
-> that are in each tools breadth. Such as opening and editing a file in vim, or navigating to a 
-> different folder in powershell, or creating a new container in your docker container.
-> 
-> Hope this helps.
+> Thank you so much.
 
-Appreciate it, helps a lot more than you think.
+I'm not a lecturer or a lab facilitator so by all means I could be somewhat wrong.
 
-Thanks a lot!                
+1) Confusing question but the idea if your intending to use docker is to run ubuntu using 
+docker through powershell. Docker is an application that you can interact with through ur 
+powershell, the docker application is quite interesting, it creates "images" (think of it as 
+a little portal) of different Operating systems (in our case, Ubuntu) within ur local/host OS 
+(yours being Windows). 
+
+Within the images there are "containers" (I could be wrong but I imagine they are the 
+different user's of the OS), throughout the unit you can create new containers as you like, 
+or keep coming back to the same container so your files in that container can be interacted 
+with each session. You will be using your powershell to communicate with docker through 
+commands and open your little Ubuntu portal, in this portal you should be doing your software 
+development in this unit.
+
+2) Navigate to the folder holding rotate.c through your powershell and then type "vim 
+rotate.c" to edit the file. However, as stated before this file should be within your 
+container, you can do this by using docker commands to copy or simply creating a new c file 
+in the container and copy and pasting the text.
+
+3) This question is also confusing and I think it's important to understand the role of 
+certain tools we are using:
+Docker - application we use to create images of other OS within our host OS, with each 
+container representing a different user (with different folders) of those images
+VIM - a simple text editor
+Powershell - a command driven application that we use to communicate to our OS and it's 
+applications.
+
+With that in mind, through powershell we communicate to our docker application and instruct 
+it to open our myubuntu container ("portal"). Once opened the prompt will change to "root" 
+with a bunch of numbers/letters indicating the powershell is now communicating to the 
+container. We then can create our own files in this container, including rotate.c, we can use 
+VIM to create such files since it is a text editor (high level software language files are 
+essentially just text files with special syntax). Once done you can simply exit your 
+container by communicating through powershell to the docker container, putting you back onto 
+your host OS command-line (powershell).
+
+I've ommitted specific commands used etc because it would take ages laying them all out, what 
+helps is understanding what each tool use is, and then researching how to do certain tasks 
+that are in each tools breadth. Such as opening and editing a file in vim, or navigating to a 
+different folder in powershell, or creating a new container in your docker container.
+
+Hope this helps.                
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -666,10 +751,77 @@ Thanks a lot!
 Result TFIDF                         
 Subject:How to actually open rotate.c           
 
-Body:Thanks for your great reply Lewis.
+Body:ANONYMOUS wrote:
 
-Hopefully we can encourage more students to answer each others' questions, here, by offering their 
-suggestions and success-stories.                
+> Hey,
+> 
+> I've got a few questions that I need clarifying;
+> 
+> 1) When using ubuntu, do I use it through powershell (I use Microsoft) and docker 
+> desktop, or do I directly use it on ubuntu? (Could be a confusing question but I 
+> honestly have confused myself siginificantly)
+> 
+> 2) I downloaded VIM, supposedly the improved version of Vi, how do I open the rotate.c 
+> file through VIM?
+> 
+> 3) Depending on the answers to the other questions, this one may be negligent but do I 
+> run an ubuntu (myubuntu) container on powershell then supposedly access the rotate.c 
+> file through VIM on powershell, and if so how do I access files on my laptop in the 
+> terminal?
+> 
+> Sorry if these questions have been asked before but I honestly don't know if the other 
+> questions I've seen are actually asking the same question, just cause I'm befuddled. 
+> Also I have done this:
+> https://teaching.csse.uwa.edu.au/units/CITS2002/labsheets/install-linux.php
+> 
+> Pretty much I'm confused on how to open the C file as to start editing it and 
+> executing it etc.
+> 
+> Thank you so much.
+
+I'm not a lecturer or a lab facilitator so by all means I could be somewhat wrong.
+
+1) Confusing question but the idea if your intending to use docker is to run ubuntu using 
+docker through powershell. Docker is an application that you can interact with through ur 
+powershell, the docker application is quite interesting, it creates "images" (think of it as 
+a little portal) of different Operating systems (in our case, Ubuntu) within ur local/host OS 
+(yours being Windows). 
+
+Within the images there are "containers" (I could be wrong but I imagine they are the 
+different user's of the OS), throughout the unit you can create new containers as you like, 
+or keep coming back to the same container so your files in that container can be interacted 
+with each session. You will be using your powershell to communicate with docker through 
+commands and open your little Ubuntu portal, in this portal you should be doing your software 
+development in this unit.
+
+2) Navigate to the folder holding rotate.c through your powershell and then type "vim 
+rotate.c" to edit the file. However, as stated before this file should be within your 
+container, you can do this by using docker commands to copy or simply creating a new c file 
+in the container and copy and pasting the text.
+
+3) This question is also confusing and I think it's important to understand the role of 
+certain tools we are using:
+Docker - application we use to create images of other OS within our host OS, with each 
+container representing a different user (with different folders) of those images
+VIM - a simple text editor
+Powershell - a command driven application that we use to communicate to our OS and it's 
+applications.
+
+With that in mind, through powershell we communicate to our docker application and instruct 
+it to open our myubuntu container ("portal"). Once opened the prompt will change to "root" 
+with a bunch of numbers/letters indicating the powershell is now communicating to the 
+container. We then can create our own files in this container, including rotate.c, we can use 
+VIM to create such files since it is a text editor (high level software language files are 
+essentially just text files with special syntax). Once done you can simply exit your 
+container by communicating through powershell to the docker container, putting you back onto 
+your host OS command-line (powershell).
+
+I've ommitted specific commands used etc because it would take ages laying them all out, what 
+helps is understanding what each tool use is, and then researching how to do certain tasks 
+that are in each tools breadth. Such as opening and editing a file in vim, or navigating to a 
+different folder in powershell, or creating a new container in your docker container.
+
+Hope this helps.                
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>
@@ -677,27 +829,12 @@ suggestions and success-stories.
 |                                         |
 |                                         |
 Result USE                         
-Subject:Win 10 where to save file for ubuntu to find it?           
+Subject:How to actually open rotate.c           
 
-Body:Previously, <poster084@student.uwa.edu.au> wrote:
+Body:Thanks for your great reply Lewis.
 
-> So I am using ubuntu 20.04 LTS and I am going through "Linux and compiler basics". But 
-> when I am  going through cat "linux-cc-basics.php" command, it says there is no such 
-> file or directory. Where should I save my file? I am using windows 10 and I saved the 
-> file previously under This pc>(c)>users> my account name. 
-
-The file "linux-cc-basics.php" is a webpage so, unless you've downloaded it to somewhere on your 
-local Windows file-system (such as the Desktop), you will not have it on your local system and, 
-thus, cannot display it with 'cat'.
-
-Before running a docker image (to become a container) you need to indicate through its command-
-line arguments which parts of your local file-system that docker should able to access.
-
-I believe that this is the same under both Windows and macOS, and has been described here:
-
-  https://secure.csse.uwa.edu.au/run/help2002?p=np&a=55
-
-??                
+Hopefully we can encourage more students to answer each others' questions, here, by offering their 
+suggestions and success-stories.                
 |                                         |
 |                                         |
 <<<<----------------------------------->>>>

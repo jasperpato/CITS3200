@@ -39,7 +39,7 @@ def generate_post(post, threads, cleaners, filters, substitutes, weights, nposts
     tfidf_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [tfidf.similarity],0.2, nposts)
     use_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [use.similarity],0.2, nposts)
     list_of_posts = [bag_of_words_posts, jaccard_posts, tfidf_posts, use_posts]
-    diff_posts = find_diff_posts(list_of_posts, start_algo)
+    diff_posts = return_best_posts(list_of_posts)
     return diff_posts
 
 def find_diff_posts(algo_results, start_index):
@@ -55,6 +55,12 @@ def find_diff_posts(algo_results, start_index):
             else:
                 out_posts.append(post)
                 break
+    return out_posts
+
+def return_best_posts(algo_results):
+    out_posts = []
+    for posts in algo_results:
+        out_posts.append(posts[0])
     return out_posts
 
 out_file = open('google_docs_case_dump.txt', 'w')
