@@ -1,3 +1,6 @@
+"""
+Class code to run cosine
+"""
 from collections import Counter
 from math import sqrt
 from typing import Set, Dict

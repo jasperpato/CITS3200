@@ -1,3 +1,6 @@
+"""
+Class code to run jaccard
+"""
 from typing import Dict
 from project_types import Tokens
 from .algorithm import SimilarityAlgorithm

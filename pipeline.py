@@ -96,7 +96,7 @@ def pipeline(post : Post,
 
 def dictionary_average(*dicts):
     out_dict = next(dicts[0])
-    out_dict = next(dicts[0])
+    out_dict = next(dicts[0]) #Need to retrieve the correct dictionary from the generator
     for dictionary in dicts[1:]:
         for key, val in dictionary.items():
             out_dict[key] += val
