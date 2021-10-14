@@ -1,8 +1,7 @@
 """
-This is one of the scripts to run our project, however this has been abandoned for the pipeline.py.
 To use the code enter this code into the command line:
 
-python3 main.py [text_data_file_with_posts]
+python3 similarity.py [text_data_file_with_posts]
 
 The system will prompt you to write a subject and body of text.
 Then it wil lreturn 3 of the most similiar post.
@@ -31,8 +30,6 @@ def similarity(filename, post_subject, post_text, N=3):
     filters = (  remove_none_alphabet, # take non-alphabetical words out
                 remove_stopwords)          # remove stopwords
 
-
-    #weights = [ lambda x: 1.5 if x.verified else 1.0]   # give a bit more priority to Chris' posts
     weights = [verified_weight, date_weight] #uses the functions from the weights.py script
     
     cleaners =    ( to_lower,              # lowercase all text

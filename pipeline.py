@@ -12,6 +12,8 @@ from nltk import word_tokenize
 from utils import pipe, cached, pipe_weight
 from itertools import product
 from project_types import Tokens
+from spell_correction_pysc import spell_correction
+from spellchecker import SpellChecker
 
 def process_post(p : Post,
                  cleaners : Tuple[Callable[[str], str]],
@@ -75,19 +77,22 @@ def pipeline(post : Post,
           tokens and computes similarity
         - weight functions are then applied
         """
+        spell = SpellChecker()
+        post.subject = spell_correction(post.subject,spell)
+        post.payload = spell_correction(post.payload,spell)
         in_subject_toks = process_post(post, cleaners, filters, substitutes, True)
         in_payload_toks = process_post(post, cleaners, filters, substitutes, False)
         posts = all_posts(threads)
         similarities = {}
 
         all_subject_toks = [process_cached(p, cleaners, filters, substitutes, True) for p in posts]
-        subject_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_subject_toks, toks_array=all_subject_toks) for alg in algorithms], axis=0)
+        subject_similarities = np.mean([alg(in_subject_toks, all_subject_toks) for alg in algorithms], axis=0)
         all_payload_toks =  [process_cached(p, cleaners, filters, substitutes, False) for p in posts]
-        payload_similarities = np.mean([alg(post=post, posts=posts, in_toks=in_payload_toks, toks_array=all_payload_toks) for alg in algorithms], axis=0)
+        payload_similarities = np.mean([alg(in_payload_toks, all_payload_toks) for alg in algorithms], axis=0)
 
         for i, p in enumerate(posts):
           similarities[p] = pipe_weight(p,*weights) * (w * subject_similarities[i] + (1.0-w) * payload_similarities[i])
-
+        
         return nlargest(n, similarities, key=similarities.get)
         """
         # check similarity between given post and all other posts, and then scale with weights
