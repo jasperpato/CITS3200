@@ -95,13 +95,23 @@ def pipeline(post : Post,
 
 
 def dictionary_average(*dicts):
-    out_dict = next(dicts[0])
-    out_dict = next(dicts[0]) #Need to retrieve the correct dictionary from the generator
-    for dictionary in dicts[1:]:
+    #This does not work with tfidf, since tfidf does not return a dictionary
+    dictionaries = [] 
+    out_dict = {}
+    while True: #This is to retrieve the dictionaries from the generator
+      try:
+        dictionaries.append(next(dicts[0]))
+      except StopIteration:
+        break
+        
+    for dictionary in dictionaries:
         for key, val in dictionary.items():
+          if key not in out_dict:
+            out_dict[key] = val
+          else:
             out_dict[key] += val
 
-    out_dict = {key: val/len(dicts) for key, val in out_dict.items()}
+    out_dict = {key: val/len(dictionaries) for key, val in out_dict.items()}
     return out_dict
 
 
