@@ -7,7 +7,8 @@ and converts them into the Post class defined here.
 from collections import Counter
 
 class Post:
-    def __init__(self, date, subject, payload, verified):
+    def __init__(self, id, date, subject, payload, verified):
+        self.id = id
         self.date = date    # datetime.datetime object.
         self.subject = subject # the subject of the post, hopefully relating to the post.
         self.payload = payload # The main body of the post. 

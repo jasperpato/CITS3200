@@ -2,6 +2,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from heapq import nlargest
 import os, sys
+from typing import List
+from project_types import Tokens
 
 from .algorithm import Algorithm
 
@@ -17,10 +19,10 @@ class Tfidf(Algorithm):
     def __init__(self):
         self.vectorizer = TfidfVectorizer()
 
-    def similarity(self, in_toks, toks_array, **kwargs):
+    def similarity(self, in_toks : Tokens, all_toks : List[Tokens]):
 
-        in_text = ' '.join(in_toks) 
-        document_list = [' '.join(toks) for toks in toks_array]
+        in_text = ''.join(in_toks) 
+        document_list = [''.join(toks) for toks in all_toks]
         document_list.insert(0, in_text)
         embeddings = self.vectorizer.fit_transform(document_list)
         scores = cosine_similarity(embeddings[0], embeddings[1:]).flatten()

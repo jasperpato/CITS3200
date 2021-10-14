@@ -9,13 +9,13 @@ Then it wil lreturn 3 of the most similiar post.
 """
 import sys
 from parse_file import parse_file
+from similarity_algorithms.cosine import cosine_similarity
 from thread_obj import Thread
 from post import Post
 from pipeline import pipeline
 import nltk
 from re import sub
 from string import ascii_letters
-from algorithms import cosine_similarity, jaccard
 from weights import verified_weight, date_weight
 from utils import remove_none_alphabet, remove_stopwords, to_lower
 nltk.download('punkt')
@@ -26,7 +26,7 @@ def similarity(filename, post_subject, post_text, N=3):
     threads = parse_file(filename)
     
     new_post = Post(None,post_subject,post_text,None)
-    W = 0.3 # weight of subject similarity, payload weight is (1.0 - W)
+    W = 0.2 # weight of subject similarity, payload weight is (1.0 - W)
 
     filters = (  remove_none_alphabet, # take non-alphabetical words out
                 remove_stopwords)          # remove stopwords
@@ -40,7 +40,9 @@ def similarity(filename, post_subject, post_text, N=3):
 
     substitutes = tuple([])
 
-    algorithms = (cosine_similarity, jaccard)
+    from similarity_algorithms.tfidf import Tfidf
+
+    algorithms = (cosine_similarity, Tfidf().similarity)
 
     return [p for p in pipeline(new_post, threads, cleaners, filters, substitutes,  weights, algorithms, W, N)]
 
@@ -48,8 +50,9 @@ if __name__ == "__main__":
     
     if len(sys.argv) < 3: exit()
     filename = sys.argv[1]
-    N = sys.argv[2]
+    N = int(sys.argv[2])
     subject = input("Subject: ")
     payload = input("Payload: ")
     
-    print(similarity(filename, subject, payload, N))
+    posts = similarity(filename, subject, payload, N)
+    for p in posts: print(f"{p.subject}\n{p.payload}\n")
