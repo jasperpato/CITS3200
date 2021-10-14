@@ -93,17 +93,16 @@ def pipeline(post : Post,
         
         return nlargest(n, similarities, key=similarities.get)
 
-
+# Please check tfidf and check if it returns a correct dictionary
 def dictionary_average(*dicts):
-    #This does not work with tfidf, since tfidf does not return a dictionary
     dictionaries = [] 
     out_dict = {}
-    while True: #This is to retrieve the dictionaries from the generator
+    for i in range(0,4): #This is to retrieve the dictionaries from the generator (range 4 as there are 4 alg)
       try:
         dictionaries.append(next(dicts[0]))
       except StopIteration:
         break
-        
+
     for dictionary in dictionaries:
         for key, val in dictionary.items():
           if key not in out_dict:

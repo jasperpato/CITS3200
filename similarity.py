@@ -35,7 +35,7 @@ parser.add_argument('n', type=int, help='the number of similar posts to return',
 
 parser.add_argument('--algorithm', type=str, help='similarity algorithm to utilise. Invoke multiple times to use multiple algorithms' + \
     ', where result will be averaged between algorithms. Choose from the algorithms [tfidf, use, cosine, jaccard]', 
-    action='append', default=['cosine'])
+    action='append', default=['tfidf'])
 
 
 def similar(filename, subject, payload, algos=[Tfidf], N=3, W=0.2):
