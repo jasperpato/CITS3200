@@ -3,23 +3,17 @@ import sys
 import tensorflow as tf
 import tensorflow_hub as hub
 import json
-
 from sklearn.metrics.pairwise import cosine_similarity
 from os.path import dirname, join
-
-from .algorithm import Algorithm
+from algorithm import SimilarityAlgorithm
 from parse_file import parse_file
 from thread_obj import all_posts
-
-
-post_text = lambda post: post.subject if len(post.subject.split(' ')) >= 10 else post.payload
 
 filedir = dirname(__file__)
 pretrained_model_path = join(filedir, '../../pretrained_models/use/universal-sentence-encoder_4')
 sys.path.append(dirname(filedir))
 
-
-class Use(Algorithm):
+class Use(SimilarityAlgorithm):
     model = None
     encodings = None
 
