@@ -86,7 +86,7 @@ def pipeline(post : Post,
         similarities = {}
 
         all_subject_toks = [process_cached(p, cleaners, filters, substitutes, True) for p in posts]
-        subject_similarities = np.mean([alg(in_subject_toks, all_subject_toks) for alg in algorithms], axis=0)
+        subject_similarities = np.mean([list(alg(in_subject_toks, all_subject_toks).values()) for alg in algorithms], axis=0)
         all_payload_toks =  [process_cached(p, cleaners, filters, substitutes, False) for p in posts]
         payload_similarities = np.mean([alg(in_payload_toks, all_payload_toks) for alg in algorithms], axis=0)
 

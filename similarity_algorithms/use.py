@@ -36,9 +36,11 @@ class Use(Algorithm):
             self.encodings = pickle.load(handle)
 
 
-    def encode_posts(self, toks_array, posts, save_path=None):
-        encoded_posts = self.model([''.join(toks) for toks in toks_array])
-        encodings = {posts[i].payload:encoded_posts[i] for i in range(len(posts))}
+    def encode_posts(self, toks_dict, save_path=None):
+        sorted_keys = sorted(toks_dict.keys())
+        toks_arr = [toks_dict[k] for k in sorted_keys]
+        encoded_posts = self.model([''.join(toks) for toks in toks_arr])
+        encodings = dict(zip(sorted_keys, encoded_posts))
         if save_path:
             with open(save_path, 'wb') as handle:
                 pickle.dump(encodings, handle, protocol=pickle.HIGHEST_PROTOCOL)
@@ -51,15 +53,12 @@ class Use(Algorithm):
             self.encode_posts(toks_array, posts)
         '''    
         in_text = ''.join(in_toks)
-        if post.payload not in self.encodings.keys():
-            in_vec = self.model([in_text])
-        else:
-            in_vec = [self.encodings[post.payload]]
-            posts = [p for p in posts if p.payload != post.payload]
+        in_vec = self.model([in_text])
 
-        encoding_vecs = [self.encodings[post.payload] for post in posts]
+        encoding_vecs = [self.encodings[post_id] for post_id in toks_dict.keys()]
         scores = cosine_similarity(in_vec, encoding_vecs).flatten()
-        return scores
+        post_score_map = dict(zip(toks_dict.keys(), scores))
+        return post_score_map
 
     
 def encode_test_spaces():
