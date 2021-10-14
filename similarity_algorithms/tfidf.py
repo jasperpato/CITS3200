@@ -4,7 +4,7 @@ import os, sys
 from typing import Dict
 from project_types import Tokens
 
-from algorithm import SimilarityAlgorithm
+from .algorithm import SimilarityAlgorithm
 
 currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -18,7 +18,7 @@ class Tfidf(SimilarityAlgorithm):
 
     def similarity(self, in_toks : Tokens, toks_dict : Dict[int, Tokens]) -> Dict[int, float]:
         in_text = ''.join(in_toks) 
-        document_list = [''.join(toks) for toks in toks_dict]
+        document_list = [''.join(toks) for key, toks in toks_dict.items()]
         document_list.insert(0, in_text)
         embeddings = self.vectorizer.fit_transform(document_list)
         scores = cosine_similarity(embeddings[0], embeddings[1:]).flatten()

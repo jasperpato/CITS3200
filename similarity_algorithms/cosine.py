@@ -3,7 +3,7 @@ from math import sqrt
 from typing import List, Set, Dict
 from utils import merge
 from project_types import Tokens, Vector
-from algorithm import SimilarityAlgorithm
+from .algorithm import SimilarityAlgorithm
 
 class Cosine(SimilarityAlgorithm):
 

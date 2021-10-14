@@ -1,6 +1,6 @@
 from typing import Dict, List
 from project_types import Tokens
-from algorithm import SimilarityAlgorithm
+from .algorithm import SimilarityAlgorithm
 
 class Jaccard(SimilarityAlgorithm):
 

@@ -40,13 +40,13 @@ parser.add_argument('n', type=int, help='the number of similar posts to return',
 
 parser.add_argument('--algorithm', type=str, help='similarity algorithm to utilise. Invoke multiple times to use multiple algorithms' + \
     ', where result will be averaged between algorithms. Choose from the algorithms [tfidf, use, cosine, jaccard]', 
-    action='append', default='Tfidf')
+    action='append', default=['tfidf'])
 
 
 def similarity(filename, subject, payload, algos, n):
     threads = parse_file(filename)
     
-    new_post = Post(None, subject, payload, None)
+    new_post = Post(None, None, subject, payload, None)
     W = 0.2 # weight of subject similarity, payload weight is (1.0 - W)
 
     filters = (remove_non_alphabet, remove_stopwords)

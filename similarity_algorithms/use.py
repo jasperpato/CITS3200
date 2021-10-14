@@ -7,7 +7,7 @@ import json
 from sklearn.metrics.pairwise import cosine_similarity
 from os.path import dirname, join
 
-from .algorithm import Algorithm
+from .algorithm import SimilarityAlgorithm
 from parse_file import parse_file
 from thread_obj import all_posts
 
@@ -19,7 +19,7 @@ pretrained_model_path = join(filedir, '../../pretrained_models/use/universal-sen
 sys.path.append(dirname(filedir))
 
 
-class Use(Algorithm):
+class Use(SimilarityAlgorithm):
     model = None
     encodings = None
 

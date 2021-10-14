@@ -84,11 +84,10 @@ def pipeline(post : Post,
         posts = [(p.id, p) for p in all_posts(threads)]
         similarities = {}
 
-        subject_toks_dict = {p_id: process_cached(p, cleaners, filters, substitutes, True) for p, p_id in posts}
+        subject_toks_dict = {p_id: process_cached(p, cleaners, filters, substitutes, True) for p_id, p in posts}
         subject_similarities = dictionary_average(alg(in_subject_toks, subject_toks_dict) for alg in algorithms)
-        payload_toks_dict =  {p_id: process_cached(p, cleaners, filters, substitutes, False) for p, p_id in posts}
+        payload_toks_dict =  {p_id: process_cached(p, cleaners, filters, substitutes, False) for p_id, p in posts}
         payload_similarities = dictionary_average(alg(in_payload_toks, payload_toks_dict) for alg in algorithms)
-
         for p_id, p in posts:
             similarities[p] = pipe_weight(p,*weights) * (w * subject_similarities[p_id] + (1.0-w) * payload_similarities[p_id])
         
@@ -96,12 +95,13 @@ def pipeline(post : Post,
 
 
 def dictionary_average(*dicts):
-    out_dict = dicts[0].copy()
+    out_dict = next(dicts[0])
+    out_dict = next(dicts[0])
     for dictionary in dicts[1:]:
         for key, val in dictionary.items():
             out_dict[key] += val
 
     out_dict = {key: val/len(dicts) for key, val in out_dict.items()}
-    
+    return out_dict
 
 
