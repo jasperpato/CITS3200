@@ -77,7 +77,7 @@ def pipeline(post : Post,
           tokens and computes similarity
         - weight functions are then applied
         """
-        spell = SpellChecker()
+        spell = SpellChecker() #This part will take a while each time it is being run
         post.subject = spell_correction(post.subject,spell)
         post.payload = spell_correction(post.payload,spell)
         in_subject_toks = process_post(post, cleaners, filters, substitutes, True)

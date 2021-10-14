@@ -1,10 +1,10 @@
 """
 To use the code enter this code into the command line:
 
-python3 similarity.py [text_data_file_with_posts]
+python3 similarity.py [text_data_file_with_posts] [Number of post to return]
 
 The system will prompt you to write a subject and body of text.
-Then it wil lreturn 3 of the most similiar post.
+By default, the program will return 3 posts unless specified
 """
 import sys
 from parse_file import parse_file
@@ -22,6 +22,8 @@ stopwords = nltk.corpus.stopwords.words('english')
 
 from similarity_algorithms.cosine import Cosine
 from similarity_algorithms.tfidf import Tfidf
+from similarity_algorithms.jaccard import Jaccard
+from similarity_algorithms.use import Use
 
 def similarity(filename, post_subject, post_text, N=3):
     threads = parse_file(filename)
@@ -37,15 +39,17 @@ def similarity(filename, post_subject, post_text, N=3):
 
     substitutes = tuple([])
 
-    algorithms = (Cosine().similarity, Tfidf().similarity)
-
+    similarity_classes = [Cosine, Tfidf, Jaccard, Use]
+    
+    algorithms = tuple([s().similarity for s in similarity_classes])
     return [p for p in pipeline(new_post, threads, cleaners, filters, substitutes,  weights, algorithms, W, N)]
 
 if __name__ == "__main__":
     
-    if len(sys.argv) < 3: exit()
+    if len(sys.argv) < 2: exit()
     filename = sys.argv[1]
-    N = int(sys.argv[2])
+    if len(sys.argv) >=3:N = int(sys.argv[2])
+    else: N = 3
     subject = input("Subject: ")
     payload = input("Payload: ")
     
