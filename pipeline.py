@@ -2,7 +2,6 @@
 This is the 'heart' of the program. Developers need to understand how the
 pipeline function works, as this is the main interface that they must use.
 """
-import numpy as np
 
 from post import Post
 from thread_obj import Thread, all_posts
