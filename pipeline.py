@@ -82,20 +82,27 @@ def pipeline(post : Post,
         post.payload = spell_correction(post.payload,spell)
         in_subject_toks = process_post(post, cleaners, filters, substitutes, True)
         in_payload_toks = process_post(post, cleaners, filters, substitutes, False)
-        posts = all_posts(threads)
+        posts = [(p.id, p) for p in all_posts(threads)]
         similarities = {}
 
-        all_subject_toks = [process_cached(p, cleaners, filters, substitutes, True) for p in posts]
-        subject_similarities = np.mean([list(alg(in_subject_toks, all_subject_toks).values()) for alg in algorithms], axis=0)
-        all_payload_toks =  [process_cached(p, cleaners, filters, substitutes, False) for p in posts]
-        payload_similarities = np.mean([alg(in_payload_toks, all_payload_toks) for alg in algorithms], axis=0)
+        subject_toks_dict = {p_id: process_cached(p, cleaners, filters, substitutes, True) for p, p_id in posts}
+        subject_similarities = dictionary_average(alg(in_subject_toks, subject_toks_dict) for alg in algorithms)
+        payload_toks_dict =  {p_id: process_cached(p, cleaners, filters, substitutes, False) for p, p_id in posts}
+        payload_similarities = dictionary_average(alg(in_payload_toks, payload_toks_dict) for alg in algorithms)
 
-        for i, p in enumerate(posts):
-          similarities[p] = pipe_weight(p,*weights) * (w * subject_similarities[i] + (1.0-w) * payload_similarities[i])
+        for p_id, p in posts:
+            similarities[p] = pipe_weight(p,*weights) * (w * subject_similarities[p_id] + (1.0-w) * payload_similarities[p_id])
         
         return nlargest(n, similarities, key=similarities.get)
-        """
-        # check similarity between given post and all other posts, and then scale with weights
-        post_scores = {p:(pipe_weight(p,*weights))*sum([alg(post_toks, process_cached(p, cleaners, filters, substitutes)) for alg in algorithms]) for p in all_posts(threads)}
-        return nlargest(n, post_scores, key=post_scores.get)
-        """
+
+
+def dictionary_average(*dicts):
+    out_dict = dicts[0].copy()
+    for dictionary in dicts[1:]:
+        for key, val in dictionary.items():
+            out_dict[key] += val
+
+    out_dict = {key: val/len(dicts) for key, val in out_dict.items()}
+    
+
+
