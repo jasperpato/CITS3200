@@ -48,16 +48,16 @@ class Use(Algorithm):
 
 
     def similarity(self, in_toks, toks_dict):
-        '''
         if self.encodings == None:
-            self.encode_posts(toks_array, posts)
-        '''    
+            self.encode_posts(toks_dict)
+           
         in_text = ''.join(in_toks)
         in_vec = self.model([in_text])
 
-        encoding_vecs = [self.encodings[post_id] for post_id in toks_dict.keys()]
+        sorted_keys = sorted(toks_dict.keys())
+        encoding_vecs = [self.encodings[post_id] for post_id in sorted_keys]
         scores = cosine_similarity(in_vec, encoding_vecs).flatten()
-        post_score_map = dict(zip(toks_dict.keys(), scores))
+        post_score_map = dict(zip(sorted_keys, scores))
         return post_score_map
 
     
