@@ -94,8 +94,3 @@ def pipeline(post : Post,
           similarities[p] = pipe_weight(p,*weights) * (w * subject_similarities[i] + (1.0-w) * payload_similarities[i])
         
         return nlargest(n, similarities, key=similarities.get)
-        """
-        # check similarity between given post and all other posts, and then scale with weights
-        post_scores = {p:(pipe_weight(p,*weights))*sum([alg(post_toks, process_cached(p, cleaners, filters, substitutes)) for alg in algorithms]) for p in all_posts(threads)}
-        return nlargest(n, post_scores, key=post_scores.get)
-        """
