@@ -6,6 +6,8 @@ python3 similarity.py [text_data_file_with_posts] [Number of post to return]
 The system will prompt you to write a subject and body of text.
 By default, the program will return 3 posts unless specified
 """
+
+import argparse
 import sys
 from parse_file import parse_file
 from thread_obj import Thread
@@ -20,15 +22,31 @@ nltk.download('punkt')
 nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
 
+
 from similarity_algorithms.cosine import Cosine
 from similarity_algorithms.tfidf import Tfidf
 from similarity_algorithms.jaccard import Jaccard
 from similarity_algorithms.use import Use
 
-def similarity(filename, post_subject, post_text, N=3):
+algos_dict = {'tfidf': Tfidf, 'use': Use, 'jaccard': Jaccard, 'cosine': Cosine}
+
+
+prog_description = "------------TO DO----------------"
+parser = argparse.ArgumentParser(description=prog_description, epilog='Enjoy the program! :D')
+
+parser.add_argument('filename', type=str, help='filename of the text file containing posts to be returned by their text similarity')
+
+parser.add_argument('n', type=int, help='the number of similar posts to return', default=3)
+
+parser.add_argument('--algorithm', type=str, help='similarity algorithm to utilise. Invoke multiple times to use multiple algorithms' + \
+    ', where result will be averaged between algorithms. Choose from the algorithms [tfidf, use, cosine, jaccard]', 
+    action='append', default='Tfidf')
+
+
+def similarity(filename, subject, payload, algos, n):
     threads = parse_file(filename)
     
-    new_post = Post(None,post_subject,post_text,None)
+    new_post = Post(None, subject, payload, None)
     W = 0.2 # weight of subject similarity, payload weight is (1.0 - W)
 
     filters = (remove_non_alphabet, remove_stopwords)
@@ -38,20 +56,19 @@ def similarity(filename, post_subject, post_text, N=3):
     cleaners = (to_lower, lambda x: sub(r'\s+', ' ', x))
 
     substitutes = tuple([])
-
-    similarity_classes = [Cosine, Tfidf, Jaccard, Use]
     
-    algorithms = tuple([s().similarity for s in similarity_classes])
-    return [p for p in pipeline(new_post, threads, cleaners, filters, substitutes,  weights, algorithms, W, N)]
+    algorithms = tuple([algo().similarity for algo in algos])
+    return [p for p in pipeline(new_post, threads, cleaners, filters, substitutes,  weights, algorithms, W, n)]
+
 
 if __name__ == "__main__":
-    
-    if len(sys.argv) < 2: exit()
-    filename = sys.argv[1]
-    if len(sys.argv) >=3:N = int(sys.argv[2])
-    else: N = 3
+    args = parser.parse_args()
     subject = input("Subject: ")
     payload = input("Payload: ")
     
-    posts = similarity(filename, subject, payload, N)
+    filename = args.filename
+    num_posts = args.n
+    algos = [algos_dict[name] for name in args.algorithm]
+
+    posts = similarity(filename, subject, payload, algos, num_posts)
     for p in posts: print(f"{p.subject}\n{p.payload}\n")
