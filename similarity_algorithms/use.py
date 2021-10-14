@@ -1,11 +1,9 @@
-import warnings
 import pickle
 import sys 
 import tensorflow as tf
 import tensorflow_hub as hub
 import json
 
-from heapq import nlargest
 from sklearn.metrics.pairwise import cosine_similarity
 from os.path import dirname, join
 

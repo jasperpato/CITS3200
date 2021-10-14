@@ -1,6 +1,5 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from heapq import nlargest
 import os, sys
 from typing import Dict
 from project_types import Tokens
