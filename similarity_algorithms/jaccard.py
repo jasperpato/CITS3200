@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 from project_types import Tokens
 from .algorithm import SimilarityAlgorithm
 

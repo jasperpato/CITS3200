@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict
+from typing import Dict
 from project_types import Tokens
 
 class SimilarityAlgorithm(ABC):
