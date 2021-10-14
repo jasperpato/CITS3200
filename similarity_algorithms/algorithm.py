@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 from typing import List, Dict
 from project_types import Tokens
 
-class Algorithm(ABC):
+class SimilarityAlgorithm(ABC):
     
     @abstractmethod
-    def similarity(self, in_tok : Tokens, toks_dict : Dict[int, Tokens]):
+    def similarity(self, in_tok : Tokens, toks_dict : Dict[int, Tokens]) -> Dict[int, float]:
         '''
         in_toks is list of tokens of the incoming query
         toks_dict is a dictionary mapping post id to its text (can be subject or payload)

@@ -1,9 +1,12 @@
-from typing import List
+from typing import Dict, List
 from project_types import Tokens
+from algorithm import SimilarityAlgorithm
 
-# calculates (intersection / union) of two sets of tokens
-def jaccard_similarity(in_toks : Tokens, toks_array : List[Tokens], **kwargs) -> List[float]:
-    scores = []
-    for i in range(0, len(toks_array)):
-        scores.append(len(set(in_toks) & set(toks_array[i])) / len(set(in_toks) | set(toks_array[i])))
-    return scores
+class Jaccard(SimilarityAlgorithm):
+
+    def similarity(self, in_toks : Tokens, toks_dict : Dict[int, Tokens]) -> Dict[int, float]:
+        scores = {}
+        for id, toks in toks_dict.items():
+            scores[id] = len(set(in_toks) & set(toks)) / len(set(in_toks) | set(toks))
+        return scores
+        #return {id: len(set(in_toks) & set(toks)) / len(set(in_toks) | set(toks)) for id, toks in toks_array.items()}

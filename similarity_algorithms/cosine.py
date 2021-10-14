@@ -3,22 +3,24 @@ from math import sqrt
 from typing import List, Set, Dict
 from utils import merge
 from project_types import Tokens, Vector
-from post import Post
+from algorithm import SimilarityAlgorithm
 
-def dot_product(xs : Vector, ys : Vector) -> float:
-    return sum([x*y for (x,y) in zip(xs,ys)])
+class Cosine(SimilarityAlgorithm):
 
-def norm(xs : Vector) -> float:
-    return sqrt(dot_product(xs,xs))
+    def dot_product(self, xs : Vector, ys : Vector) -> float:
+        return sum([x*y for (x,y) in zip(xs,ys)])
 
-def word_vector(toks : Tokens, words : Set[str]) -> Vector:
-    return list(merge({w : 0 for w in words}, Counter(toks)).values())
+    def norm(self, xs : Vector) -> float:
+        return sqrt(self.dot_product(xs,xs))
 
-def cosine_similarity(in_toks : Tokens, all_toks : List[Tokens], **kwargs) -> List[float]:
-    scores = []
-    for i in range(0, len(all_toks)):
-        all_words = set(in_toks) | set(all_toks[i])
-        A_vec = word_vector(in_toks, all_words)
-        B_vec = word_vector(all_toks[i], all_words)
-        scores.append(dot_product(A_vec, B_vec) / (norm(A_vec) * norm(B_vec)))
-    return scores
+    def word_vector(self, toks : Tokens, words : Set[str]) -> Vector:
+        return list(merge({w : 0 for w in words}, Counter(toks)).values())
+
+    def similarity(self, in_toks : Tokens, toks_dict : Dict[int, Tokens]) -> Dict[int, float]:
+        scores = {}
+        for id, toks in toks_dict.items():
+            all_words = set(in_toks) | set(toks)
+            A_vec = self.word_vector(in_toks, all_words)
+            B_vec = self.word_vector(toks, all_words)
+            scores[id] = self.dot_product(A_vec, B_vec) / (self.norm(A_vec) * self.norm(B_vec))
+        return scores
