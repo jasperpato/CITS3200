@@ -1,7 +1,8 @@
 """
-To use the code enter this code into the command line:
-
-python3 similarity.py [text_data_file_with_posts] [Number of post to return]
+Default usage:
+python3 similarity.py [text file with posts] [number of posts to return]
+    
+To choose specific similarity algorithms to invoke, use the option -alg followed by algorithms. Default is tfidf
 
 The system will prompt you to write a subject and body of text.
 By default, the program will return 3 posts unless specified
@@ -29,13 +30,16 @@ algos_dict = {'tfidf': Tfidf, 'use': Use, 'jaccard': Jaccard, 'cosine': Cosine}
 prog_description = "------------ TO DO ----------------"
 parser = argparse.ArgumentParser(description=prog_description, epilog='Enjoy the program! :D')
 
-parser.add_argument('filename', type=str, help='filename of the text file containing posts to be returned by their text similarity')
+parser.add_argument('filename', type=str, help='Filename of the text file containing posts to be returned by their text similarity.')
 
-parser.add_argument('n', type=int, help='the number of similar posts to return', default=3)
+parser.add_argument('n', type=int, help='The number of similar posts to return.', nargs='?', default=3)
 
-parser.add_argument('--algorithm', type=str, help='similarity algorithm to utilise. Invoke multiple times to use multiple algorithms' + \
-    ', where result will be averaged between algorithms. Choose from the algorithms [tfidf, use, cosine, jaccard]', 
-    action='append', default=['tfidf'])
+parser.add_argument('-a', '--algorithm', dest='algs', type=str, help='Similarity algorithms to utilise. Choose from the algorithms' + \
+    ' [tfidf, use, cosine, jaccard], where results are averaged if more than 1 algorithm is used. Default is tfidf.', nargs='*', 
+    default=['tfidf'])
+
+parser.add_argument('-s', '--spellcheck', dest='spell', help='Whether to perform spell correction on the input text before text similarity' + \
+    ' is performed. Increases compute time significantly.', action='store_true', default=False)
 
 
 def similar(filename, subject, payload, algos=[Tfidf], N=3, W=0.2):
@@ -53,13 +57,14 @@ def similar(filename, subject, payload, algos=[Tfidf], N=3, W=0.2):
 
 
 if __name__ == "__main__":
-    args = parser.parse_args()
+    args = parser.parse_args('help2002-2021.txt -a tfidf use -s'.split())
     subject = input("Subject: ")
     payload = input("Payload: ")
     
     filename = args.filename
     num_posts = args.n
-    algos = [algos_dict[name] for name in args.algorithm]
+    algos = [algos_dict[name] for name in args.algs]
+    use_spellcheck = args.spell
 
     posts = similar(filename, subject, payload, algos, num_posts)
     for p in posts: print(f"{p.subject}\n{p.payload}\n")
