@@ -57,7 +57,7 @@ def similar(filename, subject, payload, algos=[Tfidf], N=3, W=0.2):
 
 
 if __name__ == "__main__":
-    args = parser.parse_args('help2002-2021.txt -a tfidf use -s'.split())
+    args = parser.parse_args()
     subject = input("Subject: ")
     payload = input("Payload: ")
     
