@@ -41,8 +41,8 @@ def generate_post(post, threads, cleaners, filters, substitutes, weights, nposts
     tfidf_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [tfidf.similarity],0.2, nposts)
     use_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [use.similarity],0.2, nposts)
     list_of_posts = [bag_of_words_posts, jaccard_posts, tfidf_posts, use_posts]
-    diff_posts = return_best_posts(list_of_posts)
-    return diff_posts
+    posts = find_best_posts(list_of_posts)
+    return posts
 
 def find_diff_posts(algo_results, start_index):
     out_posts = []
@@ -59,7 +59,7 @@ def find_diff_posts(algo_results, start_index):
                 break
     return out_posts
 
-def return_best_posts(algo_results):
+def find_best_posts(algo_results):
     out_posts = []
     for posts in algo_results:
         out_posts.append(posts[0])
@@ -67,7 +67,7 @@ def return_best_posts(algo_results):
 
 out_file = open('google_docs_case_dump.txt', 'w')
 tfidf = Tfidf()
-use = Use(os.path.join(currentdir, "../pretrained_models/universal-sentence-encoder_4/"))
+use = Use()
 jaccard = Jaccard()
 cosine = Cosine()
 test = json.load(open("./testing/test_case_2021_google_docs.json"))["testcases"]
