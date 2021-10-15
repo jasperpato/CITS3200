@@ -39,15 +39,25 @@ class Use(SimilarityAlgorithm):
                 pickle.dump(encodings, handle, protocol=pickle.HIGHEST_PROTOCOL)
         self.encodings = encodings
 
+    
+    def update_encodings(self, toks_dict):
+        for p_id, toks in toks_dict.items():
+            if p_id not in self.encodings:
+                in_text = ' '.join(toks)
+                tensor = self.model([in_text])
+                self.encodings[p_id] = tensor[0]
+
 
     def similarity(self, in_toks, toks_dict):
         if self.encodings == None:
             self.encode_posts(toks_dict)
+        else:
+            self.update_encodings(toks_dict)
            
         in_text = ' '.join(in_toks)
         in_vec = self.model([in_text])
 
-        sorted_keys = sorted(toks_dict.keys())
+        sorted_keys = sorted(self.encodings.keys())
         encoding_vecs = [self.encodings[post_id] for post_id in sorted_keys]
         scores = cosine_similarity(in_vec, encoding_vecs).flatten()
         return dict(zip(sorted_keys, scores))
