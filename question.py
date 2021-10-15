@@ -3,7 +3,6 @@ from post import Post
 from utils import to_lower, remove_stopwords, remove_non_alphabet
 from pipeline import pipeline
 from weights import verified_weight, date_weight
-from spell_correction_pysc import spell_correction
 from similarity_algorithms.tfidf import Tfidf
 from similarity_algorithms.use import Use
 from similarity_algorithms.jaccard import Jaccard
