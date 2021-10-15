@@ -1,55 +1,65 @@
 """
 To use the code enter this code into the command line:
 
-python3 similarity.py [text_data_file_with_posts]
+python3 similarity.py [text_data_file_with_posts] [Number of post to return]
 
 The system will prompt you to write a subject and body of text.
-Then it wil lreturn 3 of the most similiar post.
+By default, the program will return 3 posts unless specified
 """
-import sys
+
+import argparse
 from parse_file import parse_file
-from thread_obj import Thread
 from post import Post
 from pipeline import pipeline
 import nltk
 from re import sub
-from string import ascii_letters
-from algorithms import cosine_similarity, jaccard
 from weights import verified_weight, date_weight
-from utils import remove_none_alphabet, remove_stopwords, to_lower
+from utils import remove_non_alphabet, remove_stopwords, to_lower
 nltk.download('punkt')
 nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
 
-def similarity(filename, post_subject, post_text, N=3):
+from similarity_algorithms.cosine import Cosine
+from similarity_algorithms.tfidf import Tfidf
+from similarity_algorithms.jaccard import Jaccard
+from similarity_algorithms.use import Use
+
+algos_dict = {'tfidf': Tfidf, 'use': Use, 'jaccard': Jaccard, 'cosine': Cosine}
+
+prog_description = "------------ TO DO ----------------"
+parser = argparse.ArgumentParser(description=prog_description, epilog='Enjoy the program! :D')
+
+parser.add_argument('filename', type=str, help='filename of the text file containing posts to be returned by their text similarity')
+
+parser.add_argument('n', type=int, help='the number of similar posts to return', default=3)
+
+parser.add_argument('--algorithm', type=str, help='similarity algorithm to utilise. Invoke multiple times to use multiple algorithms' + \
+    ', where result will be averaged between algorithms. Choose from the algorithms [tfidf, use, cosine, jaccard]', 
+    action='append', default=['tfidf'])
+
+
+def similar(filename, subject, payload, algos=[Tfidf], N=3, W=0.2):
+    
     threads = parse_file(filename)
-    
-    new_post = Post(None,post_subject,post_text,None)
-    W = 0.3 # weight of subject similarity, payload weight is (1.0 - W)
+    new_post = Post(None, None, subject, payload, None)
 
-    filters = (  remove_none_alphabet, # take non-alphabetical words out
-                remove_stopwords)          # remove stopwords
-
-    weights = [verified_weight, date_weight] #uses the functions from the weights.py script
-    
-    cleaners =    ( to_lower,              # lowercase all text
-                    lambda x: sub(r'\s+', ' ', x))
-
+    filters = (remove_non_alphabet, remove_stopwords)
+    weights = [verified_weight, date_weight]
+    cleaners = (to_lower, lambda x: sub(r'\s+', ' ', x))
     substitutes = tuple([])
-
-    algorithms = (cosine_similarity, jaccard)
-
+    
+    algorithms = tuple([algo().similarity for algo in algos])
     return [p for p in pipeline(new_post, threads, cleaners, filters, substitutes,  weights, algorithms, W, N)]
 
+
 if __name__ == "__main__":
-    
-    if len(sys.argv) < 3: exit()
-    filename = sys.argv[1]
-    N = int(sys.argv[2])
+    args = parser.parse_args()
     subject = input("Subject: ")
     payload = input("Payload: ")
     
-    return_post = similarity(filename, subject, payload, N)
+    filename = args.filename
+    num_posts = args.n
+    algos = [algos_dict[name] for name in args.algorithm]
 
-    for p in return_post:
-        print(p)
+    posts = similar(filename, subject, payload, algos, num_posts)
+    for p in posts: print(f"{p.subject}\n{p.payload}\n")

@@ -40,7 +40,7 @@ def cached(f):
     return helper
 
 #removes any alphabets not in ascii from the string.
-def remove_none_alphabet(x):
+def remove_non_alphabet(x):
     return x not in ascii_letters
 
 #removes any stopwords (i,me,myself...) from the string.

@@ -1,27 +1,20 @@
-import warnings
 import pickle
 import sys 
 import tensorflow as tf
 import tensorflow_hub as hub
 import json
-
-from heapq import nlargest
 from sklearn.metrics.pairwise import cosine_similarity
 from os.path import dirname, join
 
-from .algorithm import Algorithm
+from .algorithm import SimilarityAlgorithm
 from parse_file import parse_file
 from thread_obj import all_posts
-
-
-post_text = lambda post: post.subject if len(post.subject.split(' ')) >= 10 else post.payload
 
 filedir = dirname(__file__)
 pretrained_model_path = join(filedir, '../../pretrained_models/use/universal-sentence-encoder_4')
 sys.path.append(dirname(filedir))
 
-
-class Use(Algorithm):
+class Use(SimilarityAlgorithm):
     model = None
     encodings = None
 
@@ -36,29 +29,29 @@ class Use(Algorithm):
             self.encodings = pickle.load(handle)
 
 
-    def encode_posts(self, toks_array, posts, save_path=None):
-        encoded_posts = self.model([' '.join(toks) for toks in toks_array])
-        encodings = {posts[i].payload:encoded_posts[i] for i in range(len(posts))}
+    def encode_posts(self, toks_dict, save_path=None):
+        sorted_keys = sorted(toks_dict.keys())
+        toks_arr = [toks_dict[k] for k in sorted_keys]
+        encoded_posts = self.model([''.join(toks) for toks in toks_arr])
+        encodings = dict(zip(sorted_keys, encoded_posts))
         if save_path:
             with open(save_path, 'wb') as handle:
                 pickle.dump(encodings, handle, protocol=pickle.HIGHEST_PROTOCOL)
         self.encodings = encodings
 
 
-    def similarity(self, in_toks, toks_array, post, posts):
+    def similarity(self, in_toks, toks_dict):
         if self.encodings == None:
-            self.encode_posts(toks_array, posts)
-            
-        in_text = ' '.join(in_toks)
-        if post.payload not in self.encodings.keys():
-            in_vec = self.model([in_text])
-        else:
-            in_vec = [self.encodings[post.payload]]
-            posts = [p for p in posts if p.payload != post.payload]
+            self.encode_posts(toks_dict)
+           
+        in_text = ''.join(in_toks)
+        in_vec = self.model([in_text])
 
-        encoding_vecs = [self.encodings[post.payload] for post in posts]
+        sorted_keys = sorted(toks_dict.keys())
+        encoding_vecs = [self.encodings[post_id] for post_id in sorted_keys]
         scores = cosine_similarity(in_vec, encoding_vecs).flatten()
-        return scores
+        post_score_map = dict(zip(sorted_keys, scores))
+        return post_score_map
 
     
 def encode_test_spaces():

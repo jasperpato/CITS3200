@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List
 
 Tokens = List[str]
 Vector = List[float]

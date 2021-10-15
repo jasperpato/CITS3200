@@ -2,7 +2,6 @@
 This is the 'heart' of the program. Developers need to understand how the
 pipeline function works, as this is the main interface that they must use.
 """
-import numpy as np
 
 from post import Post
 from thread_obj import Thread, all_posts
@@ -77,25 +76,41 @@ def pipeline(post : Post,
           tokens and computes similarity
         - weight functions are then applied
         """
-        spell = SpellChecker()
+        spell = SpellChecker() #This part will take a while each time it is being run
         post.subject = spell_correction(post.subject,spell)
         post.payload = spell_correction(post.payload,spell)
         in_subject_toks = process_post(post, cleaners, filters, substitutes, True)
         in_payload_toks = process_post(post, cleaners, filters, substitutes, False)
-        posts = all_posts(threads)
+        posts = [(p.id, p) for p in all_posts(threads)]
         similarities = {}
 
-        all_subject_toks = [process_cached(p, cleaners, filters, substitutes, True) for p in posts]
-        subject_similarities = np.mean([alg(in_subject_toks, all_subject_toks) for alg in algorithms], axis=0)
-        all_payload_toks =  [process_cached(p, cleaners, filters, substitutes, False) for p in posts]
-        payload_similarities = np.mean([alg(in_payload_toks, all_payload_toks) for alg in algorithms], axis=0)
-
-        for i, p in enumerate(posts):
-          similarities[p] = pipe_weight(p,*weights) * (w * subject_similarities[i] + (1.0-w) * payload_similarities[i])
+        subject_toks_dict = {p_id: process_cached(p, cleaners, filters, substitutes, True) for p_id, p in posts}
+        subject_similarities = dictionary_average(alg(in_subject_toks, subject_toks_dict) for alg in algorithms)
+        payload_toks_dict =  {p_id: process_cached(p, cleaners, filters, substitutes, False) for p_id, p in posts}
+        payload_similarities = dictionary_average(alg(in_payload_toks, payload_toks_dict) for alg in algorithms)
+        for p_id, p in posts:
+            similarities[p] = pipe_weight(p,*weights) * (w * subject_similarities[p_id] + (1.0-w) * payload_similarities[p_id])
         
         return nlargest(n, similarities, key=similarities.get)
-        """
-        # check similarity between given post and all other posts, and then scale with weights
-        post_scores = {p:(pipe_weight(p,*weights))*sum([alg(post_toks, process_cached(p, cleaners, filters, substitutes)) for alg in algorithms]) for p in all_posts(threads)}
-        return nlargest(n, post_scores, key=post_scores.get)
-        """
+
+# Please check tfidf and check if it returns a correct dictionary
+def dictionary_average(*dicts):
+    dictionaries = [] 
+    out_dict = {}
+    for i in range(0,4): #This is to retrieve the dictionaries from the generator (range 4 as there are 4 alg)
+      try:
+        dictionaries.append(next(dicts[0]))
+      except StopIteration:
+        break
+
+    for dictionary in dictionaries:
+        for key, val in dictionary.items():
+          if key not in out_dict:
+            out_dict[key] = val
+          else:
+            out_dict[key] += val
+
+    out_dict = {key: val/len(dictionaries) for key, val in out_dict.items()}
+    return out_dict
+
+
