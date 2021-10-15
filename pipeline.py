@@ -55,7 +55,8 @@ def pipeline(post : Post,
              weights : List[Callable[[Post], float]], # return a value that scales a post's similarity
              algorithms : Tuple[Callable[[Tokens, Tokens], float]], # determines similarity between two posts
              w : float, # weight of subject to subject similarity, between 0.0 and 1.0
-             n : int) -> List[Post]:
+             n : int, 
+             use_spellcheck=False) -> List[Post]:
         """
         Returns a list of posts (of length n) that are similar, in descending
         order of similarity, to the given post.
@@ -77,9 +78,11 @@ def pipeline(post : Post,
           tokens and computes similarity
         - weight functions are then applied
         """
-        spell = SpellChecker() #This part will take a while each time it is being run
-        post.subject = spell_correction(post.subject,spell)
-        post.payload = spell_correction(post.payload,spell)
+        if use_spellcheck:
+          spell = SpellChecker() #This part will take a while each time it is being run
+          post.subject = spell_correction(post.subject, spell)
+          post.payload = spell_correction(post.payload, spell)
+
         in_subject_toks = process_post(post, cleaners, filters, substitutes, True)
         in_payload_toks = process_post(post, cleaners, filters, substitutes, False)
         posts = [(p.id, p) for p in all_posts(threads)]
@@ -101,9 +104,6 @@ def dictionary_average(*dicts):
     for dictionary in dicts:
         n += 1
         for key, val in dictionary.items():
-          if key not in out_dict:
-            out_dict[key] = val
-          else:
             out_dict[key] += val
     return {key: val/n for key, val in out_dict.items()}
 
