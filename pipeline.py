@@ -94,13 +94,16 @@ def pipeline(post : Post,
         
         return nlargest(n, similarities, key=similarities.get)
 
-
+# Please check tfidf and check if it returns a correct dictionary
 def dictionary_average(*dicts):
     out_dict = defaultdict(int)
     n = 0
     for dictionary in dicts:
         n += 1
         for key, val in dictionary.items():
+          if key not in out_dict:
+            out_dict[key] = val
+          else:
             out_dict[key] += val
     return {key: val/n for key, val in out_dict.items()}
 
