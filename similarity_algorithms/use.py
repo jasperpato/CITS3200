@@ -32,7 +32,7 @@ class Use(SimilarityAlgorithm):
     def encode_posts(self, toks_dict, save_path=None):
         sorted_keys = sorted(toks_dict.keys())
         toks_arr = [toks_dict[k] for k in sorted_keys]
-        encoded_posts = self.model([''.join(toks) for toks in toks_arr])
+        encoded_posts = self.model([' '.join(toks) for toks in toks_arr])
         encodings = dict(zip(sorted_keys, encoded_posts))
         if save_path:
             with open(save_path, 'wb') as handle:
@@ -44,14 +44,13 @@ class Use(SimilarityAlgorithm):
         if self.encodings == None:
             self.encode_posts(toks_dict)
            
-        in_text = ''.join(in_toks)
+        in_text = ' '.join(in_toks)
         in_vec = self.model([in_text])
 
         sorted_keys = sorted(toks_dict.keys())
         encoding_vecs = [self.encodings[post_id] for post_id in sorted_keys]
         scores = cosine_similarity(in_vec, encoding_vecs).flatten()
-        post_score_map = dict(zip(sorted_keys, scores))
-        return post_score_map
+        return dict(zip(sorted_keys, scores))
 
     
 def encode_test_spaces():

@@ -1,14 +1,16 @@
 from re import sub
 from post import Post
-from similarity_algorithms.basic_algos import jaccard, bag_of_words
-from utils import space, to_lower, remove_none_alphabet, remove_stopwords, stemmer
+from utils import to_lower, remove_stopwords, remove_non_alphabet
 from pipeline import pipeline
 from weights import verified_weight, date_weight
 from spell_correction_pysc import spell_correction
 from similarity_algorithms.tfidf import Tfidf
 from similarity_algorithms.use import Use
+from similarity_algorithms.jaccard import Jaccard
+from similarity_algorithms.cosine import Cosine
 from parse_file import parse_file
 from datetime import datetime
+from uuid import uuid4
 import json
 import os
 
@@ -20,22 +22,23 @@ use = None
 
 def encapsulate(test_cases):
     list_of_tup = [] 
-    cleaners = [to_lower, space]
-    filters = [remove_none_alphabet, remove_stopwords]
+    cleaners = [to_lower, lambda x: sub(r'\s+', ' ', x)]
+    filters = [remove_non_alphabet, remove_stopwords]
     substitutes = []
     weight = [date_weight, verified_weight]
-    files = ['testing/test_space_2021_google_docs.txt']
+    files = ['help2002-2021.txt']
     all_threads = [parse_file(f) for f in files]
     threads = all_threads[0]
     for i, case in enumerate(test_cases):
         date = datetime.strptime("2019-07-28 16:54:49", "%Y-%m-%d %H:%M:%S")
-        post = Post(date, case['Subject'], case['Body'], False)
-        list_of_tup.append(tuple(generate_post(post, threads, cleaners, filters, substitutes, weight, 10, i % 4)))
+        post = Post(uuid4(),  date, case['Subject'], case['Body'], False)
+        pruned_threads = [t for t in threads if t.subject != post.subject]
+        list_of_tup.append(tuple(generate_post(post, pruned_threads, cleaners, filters, substitutes, weight, 10, i % 4)))
     return list_of_tup, test_cases
 
 def generate_post(post, threads, cleaners, filters, substitutes, weights, nposts, start_algo):
-    jaccard_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [jaccard],0.2, nposts)
-    bag_of_words_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [bag_of_words],0.2, nposts)
+    jaccard_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [jaccard.similarity],0.2, nposts)
+    bag_of_words_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [cosine.similarity],0.2, nposts)
     tfidf_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [tfidf.similarity],0.2, nposts)
     use_posts = pipeline(post, threads, tuple(cleaners), tuple(filters), tuple(substitutes), weights, [use.similarity],0.2, nposts)
     list_of_posts = [bag_of_words_posts, jaccard_posts, tfidf_posts, use_posts]
@@ -66,6 +69,8 @@ def return_best_posts(algo_results):
 out_file = open('google_docs_case_dump.txt', 'w')
 tfidf = Tfidf()
 use = Use(os.path.join(currentdir, "../pretrained_models/universal-sentence-encoder_4/"))
+jaccard = Jaccard()
+cosine = Cosine()
 test = json.load(open("./testing/test_case_2021_google_docs.json"))["testcases"]
 result, cases = encapsulate(test)
 
