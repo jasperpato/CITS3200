@@ -11,14 +11,13 @@ from parse_file import parse_file
 from thread_obj import all_posts
 
 filedir = dirname(__file__)
-pretrained_model_path = join(filedir, '../../pretrained_models/use/universal-sentence-encoder_4')
 sys.path.append(dirname(filedir))
 
 class Use(SimilarityAlgorithm):
     model = None
     encodings = None
 
-    def __init__(self, model_path, use_cpu=True):
+    def __init__(self, model_path='universal-sentence-encoder_4', use_cpu=True):
         if use_cpu:
             tf.config.set_visible_devices([], 'GPU')
         self.model = hub.load(model_path)
@@ -65,7 +64,7 @@ class Use(SimilarityAlgorithm):
     
 def encode_test_spaces():
     from testing.similaritytest import json_to_post_1, json_to_post_2
-    algo = Use(pretrained_model_path)
+    algo = Use()
     
     
     test_f = open(join(filedir, "../testing/test_space_2019_2.json"))
@@ -80,7 +79,7 @@ def encode_test_spaces():
 
 
 def encode_dataset():
-    algo = Use(pretrained_model_path)
+    algo = Use()
 
     posts = all_posts(parse_file(join(filedir, '../help2002-2017.txt')))
     algo.encode_posts(posts, join(filedir, '../../encodings/use/2017.pickle'))
