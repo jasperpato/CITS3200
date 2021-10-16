@@ -22,7 +22,7 @@ def main():
     filters = (  remove_none_alphabet, # take non-alphabetical words out
                 remove_stopwords)          # remove stopwords
     start = time.time()
-    faq = affinity_clustering(threads, cleaners, filters, 5)
+    faq = simple_verified_clustering(threads, cleaners, filters, 5)
     end = time.time()
     for i in faq:
         print(i)

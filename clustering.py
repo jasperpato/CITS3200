@@ -9,13 +9,10 @@ import numpy
 
 process_cached = cached(process_post)
 
-def simple_clustering(threads : List[Thread], cleaners, filters):
+def simple_clustering(threads : List[Thread], cleaners, filters, n):
     closest_vector = {}
-    i = 0
     all_posts_reduced = all_posts(threads)
     for post in all_posts(threads):
-        print("post: ", i)
-        i = i + 1
         for other_post in all_posts_reduced:
             if post == other_post:
                 continue
@@ -38,20 +35,27 @@ def simple_clustering(threads : List[Thread], cleaners, filters):
     for post in closest_vector:
         if closest_vector[post][0] == None: continue
         clusters[closest_vector[post][0]].append(post)
-    return clusters
+    faq = []
+    for i in range(n):
+        maxi = 0
+        biggest_cluster = ""
+        for post in clusters.keys():
+            if post in faq: continue
+            if len(clusters[post]) > maxi:
+                maxi = len(clusters[post])
+                biggest_cluster = post
+        faq.append(biggest_cluster)
+    return faq
 
 
-def simple_verified_clustering(threads : List[Thread], cleaners, filters):
+def simple_verified_clustering(threads : List[Thread], cleaners, filters, n):
     closest_vector = {}
     verified_all_posts = []
     for post in all_posts(threads):
         if verified_weight(post) == 1.35:
             verified_all_posts.append(post)
-    i = 0
     all_posts_reduced = all_posts(threads)
-    print(len(verified_all_posts))
     for post in verified_all_posts:
-        i = i + 1
         for other_post in all_posts_reduced:
             if post == other_post:
                 continue
@@ -74,8 +78,20 @@ def simple_verified_clustering(threads : List[Thread], cleaners, filters):
     for post in closest_vector:
         if closest_vector[post][0] == None: continue
         clusters[closest_vector[post][0]].append(post)
-    return clusters
-# ^ doesn't return correct thing
+    print(len(clusters))
+    faq = []
+    for i in range(n):
+        maxi = 0
+        biggest_cluster = ""
+        for post in clusters.keys():
+            if post in faq: continue
+            if len(clusters[post]) > maxi:
+                maxi = len(clusters[post])
+                print(maxi)
+                biggest_cluster = post
+        faq.append(biggest_cluster)
+    return faq
+#only returns first 2
 
 def build_affinity(threads : List[Thread], cleaners, filters):
     all_posts_reduced = all_posts(threads)
@@ -126,11 +142,11 @@ def affinity_clustering(threads : List[Thread], cleaners, filters, n):
     for i in range(n):
         maxi = 0
         pos = 0
-        for i in range(n_clusters):
-            if i in biggest_clusters: continue
-            if cluster_sizes[i] > maxi:
+        for j in range(n_clusters):
+            if j in biggest_clusters: continue
+            if cluster_sizes[j] > maxi:
                 maxi = cluster_sizes[i]
-                pos = i
+                pos = j
         biggest_clusters.append(pos)
     posts = all_posts(threads)
     faq = []
