@@ -27,6 +27,9 @@ Encoder (USE). These can be chosen individually, or used together and averaged.
 Based on manual tagging tests, our recommendation is to use the default option
 of TFIDF for calculating similarity scores between posts.
 
+** Insert info about Use here. It requires downloading the pretrained model
+from somewhere and placing in correct directory **
+
 The intended usage is to call similar() from similarity.py from an outer
 program. The signature is:
 similar(filename,subject,payload,algos=[Tfidf],N=3,use_spellcheck=False,W=0.1):
