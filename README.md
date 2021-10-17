@@ -9,7 +9,7 @@ This program returns posts from an input file that are similar in meaning to an 
 1. Clone this repository using
 > git clone https://github.com/jasperpato/CITS3200.git
 
-2. (optional) Create a python virtual environment
+2. (optional) Create a python virtual environment and install required packages
 > python3 -m venv venv
 
 3. (optional) Enter the virtual environment
@@ -21,8 +21,17 @@ This program returns posts from an input file that are similar in meaning to an 
 5. Download requirements
 > python3 -m pip install -r requirements.txt
 
-6. Run demo program
-> python3 similarity.py
+6. (optional) Run bash script to install the pretrained model for USE (1.5GB)
+> ./install_USE.sh
+
+7. (optional) Run --help command for program usage
+> python3 similarity.py --help
+
+8. Run program on command line
+> python3 similarity.py [input file name] [number of posts]
+
+9. OR import and use the <i>similar()</i> function from this package
+> similar_posts = similar(filename, subject, payload, n)
 
 ## Overview of Program
 
@@ -33,8 +42,8 @@ Encoder (USE). These can be chosen individually, or used together and averaged.
 Based on manual tagging tests, our recommendation is to use the default option
 of TFIDF for calculating similarity scores between posts.
 
-** Insert info about Use here. It requires downloading the pretrained model
-from somewhere and placing in correct directory **
+For the functioning of USE, a pretrained model is required, which 
+may be installed via the supplied bash script.
 
 ### Usage
 
@@ -63,15 +72,7 @@ program. The signature is:
 
 Import this function into your python program by including this statement:
 
-> from CITS3200.similarity import similar
-
-Use in a program:
-
-> filename = 'help2002-2019.txt'
-> subject  = 'help me!'
-> payload  = 'I need help. Has anyone asked this question before?'
-> n        = 6
-> similar_posts = similar(filename, subject, payload, n)
+> from CITS3200 import similar
 
 View example.py for an example.
 
