@@ -55,4 +55,4 @@ def parse_file(filename : str) -> List[Thread]:
         post_strings = ["Date: " + x for x in s.split("Date: ")][1:]
         posts = [parse_post(id, s) for id, s in enumerate(post_strings)]
         
-    return group_into_threads(posts)
+    return posts

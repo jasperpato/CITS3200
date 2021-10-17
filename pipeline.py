@@ -14,6 +14,7 @@ from itertools import product
 from project_types import Tokens
 from spell_correction_pysc import spell_correction
 from spellchecker import SpellChecker
+from similarity_algorithms.tfidf import Tfidf
 
 def process_post(p : Post,
                  cleaners : Tuple[Callable[[str], str]],
@@ -48,15 +49,15 @@ def process_post(p : Post,
 process_cached = cached(process_post)
 
 def pipeline(post : Post,
-             threads : List[Thread],
+             posts : List[Post],
              cleaners : Tuple[Callable[[str], str]],
              filters : Tuple[Callable[[str], bool]], # check if string should be filtered out
              substitutes : Tuple[Callable[[str], str]], # apply textual substitution
              weights : List[Callable[[Post], float]], # return a value that scales a post's similarity
-             algorithms : Tuple[Callable[[Tokens, Tokens], float]], # determines similarity between two posts
-             w : float, # weight of subject to subject similarity, between 0.0 and 1.0
-             n : int, 
-             use_spellcheck=False) -> List[Post]:
+             n=5,
+             algorithms=[Tfidf], # determines similarity between two posts 
+             use_spellcheck=False,
+             w=0.1) -> List[Post]:
         """
         Returns a list of posts (of length n) that are similar, in descending
         order of similarity, to the given post.
@@ -85,19 +86,18 @@ def pipeline(post : Post,
 
         in_subject_toks = process_post(post, cleaners, filters, substitutes, True)
         in_payload_toks = process_post(post, cleaners, filters, substitutes, False)
-        posts = [(p.id, p) for p in all_posts(threads)]
         similarities = {}
 
-        subject_toks_dict = {p_id: process_cached(p, cleaners, filters, substitutes, True) for p_id, p in posts}
+        subject_toks_dict = {p.id: process_cached(p, cleaners, filters, substitutes, True) for p in posts}
         subject_similarities = dictionary_average(*[alg(in_subject_toks, subject_toks_dict) for alg in algorithms])
-        payload_toks_dict =  {p_id: process_cached(p, cleaners, filters, substitutes, False) for p_id, p in posts}
+        payload_toks_dict =  {p.id: process_cached(p, cleaners, filters, substitutes, False) for p in posts}
         payload_similarities = dictionary_average(*[alg(in_payload_toks, payload_toks_dict) for alg in algorithms])
-        for p_id, p in posts:
-            similarities[p] = pipe_weight(p,*weights) * (w * subject_similarities[p_id] + (1.0-w) * payload_similarities[p_id])
+        for p in posts:
+            similarities[p.id] = pipe_weight(p,*weights) * (w * subject_similarities[p.id] + (1.0-w) * payload_similarities[p.id])
         
-        return nlargest(n, similarities, key=similarities.get)
+        p_ids = nlargest(n, similarities, key=similarities.get)
+        return [posts[id] for id in p_ids]
 
-# Please check tfidf and check if it returns a correct dictionary
 def dictionary_average(*dicts):
     out_dict = defaultdict(int)
     n = 0
