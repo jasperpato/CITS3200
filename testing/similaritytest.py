@@ -1,6 +1,5 @@
 import json
 import datetime
-import pickle
 import time
 import nltk
 import os
@@ -133,12 +132,8 @@ def tag_intersection_test(algo, n):
 
 def evaluate_algo(algo, test_case, test_space, n):
     start_time = time.process_time()
-    if 'Category' in test_case.keys():
-        input_post = parse_test_case(test_case)
-        all_posts = [json_to_post_1(p) for p in test_space]
-    else:
-        input_post = json_to_post_2(test_case)
-        all_posts = [json_to_post_2(p) for p in test_space]
+    input_post = json_to_post(test_case)
+    all_posts = [json_to_post(p) for p in test_space]
 
     if algo == None:
         algs = (cosine_similarity, jaccard)
@@ -151,23 +146,9 @@ def evaluate_algo(algo, test_case, test_space, n):
 
 # Used for converting json objects (stored in test_space_2019.json) into post objects
 
-def json_to_post_1(post):
-    date = datetime.datetime.strptime(post["Date"], "%a %b %d %H:%M:%S %Y")
-    verified = post['From'] in valid
-    return Post(date, post['Subject'], post['Body'], verified)
-
-
-# Used for converting json objects (stored in test_case_2019.json) into post objects
-
-def parse_test_case(post):
-    return Post(None, post['Subject'], post['Body'], False)
-
-
-# Used for converting json objects (stored in test_space_2019_1.json) into post objects
-
-def json_to_post_2(post):
-    date = datetime.datetime.strptime(post["Date"], "%Y-%m-%d %H:%M:%S")
-    return Post(date, post['Subject'], post['Body'], post['Verified'])
+def json_to_post(post):
+    date = datetime.datetime.strptime("2019-07-28 16:54:49", "%Y-%m-%d %H:%M:%S")
+    return Post(date, post['Subject'], post['Body'], False)
 
 
 # Returns the average similarity score (tag intersection) using an algorithm that utilises 

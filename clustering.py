@@ -1,5 +1,4 @@
 from sklearn.cluster import AffinityPropagation
-from algorithms import cosine_similarity
 from thread_obj import Thread, all_posts
 from weights import verified_weight
 from pipeline import process_post
@@ -9,25 +8,26 @@ import numpy
 
 process_cached = cached(process_post)
 
-def simple_clustering(threads : List[Thread], cleaners, filters, n):
+def simple_clustering(threads : List[Thread], alg, cleaners, filters, n):
     closest_vector = {}
     all_posts_reduced = all_posts(threads)
     for post in all_posts(threads):
+        payload_toks = process_post(post, cleaners, filters, tuple([]), False)
+        payload_toks_dict = {p.id: process_cached(p, cleaners, filters, tuple([]), False) for p in all_posts_reduced}
+        similarities = alg().similarity(payload_toks, payload_toks_dict)
         for other_post in all_posts_reduced:
             if post == other_post:
                 continue
-            payload_toks = process_post(post, cleaners, filters, tuple([]), False)
-            cosine_sim = cosine_similarity(payload_toks, process_cached(other_post, cleaners, filters, tuple([]), False))
             if post not in closest_vector:
                 closest_vector[post] = (None, 0.003)
             if other_post not in closest_vector:
                 closest_vector[other_post] = (None, 0.003)
-            if cosine_sim < closest_vector[post][1]:
-                if cosine_sim == 0.0: continue
-                closest_vector[post] = (other_post, cosine_sim)
-            if cosine_sim < closest_vector[other_post][1]:
-                if cosine_sim == 0.0: continue
-                closest_vector[other_post] = (post, cosine_sim)
+            if similarities[other_post.id] < closest_vector[post][1]:
+                if similarities[other_post.id] == 0.0: continue
+                closest_vector[post] = (other_post, similarities[other_post.id])
+            if similarities[other_post.id] < closest_vector[other_post][1]:
+                if similarities[other_post.id] == 0.0: continue
+                closest_vector[other_post] = (post, similarities[other_post.id])
         all_posts_reduced.remove(post)
     clusters = {}
     for post in all_posts(threads):
@@ -56,21 +56,22 @@ def simple_verified_clustering(threads : List[Thread], alg, cleaners, filters, n
             verified_all_posts.append(post)
     all_posts_reduced = all_posts(threads)
     for post in verified_all_posts:
+        payload_toks = process_post(post, cleaners, filters, tuple([]), False)
+        payload_toks_dict = {p.id: process_cached(p, cleaners, filters, tuple([]), False) for p in all_posts_reduced}
+        similarities = alg().similarity(payload_toks, payload_toks_dict)
         for other_post in all_posts_reduced:
             if post == other_post:
                 continue
-            payload_toks = process_post(post, cleaners, filters, tuple([]), False)
-            cosine_sim = alg(payload_toks, process_cached(other_post, cleaners, filters, tuple([]), False))
             if post not in closest_vector:
                 closest_vector[post] = (None, 0.003)
             if other_post not in closest_vector:
                 closest_vector[other_post] = (None, 0.003)
-            if cosine_sim < closest_vector[post][1]:
-                if cosine_sim == 0.0: continue
-                closest_vector[post] = (other_post, cosine_sim)
-            if cosine_sim < closest_vector[other_post][1]:
-                if cosine_sim == 0.0: continue
-                closest_vector[other_post] = (post, cosine_sim)
+            if similarities[other_post.id] < closest_vector[post][1]:
+                if similarities[other_post.id] == 0.0: continue
+                closest_vector[post] = (other_post, similarities[other_post.id])
+            if similarities[other_post.id] < closest_vector[other_post][1]:
+                if similarities[other_post.id] == 0.0: continue
+                closest_vector[other_post] = (post, similarities[other_post.id])
         all_posts_reduced.remove(post)
     clusters = {}
     for post in closest_vector:
@@ -78,7 +79,6 @@ def simple_verified_clustering(threads : List[Thread], alg, cleaners, filters, n
     for post in closest_vector:
         if closest_vector[post][0] == None: continue
         clusters[closest_vector[post][0]].append(post)
-    print(len(clusters))
     faq = []
     for i in range(n):
         maxi = 0
@@ -87,27 +87,27 @@ def simple_verified_clustering(threads : List[Thread], alg, cleaners, filters, n
             if post in faq: continue
             if len(clusters[post]) >= maxi:
                 maxi = len(clusters[post])
-                print(maxi)
                 biggest_cluster = post
         faq.append(biggest_cluster)
     return faq
 
 #Constructs affinity matrix corresponding to the similarity between posts
-def build_affinity(threads : List[Thread], cleaners, filters):
+def build_affinity(threads : List[Thread], alg, cleaners, filters):
     all_posts_reduced = all_posts(threads)
     graph = []
     cutoff = 0.002
     for post in all_posts(threads):
         graph.append([])
+        payload_toks = process_post(post, cleaners, filters, tuple([]), False)
+        payload_toks_dict = {p.id: process_cached(p, cleaners, filters, tuple([]), False) for p in all_posts_reduced}
+        similarities = alg().similarity(payload_toks, payload_toks_dict)
         for other_post in all_posts_reduced:
-            payload_toks = process_post(post, cleaners, filters, tuple([]), False)
-            cosine_sim = cosine_similarity(payload_toks, process_cached(other_post, cleaners, filters, tuple([]), False))
-            graph[len(graph)-1].append(cosine_sim)
+            graph[len(graph)-1].append(similarities[other_post.id])
     return graph
 
 #not finished?????
 #Extends the affinity matrix to include new posts
-def add_to_affinity(threads : List[Thread], cleaners, filters):
+def add_to_affinity(threads : List[Thread], alg, cleaners, filters):
     try:
         graph = numpy.load("graph.npy", allow_pickle=True)
     except:
@@ -118,17 +118,17 @@ def add_to_affinity(threads : List[Thread], cleaners, filters):
         graph.append([])
         for j in range(len(posts)):
             payload_toks = process_post(post, cleaners, filters, tuple([]), False)
-            cosine_sim = cosine_similarity(payload_toks, process_cached(other_post, cleaners, filters, tuple([]), False))
-            graph[j].append(cosine_sim)
-            graph[i].append(cosine_sim)
+            sim = alg(payload_toks, {other_post.id: process_cached(other_post, cleaners, filters, tuple([]), False)})
+            graph[j].append(sim)
+            graph[i].append(sim)
     
 #Returns list of n posts corresponding to the centers of the biggest clusters
-def affinity_clustering(threads : List[Thread], cleaners, filters, n):
+def affinity_clustering(threads : List[Thread], alg, cleaners, filters, n):
     try:
         affinity_graph = numpy.load("graph.npy", allow_pickle=True)
     except:
         print("graph not saved, building graph")
-        affinity_graph = build_affinity(threads, cleaners, filters)
+        affinity_graph = build_affinity(threads, alg, cleaners, filters)
         print("graph built")
         numpy.save("graph", numpy.array(affinity_graph))
     aff_prop = AffinityPropagation(affinity = "precomputed")
