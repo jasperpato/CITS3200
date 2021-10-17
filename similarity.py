@@ -9,11 +9,14 @@ By default, the program will return 3 posts unless specified
 """
 
 import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+
 import argparse
+import importlib
+import nltk
 from parse_file import parse_file
 from post import Post
 from pipeline import pipeline
-import nltk
 from re import sub
 from weights import verified_weight, date_weight
 from utils import remove_non_alphabet, remove_stopwords, to_lower
@@ -21,14 +24,6 @@ nltk.download('punkt')
 nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
 
-from similarity_algorithms.cosine import Cosine
-from similarity_algorithms.tfidf import Tfidf
-from similarity_algorithms.jaccard import Jaccard
-from similarity_algorithms.use import Use
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
-
-algos_dict = {'tfidf': Tfidf, 'use': Use, 'jaccard': Jaccard, 'cosine': Cosine}
 
 prog_description = "------------ TO DO ----------------"
 parser = argparse.ArgumentParser(description=prog_description, epilog='Enjoy the program! :D')
@@ -45,13 +40,7 @@ parser.add_argument('-s', '--spellcheck', dest='spell', help='Whether to perform
     ' is performed. Increases compute time significantly.', action='store_true', default=False)
 
 
-def similar(filename, subject, payload, N=3, algos=['Tfidf'], use_spellcheck=False, W=0.1):
-
-    algos_dict = {'tfidf'  : Tfidf,   'Tfidf'  : Tfidf,  'TFIDF': Tfidf,
-                  'use'    : Use,     'Use'    : Use,    'USE'  : Use,
-                  'jaccard': Jaccard, 'Jaccard': Jaccard,
-                  'cosine' : Cosine,  'Cosine' : Cosine}
-
+def similar(filename, subject, payload, N=3, algo_names=['tfidf'], use_spellcheck=False, W=0.1):
     posts = parse_file(filename)
     new_post = Post(None, None, subject, payload, None)
 
@@ -60,20 +49,39 @@ def similar(filename, subject, payload, N=3, algos=['Tfidf'], use_spellcheck=Fal
     cleaners = (to_lower, lambda x: sub(r'\s+', ' ', x))
     substitutes = tuple([])
     
-    algorithms = tuple([algos_dict[a]().similarity for a in algos])
-    return [p for p in pipeline(new_post, posts, cleaners, filters, substitutes, weights, N, algorithms, use_spellcheck, W)]
+    algos = generate_algo_list(algo_names)
+    algorithms = tuple([a().similarity for a in algos])
+    return [p for p in pipeline(new_post, posts, cleaners, filters, substitutes, weights, algorithms, N, use_spellcheck, W)]
+
+
+def generate_algo_list(algo_names):
+    algos = []
+    for algo_name in algo_names:
+        module = importlib.import_module(f'similarity_algorithms.{algo_name}')
+        algos.append(getattr(module, algo_name.capitalize()))
+    return algos
 
 
 if __name__ == "__main__":
     args = parser.parse_args()
+    
+    print(f"\n{'-' * 100}\nInput post:\n{'-' * 100}\n")
     subject = input("Subject: ")
     payload = input("Payload: ")
+    print('\n', end='')
     
     filename = args.filename
     num_posts = args.n
 
-    algos = [a for a in args.algs]
+    algos = [a.lower() for a in args.algs]
     use_spellcheck = args.spell
 
-    posts = similar(filename=filename, subject=subject, payload=payload, algos=algos, N=num_posts, use_spellcheck=use_spellcheck)
-    for p in posts: print(f"{p.subject}\n{p.payload}\n{'-' * 100}\n")
+    posts = similar(filename, subject, payload, num_posts, algos, use_spellcheck)
+    print('-' * 100)
+    for post_number, p in enumerate(posts): 
+        s = f"Post {post_number + 1}:\n" + \
+            f"{'-' * 100}\n\n" + \
+            f"Subject: {p.subject}\n" + \
+            f"Body:\n{p.payload}\n\n" + \
+            f"{'-' * 100}\n"
+        print(s, end='')
