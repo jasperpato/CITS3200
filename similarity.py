@@ -8,6 +8,7 @@ The system will prompt you to write a subject and body of text.
 By default, the program will return 3 posts unless specified
 """
 
+import os
 import argparse
 from parse_file import parse_file
 from post import Post
@@ -24,6 +25,8 @@ from similarity_algorithms.cosine import Cosine
 from similarity_algorithms.tfidf import Tfidf
 from similarity_algorithms.jaccard import Jaccard
 from similarity_algorithms.use import Use
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 algos_dict = {'tfidf': Tfidf, 'use': Use, 'jaccard': Jaccard, 'cosine': Cosine}
 
@@ -66,5 +69,5 @@ if __name__ == "__main__":
     algos = [algos_dict[name] for name in args.algs]
     use_spellcheck = args.spell
 
-    posts = similar(filename, subject, payload, algos, num_posts, use_spellcheck)
-    for p in posts: print(f"{p.subject}\n{p.payload}\n")
+    posts = similar(filename=filename, subject=subject, payload=payload, algos=algos, N=num_posts, use_spellcheck=use_spellcheck)
+    for p in posts: print(f"{p.subject}\n{p.payload}\n{'-' * 100}\n")
