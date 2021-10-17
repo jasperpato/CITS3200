@@ -41,23 +41,23 @@ from somewhere and placing in correct directory **
 
 The intended usage is to call similar() from similarity.py from an outer
 program. The signature is:
-> **similar(filename,subject,payload,algos=[Tfidf],N=3,use_spellcheck=False,W=0.1):**
+> **similar(filename,subject,payload,algos=[Tfidf],N=3,use_spellcheck=False,W=0.1)**
 >
->#### Parameter info
->
-> -**Filename** is the name of the txt file that contains a series of posts in rfc2822 
->  format.
->
-> -**Subject** and payload are strings containing the subject and payload text of an
->  input post for which similar posts are to be found.
->
-> -**Algos** is a list of similarity algorithm names as strings. It can contain any
->  combination of ['Cosine', 'Jaccard', 'Tfidf', 'Use'].
->
-> -**N** is the number of similar posts to be returned.
->
-> -**Use_spellcheck** specifies whether to implement spell correction during
->  pre-processing. It can yield more accurate results, however takes more time.
+>> #### Parameter info
+>>
+>> - **Filename** is the name of the txt file that contains a series of posts in rfc2822 
+>>   format.
+>> 
+>> - **Subject** and payload are strings containing the subject and payload text of an
+>>  input post for which similar posts are to be found.
+>>
+>> - **Algos** is a list of similarity algorithm names as strings. It can contain any
+>>   combination of ['Cosine', 'Jaccard', 'Tfidf', 'Use'].
+>>
+>> - **N** is the number of similar posts to be returned.
+>>
+>> - **Use_spellcheck** specifies whether to implement spell correction during
+>>   pre-processing. It can yield more accurate results, however takes more time.
 
 For each post a subject similarity and payload similarity are calculated
 separately. W is a weighting between 0 and 1 given to the subject similarity.
