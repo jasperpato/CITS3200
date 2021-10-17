@@ -27,7 +27,8 @@ Encoder (USE). These can be chosen individually, or used together and averaged.
 Based on manual tagging tests, our recommendation is to use the default option
 of TFIDF for calculating similarity scores between posts.
 
-The intended usage is to call similar() from an outer program. The signature is:
+The intended usage is to call similar() from similarity.py from an outer
+program. The signature is:
 similar(filename,subject,payload,algos=[Tfidf],N=3,use_spellcheck=False,W=0.1):
 
 Filename is the name of the txt file that contains a series of posts in rfc2822
