@@ -40,7 +40,7 @@ parser.add_argument('-s', '--spellcheck', dest='spell', help='Whether to perform
     ' is performed. Increases compute time significantly.', action='store_true', default=False)
 
 
-def similar(filename, subject, payload, algos=['Tfidf'], N=3, use_spellcheck=False, W=0.1):
+def similar(filename, subject, payload, N=3, algos=['Tfidf'], use_spellcheck=False, W=0.1):
 
     algos_dict = {'tfidf'  : Tfidf,   'Tfidf'  : Tfidf,  'TFIDF': Tfidf,
                   'use'    : Use,     'Use'    : Use,    'USE'  : Use,
@@ -56,7 +56,7 @@ def similar(filename, subject, payload, algos=['Tfidf'], N=3, use_spellcheck=Fal
     substitutes = tuple([])
     
     algorithms = tuple([algos_dict[a]().similarity for a in algos])
-    return [p for p in pipeline(new_post, posts, cleaners, filters, substitutes, weights, algorithms, N, use_spellcheck, W)]
+    return [p for p in pipeline(new_post, posts, cleaners, filters, substitutes, weights, N, algorithms, use_spellcheck, W)]
 
 
 if __name__ == "__main__":
@@ -70,5 +70,5 @@ if __name__ == "__main__":
     algos = [a for a in args.algs]
     use_spellcheck = args.spell
 
-    posts = similar(filename, subject, payload, algos, num_posts, use_spellcheck)
+    posts = similar(filename, subject, payload, num_posts, algos, use_spellcheck)
     for p in posts: print(f"{p.subject}\n{p.payload}\n")

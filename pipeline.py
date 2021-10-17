@@ -14,6 +14,7 @@ from itertools import product
 from project_types import Tokens
 from spell_correction_pysc import spell_correction
 from spellchecker import SpellChecker
+from similarity_algorithms.tfidf import Tfidf
 
 def process_post(p : Post,
                  cleaners : Tuple[Callable[[str], str]],
@@ -53,8 +54,8 @@ def pipeline(post : Post,
              filters : Tuple[Callable[[str], bool]], # check if string should be filtered out
              substitutes : Tuple[Callable[[str], str]], # apply textual substitution
              weights : List[Callable[[Post], float]], # return a value that scales a post's similarity
-             algorithms : Tuple[Callable[[Tokens, Tokens], float]], # determines similarity between two posts
-             n=5, 
+             n=5,
+             algorithms=[Tfidf], # determines similarity between two posts 
              use_spellcheck=False,
              w=0.1) -> List[Post]:
         """
@@ -97,7 +98,6 @@ def pipeline(post : Post,
         p_ids = nlargest(n, similarities, key=similarities.get)
         return [posts[id] for id in p_ids]
 
-# Please check tfidf and check if it returns a correct dictionary
 def dictionary_average(*dicts):
     out_dict = defaultdict(int)
     n = 0
