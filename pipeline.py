@@ -54,9 +54,9 @@ def pipeline(post : Post,
              substitutes : Tuple[Callable[[str], str]], # apply textual substitution
              weights : List[Callable[[Post], float]], # return a value that scales a post's similarity
              algorithms : Tuple[Callable[[Tokens, Tokens], float]], # determines similarity between two posts
-             w : float, # weight of subject to subject similarity, between 0.0 and 1.0
-             n : int, 
-             use_spellcheck=False) -> List[Post]:
+             n=5, 
+             use_spellcheck=False,
+             w=0.2) -> List[Post]:
         """
         Returns a list of posts (of length n) that are similar, in descending
         order of similarity, to the given post.

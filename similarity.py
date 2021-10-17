@@ -30,7 +30,7 @@ algos_dict = {'tfidf': Tfidf, 'use': Use, 'jaccard': Jaccard, 'cosine': Cosine}
 prog_description = "------------ TO DO ----------------"
 parser = argparse.ArgumentParser(description=prog_description, epilog='Enjoy the program! :D')
 
-parser.add_argument('filename', type=str, help='Filename of the text file containing posts to be returned by their text similarity.')
+parser.add_argument('filename', type=str, help='Filename of the text file containing posts to be returned by their text similarity.', nargs='?', default="help2002-2017.txt")
 
 parser.add_argument('n', type=int, help='The number of similar posts to return.', nargs='?', default=3)
 
@@ -42,7 +42,7 @@ parser.add_argument('-s', '--spellcheck', dest='spell', help='Whether to perform
     ' is performed. Increases compute time significantly.', action='store_true', default=False)
 
 
-def similar(filename, subject, payload, use_spellcheck, algos=[Tfidf], N=3, W=0.2):
+def similar(filename, subject, payload, algos=[Tfidf], N=3, use_spellcheck=False, W=0.2):
     
     threads = parse_file(filename)
     new_post = Post(None, None, subject, payload, None)
@@ -53,7 +53,7 @@ def similar(filename, subject, payload, use_spellcheck, algos=[Tfidf], N=3, W=0.
     substitutes = tuple([])
     
     algorithms = tuple([algo().similarity for algo in algos])
-    return [p for p in pipeline(new_post, threads, cleaners, filters, substitutes,  weights, algorithms, W, N, use_spellcheck)]
+    return [p for p in pipeline(new_post, threads, cleaners, filters, substitutes, weights, algorithms, N, use_spellcheck, W)]
 
 
 if __name__ == "__main__":
