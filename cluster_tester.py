@@ -1,6 +1,7 @@
 from clustering import simple_clustering, simple_verified_clustering, affinity_clustering
 from utils import remove_none_alphabet, remove_stopwords, to_lower
-from parse_file import parse_post, group_into_threads
+from parse_file import parse_post, group_into_threads\
+from algorithms import cosine_similarity
 from re import sub
 import time
 
@@ -22,7 +23,7 @@ def main():
     filters = (  remove_none_alphabet, # take non-alphabetical words out
                 remove_stopwords)          # remove stopwords
     start = time.time()
-    faq = simple_verified_clustering(threads, cleaners, filters, 5)
+    faq = simple_verified_clustering(threads, cosine_similarity, cleaners, filters, 5)
     end = time.time()
     for i in faq:
         print(i)

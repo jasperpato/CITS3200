@@ -19,9 +19,9 @@ def simple_clustering(threads : List[Thread], cleaners, filters, n):
             payload_toks = process_post(post, cleaners, filters, tuple([]), False)
             cosine_sim = cosine_similarity(payload_toks, process_cached(other_post, cleaners, filters, tuple([]), False))
             if post not in closest_vector:
-                closest_vector[post] = (None, 0.002)
+                closest_vector[post] = (None, 0.003)
             if other_post not in closest_vector:
-                closest_vector[other_post] = (None, 0.002)
+                closest_vector[other_post] = (None, 0.003)
             if cosine_sim < closest_vector[post][1]:
                 if cosine_sim == 0.0: continue
                 closest_vector[post] = (other_post, cosine_sim)
@@ -41,14 +41,14 @@ def simple_clustering(threads : List[Thread], cleaners, filters, n):
         biggest_cluster = ""
         for post in clusters.keys():
             if post in faq: continue
-            if len(clusters[post]) > maxi:
+            if len(clusters[post]) >= maxi:
                 maxi = len(clusters[post])
                 biggest_cluster = post
         faq.append(biggest_cluster)
     return faq
 
 
-def simple_verified_clustering(threads : List[Thread], cleaners, filters, n):
+def simple_verified_clustering(threads : List[Thread], alg, cleaners, filters, n):
     closest_vector = {}
     verified_all_posts = []
     for post in all_posts(threads):
@@ -60,11 +60,11 @@ def simple_verified_clustering(threads : List[Thread], cleaners, filters, n):
             if post == other_post:
                 continue
             payload_toks = process_post(post, cleaners, filters, tuple([]), False)
-            cosine_sim = cosine_similarity(payload_toks, process_cached(other_post, cleaners, filters, tuple([]), False))
+            cosine_sim = alg(payload_toks, process_cached(other_post, cleaners, filters, tuple([]), False))
             if post not in closest_vector:
-                closest_vector[post] = (None, 0.002)
+                closest_vector[post] = (None, 0.003)
             if other_post not in closest_vector:
-                closest_vector[other_post] = (None, 0.002)
+                closest_vector[other_post] = (None, 0.003)
             if cosine_sim < closest_vector[post][1]:
                 if cosine_sim == 0.0: continue
                 closest_vector[post] = (other_post, cosine_sim)
@@ -85,14 +85,14 @@ def simple_verified_clustering(threads : List[Thread], cleaners, filters, n):
         biggest_cluster = ""
         for post in clusters.keys():
             if post in faq: continue
-            if len(clusters[post]) > maxi:
+            if len(clusters[post]) >= maxi:
                 maxi = len(clusters[post])
                 print(maxi)
                 biggest_cluster = post
         faq.append(biggest_cluster)
     return faq
-#only returns first 2
 
+#Constructs affinity matrix corresponding to the similarity between posts
 def build_affinity(threads : List[Thread], cleaners, filters):
     all_posts_reduced = all_posts(threads)
     graph = []
@@ -106,6 +106,7 @@ def build_affinity(threads : List[Thread], cleaners, filters):
     return graph
 
 #not finished?????
+#Extends the affinity matrix to include new posts
 def add_to_affinity(threads : List[Thread], cleaners, filters):
     try:
         graph = numpy.load("graph.npy", allow_pickle=True)
@@ -121,7 +122,7 @@ def add_to_affinity(threads : List[Thread], cleaners, filters):
             graph[j].append(cosine_sim)
             graph[i].append(cosine_sim)
     
-
+#Returns list of n posts corresponding to the centers of the biggest clusters
 def affinity_clustering(threads : List[Thread], cleaners, filters, n):
     try:
         affinity_graph = numpy.load("graph.npy", allow_pickle=True)
