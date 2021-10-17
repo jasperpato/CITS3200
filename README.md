@@ -52,8 +52,10 @@ The payload similarity will be given a weighting of (1-W). It is recommended
 not to alter W from the default value of 0.1.
 
 Import this function into your python program by including this statement:
+
 from CITS3200.similarity import similar
 
+View example.py for an example.
 
 
 
