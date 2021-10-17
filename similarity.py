@@ -49,6 +49,7 @@ def similar(filename, subject, payload, N=3, algo_names=['tfidf'], use_spellchec
     cleaners = (to_lower, lambda x: sub(r'\s+', ' ', x))
     substitutes = tuple([])
     
+    algo_names = [name.lower() for name in algo_names]
     algos = generate_algo_list(algo_names)
     algorithms = tuple([a().similarity for a in algos])
     return [p for p in pipeline(new_post, posts, cleaners, filters, substitutes, weights, algorithms, N, use_spellcheck, W)]
@@ -73,7 +74,7 @@ if __name__ == "__main__":
     filename = args.filename
     num_posts = args.n
 
-    algos = [a.lower() for a in args.algs]
+    algos = [a for a in args.algs]
     use_spellcheck = args.spell
 
     posts = similar(filename, subject, payload, num_posts, algos, use_spellcheck)
