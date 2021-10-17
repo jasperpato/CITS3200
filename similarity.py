@@ -42,9 +42,9 @@ parser.add_argument('-s', '--spellcheck', dest='spell', help='Whether to perform
     ' is performed. Increases compute time significantly.', action='store_true', default=False)
 
 
-def similar(filename, subject, payload, algos=[Tfidf], N=3, use_spellcheck=False, W=0.2):
+def similar(filename, subject, payload, algos=[Tfidf], N=3, use_spellcheck=False, W=0.1):
     
-    threads = parse_file(filename)
+    posts = parse_file(filename)
     new_post = Post(None, None, subject, payload, None)
 
     filters = (remove_non_alphabet, remove_stopwords)
@@ -53,7 +53,7 @@ def similar(filename, subject, payload, algos=[Tfidf], N=3, use_spellcheck=False
     substitutes = tuple([])
     
     algorithms = tuple([algo().similarity for algo in algos])
-    return [p for p in pipeline(new_post, threads, cleaners, filters, substitutes, weights, algorithms, N, use_spellcheck, W)]
+    return [p for p in pipeline(new_post, posts, cleaners, filters, substitutes, weights, algorithms, N, use_spellcheck, W)]
 
 
 if __name__ == "__main__":
