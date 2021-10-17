@@ -50,22 +50,28 @@ program. The signature is:
 >> - **Subject** and **payload** are strings containing the subject and payload text of an
 >>  input post for which similar posts are to be found.
 >>
+>> - **N** is the number of similar posts to be returned.
+>>
 >> - **Algos** is a list of similarity algorithm names as strings. It can contain any
 >>   combination of ['Cosine', 'Jaccard', 'Tfidf', 'Use'].
 >>
->> - **N** is the number of similar posts to be returned.
->>
 >> - **Use_spellcheck** specifies whether to implement spell correction during
 >>   pre-processing. It can yield more accurate results, however takes more time.
-
-For each post a subject similarity and payload similarity are calculated
-separately. **W** is a weighting between 0 and 1 given to the subject similarity.
-The payload similarity will be given a weighting of (1-W). It is recommended
-not to alter W from the default value of 0.1.
+>>
+>> - **W** is the weighting of the subject similarity. The weighting of the payload
+>>   similarity will be (1-**W**). It is recommended not to alter W from the default value of 0.1.
 
 Import this function into your python program by including this statement:
 
 > from CITS3200.similarity import similar
+
+Use in a program:
+
+> filename = 'help2002-2019.txt'
+> subject  = 'help me!'
+> payload  = 'I need help. Has anyone asked this question before?'
+> n        = 6
+> similar_posts = similar(filename, subject, payload, n)
 
 View example.py for an example.
 
