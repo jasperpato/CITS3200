@@ -6,6 +6,6 @@ if __name__=="__main__":
     subject = "Lab5"
     payload = "What is it?"
 
-    posts = similar(filename, subject, payload, use_spellcheck=True)
+    posts = similar(filename, subject, payload, algos=['Jaccard','cosine','TFIDF'], use_spellcheck=True)
 
     for p in posts: print(str(p))

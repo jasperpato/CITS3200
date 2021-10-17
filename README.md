@@ -18,7 +18,7 @@ To use the program right away:
 5. Download requirements
 > python3 -m pip install -r requirements.txt
 
-6. Run example program
+6. Run demo program
 > python3 similarity.py
 
 The different algorithms for similarity scoring are Cosine, Jaccard,
@@ -42,9 +42,8 @@ combination of [Cosine, Jaccard, Tfidf, Use].
 
 N is the number of similar posts to be returned.
 
-Use_spellcheck specifies
-whether to implement spell correction during pre-processing. It can yield more
-accurate results, however takes more time.
+Use_spellcheck specifies whether to implement spell correction during
+pre-processing. It can yield more accurate results, however takes more time.
 
 For each post a subject similarity and payload similarity are calculated
 separately. W is a weighting between 0 and 1 given to the subject similarity.

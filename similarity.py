@@ -25,8 +25,6 @@ from similarity_algorithms.tfidf import Tfidf
 from similarity_algorithms.jaccard import Jaccard
 from similarity_algorithms.use import Use
 
-algos_dict = {'tfidf': Tfidf, 'use': Use, 'jaccard': Jaccard, 'cosine': Cosine}
-
 prog_description = "------------ TO DO ----------------"
 parser = argparse.ArgumentParser(description=prog_description, epilog='Enjoy the program! :D')
 
@@ -42,8 +40,13 @@ parser.add_argument('-s', '--spellcheck', dest='spell', help='Whether to perform
     ' is performed. Increases compute time significantly.', action='store_true', default=False)
 
 
-def similar(filename, subject, payload, algos=[Tfidf], N=3, use_spellcheck=False, W=0.1):
-    
+def similar(filename, subject, payload, algos=['Tfidf'], N=3, use_spellcheck=False, W=0.1):
+
+    algos_dict = {'tfidf'  : Tfidf,   'Tfidf'  : Tfidf,  'TFIDF': Tfidf,
+                  'use'    : Use,     'Use'    : Use,    'USE'  : Use,
+                  'jaccard': Jaccard, 'Jaccard': Jaccard,
+                  'cosine' : Cosine,  'Cosine' : Cosine}
+
     posts = parse_file(filename)
     new_post = Post(None, None, subject, payload, None)
 
@@ -52,7 +55,7 @@ def similar(filename, subject, payload, algos=[Tfidf], N=3, use_spellcheck=False
     cleaners = (to_lower, lambda x: sub(r'\s+', ' ', x))
     substitutes = tuple([])
     
-    algorithms = tuple([algo().similarity for algo in algos])
+    algorithms = tuple([algos_dict[a]().similarity for a in algos])
     return [p for p in pipeline(new_post, posts, cleaners, filters, substitutes, weights, algorithms, N, use_spellcheck, W)]
 
 
@@ -63,7 +66,8 @@ if __name__ == "__main__":
     
     filename = args.filename
     num_posts = args.n
-    algos = [algos_dict[name] for name in args.algs]
+
+    algos = [a for a in args.algs]
     use_spellcheck = args.spell
 
     posts = similar(filename, subject, payload, algos, num_posts, use_spellcheck)
