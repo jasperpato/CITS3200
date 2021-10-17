@@ -4,17 +4,15 @@ pipeline function works, as this is the main interface that they must use.
 """
 from collections import defaultdict
 
+import nltk
 from post import Post
-from thread_obj import Thread, all_posts
 from typing import List, Callable, Tuple
 from heapq import nlargest
-from nltk import word_tokenize
 from utils import pipe, cached, pipe_weight
 from itertools import product
 from project_types import Tokens
 from spell_correction_pysc import spell_correction
 from spellchecker import SpellChecker
-from similarity_algorithms.tfidf import Tfidf
 
 def process_post(p : Post,
                  cleaners : Tuple[Callable[[str], str]],
@@ -43,7 +41,7 @@ def process_post(p : Post,
         this is because immutability is required for cacheing.
         """
         text = p.subject if subject else p.payload
-        return [pipe(*substitutes)(tok) for tok in word_tokenize(pipe(*cleaners)(text)) if any(product(filters,tok))]
+        return [pipe(*substitutes)(tok) for tok in nltk.word_tokenize(pipe(*cleaners)(text)) if any(product(filters,tok))]
 
 #process_cached is simply the process_post function, but with memoisation
 process_cached = cached(process_post)
@@ -54,8 +52,8 @@ def pipeline(post : Post,
              filters : Tuple[Callable[[str], bool]], # check if string should be filtered out
              substitutes : Tuple[Callable[[str], str]], # apply textual substitution
              weights : List[Callable[[Post], float]], # return a value that scales a post's similarity
+             algorithms, # determines similarity between two posts 
              n=5,
-             algorithms=[Tfidf], # determines similarity between two posts 
              use_spellcheck=False,
              w=0.1) -> List[Post]:
         """
