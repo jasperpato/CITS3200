@@ -25,7 +25,7 @@ nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
 
 
-prog_description = "------------ TO DO ----------------"
+prog_description = "This program returns posts from an input file that are similar in meaning to an input post."
 parser = argparse.ArgumentParser(description=prog_description, epilog='Enjoy the program! :D')
 
 parser.add_argument('filename', type=str, help='Filename of the text file containing posts to be returned by their text similarity.', nargs='?', default="help2002-2017.txt")
