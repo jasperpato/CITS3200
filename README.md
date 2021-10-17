@@ -2,8 +2,7 @@
 
 ## Introduction
 
-This program returns posts from an input file that are similar to an input post.
-See help2002-2017.txt for an example of the input file of posts.
+This program returns posts from an input file that are similar in meaning to an input post.
 
 ## Procedure to run program
 
@@ -27,7 +26,7 @@ See help2002-2017.txt for an example of the input file of posts.
 
 ## Overview of Program
 
-### Requirements 
+### Algorithms
 The different algorithms for similarity scoring are Cosine, Jaccard,
 Term Frequency–Inverse Document Frequency (TFIDF), and Universal Sentence
 Encoder (USE). These can be chosen individually, or used together and averaged.
@@ -41,7 +40,7 @@ from somewhere and placing in correct directory **
 
 The intended usage is to call similar() from similarity.py from an outer
 program. The signature is:
-> **similar(filename,subject,payload,algos=[Tfidf],N=3,use_spellcheck=False,W=0.1)**
+> **similar(filename, subject, payload, algos=[Tfidf], N=3, use_spellcheck=False, W=0.1)**
 >
 >> #### Parameter info:
 >>
@@ -60,11 +59,9 @@ program. The signature is:
 >>   pre-processing. It can yield more accurate results, however takes more time.
 
 For each post a subject similarity and payload similarity are calculated
-separately. W is a weighting between 0 and 1 given to the subject similarity.
+separately. **W** is a weighting between 0 and 1 given to the subject similarity.
 The payload similarity will be given a weighting of (1-W). It is recommended
 not to alter W from the default value of 0.1.
-
-### Extracting main program
 
 Import this function into your python program by including this statement:
 
