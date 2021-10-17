@@ -37,8 +37,8 @@ format.
 Subject and payload are strings containing the subject and payload text of an
 input post for which similar posts are to be found.
 
-Algos is a list of similarity algorithms to be used. It can contain any
-combination of [Cosine, Jaccard, Tfidf, Use].
+Algos is a list of similarity algorithm names as strings. It can contain any
+combination of ['Cosine', 'Jaccard', 'Tfidf', 'Use'].
 
 N is the number of similar posts to be returned.
 
