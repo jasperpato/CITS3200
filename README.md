@@ -43,12 +43,12 @@ The intended usage is to call similar() from similarity.py from an outer
 program. The signature is:
 > **similar(filename,subject,payload,algos=[Tfidf],N=3,use_spellcheck=False,W=0.1)**
 >
->> #### Parameter info
+>> #### Parameter info:
 >>
 >> - **Filename** is the name of the txt file that contains a series of posts in rfc2822 
 >>   format.
 >> 
->> - **Subject** and payload are strings containing the subject and payload text of an
+>> - **Subject** and **payload** are strings containing the subject and payload text of an
 >>  input post for which similar posts are to be found.
 >>
 >> - **Algos** is a list of similarity algorithm names as strings. It can contain any
