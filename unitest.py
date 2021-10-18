@@ -43,8 +43,6 @@ class FileParseCase(unittest.TestCase):
     
     def test_parse_file(self):
         threads = parse_file.parse_file('help2002-2019.txt')
-        for thread in threads:
-            self.assertTrue(all(post.subject == thread.posts[0].subject for post in thread.posts))
         posts = [manual_post_parse(post) for post in self.post_strings]
         test_subject_set = set([post.subject for post in posts])
         tbt_subject_set = set([thread.subject for thread in threads])
