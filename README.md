@@ -28,7 +28,7 @@ This program returns posts from an input file that are similar in meaning to an 
 > python3 similarity.py --help
 
 8. Run program on command line
-> python3 similarity.py [input file name] [number of posts]
+> python3 similarity.py [input file name] [number of posts] -[options]
 
 9. OR import and use the <i>similar()</i> function from this package
 > similar_posts = similar(filename, subject, payload, n)
