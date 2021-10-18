@@ -107,13 +107,14 @@ def build_affinity(threads : List[Thread], alg, cleaners, filters):
     
 #Returns list of n posts corresponding to the centers of the biggest clusters
 def affinity_clustering(threads : List[Thread], alg, cleaners, filters, n):
-    try:
-        affinity_graph = numpy.load("graph.npy", allow_pickle=True)
-    except:
-        print("graph not saved, building graph")
-        affinity_graph = build_affinity(threads, alg, cleaners, filters)
-        print("graph built")
-        numpy.save("graph", numpy.array(affinity_graph))
+    #try:
+        #affinity_graph = numpy.load("graph.npy", allow_pickle=True)
+    #except:
+        #print("graph not saved, building graph")
+        #affinity_graph = build_affinity(threads, alg, cleaners, filters)
+        #print("graph built")
+        #numpy.save("graph", numpy.array(affinity_graph))
+    affinity_graph = build_affinity(threads, alg, cleaners, filters)
     aff_prop = AffinityPropagation(affinity = "precomputed")
     aff_prop.fit(affinity_graph)
     labels = aff_prop.fit_predict(affinity_graph)
