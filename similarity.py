@@ -23,6 +23,7 @@ from utils import remove_non_alphabet, remove_stopwords, to_lower
 nltk.download('punkt')
 nltk.download('stopwords')
 stopwords = nltk.corpus.stopwords.words('english')
+print()
 
 
 prog_description = "This program returns posts from an input file that are similar in meaning to an input post."
@@ -66,7 +67,7 @@ def generate_algo_list(algo_names):
 if __name__ == "__main__":
     args = parser.parse_args()
     
-    print(f"\n{'-' * 100}\nInput post:\n{'-' * 100}\n")
+    print(f"{'-' * 100}\nInput post:\n{'-' * 100}\n")
     subject = input("Subject: ")
     payload = input("Payload: ")
     print('\n', end='')
