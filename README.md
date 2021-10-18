@@ -99,13 +99,13 @@ eg.
 
 >> Parameter info:
 >> - **threads** the list of threads as returned from the function parse_file(filename)
-
+>>
 >> - **alg** the object created from the desired similarity algorithm class
-
+>>
 >> - **cleaners** the tuple of functions used to clean up the text eg. to_lower
-
+>>
 >> - **filters** the tuple of functions used to filter out unwanted characters eg. remove_non_alphabet
-
+>>
 >> - **n** the number of Frequently Asked Questions to be returned
 
 View cluster_tester.py for an example.
