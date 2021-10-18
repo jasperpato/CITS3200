@@ -28,7 +28,7 @@ This program returns posts from an input file that are similar in meaning to an 
 > python3 similarity.py --help
 
 8. Run program on command line
-> python3 similarity.py [input file name] [number of posts] -[options]
+> python3 similarity.py [input file name] [number of posts]
 
 9. OR import and use the <i>similar()</i> function from this package
 > similar_posts = similar(filename, subject, payload, n)
@@ -76,6 +76,39 @@ Import this function into your python program by including this statement:
 
 View example.py for an example.
 
+## Clustering
+
+Seperate from the main program there are functions provided to generate clusters relating to the similarity of a group of posts.
+
+These functions are useful for creating a list of Frequently Asked Questions.
+
+In their current state these functions are not fully polished and can be considered mildly inconvenient to use for a non-technical user.
+
+### Clustering Functions
+
+simple_clustering()
+
+simple_verified_clustering()
+
+affinity_clustering()
+
+All clustering functions take the same parameters and return the same outputs
+
+eg.
+> example_clustering(threads, alg, cleaners, filters, n)
+
+>> Parameter info:
+>> - **threads** the list of threads as returned from the function parse_file(filename)
+
+>> - **alg** the object created from the desired similarity algorithm class
+
+>> - **cleaners** the tuple of functions used to clean up the text eg. to_lower
+
+>> - **filters** the tuple of functions used to filter out unwanted characters eg. remove_non_alphabet
+
+>> - **n** the number of Frequently Asked Questions to be returned
+
+View cluster_tester.py for an example.
 
 
 
