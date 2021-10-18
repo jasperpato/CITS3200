@@ -17,15 +17,15 @@ def parse_file(filename):
 
 
 def main():
-    module = importlib.import_module(f"similarity_algorithms.tfidf")
-    alg = getattr(module, "Tfidf")
+    module = importlib.import_module(f"similarity_algorithms.cosine")
+    alg = getattr(module, "Cosine")
 
     threads = parse_file("help2002-2019.txt")
     cleaners =    ( to_lower,              # lowercase all text
                     lambda x: sub(r'\s+', ' ', x))
     filters = (remove_non_alphabet, remove_stopwords)
     start = time.time()
-    faq = affinity_clustering(threads, alg, cleaners, filters, 5)
+    faq = simple_clustering(threads, alg, cleaners, filters, 5)
     end = time.time()
     for i in faq:
         print(i)

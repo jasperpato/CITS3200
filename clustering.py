@@ -104,23 +104,6 @@ def build_affinity(threads : List[Thread], alg, cleaners, filters):
         for other_post in all_posts_reduced:
             graph[len(graph)-1].append(similarities[other_post.id])
     return graph
-
-#not finished?????
-#Extends the affinity matrix to include new posts
-def add_to_affinity(threads : List[Thread], alg, cleaners, filters):
-    try:
-        graph = numpy.load("graph.npy", allow_pickle=True)
-    except:
-        print("cannot add to non-existant graph")
-        return
-    posts = all_posts(threads)
-    for i in range(len(graph), len(posts(threads))):
-        graph.append([])
-        for j in range(len(posts)):
-            payload_toks = process_post(post, cleaners, filters, tuple([]), False)
-            sim = alg(payload_toks, {other_post.id: process_cached(other_post, cleaners, filters, tuple([]), False)})
-            graph[j].append(sim)
-            graph[i].append(sim)
     
 #Returns list of n posts corresponding to the centers of the biggest clusters
 def affinity_clustering(threads : List[Thread], alg, cleaners, filters, n):
