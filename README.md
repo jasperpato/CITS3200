@@ -97,7 +97,7 @@ All clustering functions take the same parameters and return the same outputs
 eg.
 > example_clustering(threads, alg, cleaners, filters, n)
 
->> Parameter info:
+>> #### Parameter info:
 >> - **threads** the list of threads as returned from the function parse_file(filename)
 >>
 >> - **alg** the object created from the desired similarity algorithm class
